@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { DashboardNavbar } from "@/components/DashboardNavbar";
-import { PondokDashboard } from "@/components/PondokDashboard";
-import { SuperAdminDashboard } from "@/components/SuperAdminDashboard";
 
-const Index = () => {
+interface DashboardLayoutProps {
+  children: ReactNode;
+}
+
+export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [role, setRole] = useState<"pondok" | "super">("pondok");
   const location = useLocation();
 
@@ -22,11 +24,9 @@ const Index = () => {
           onRoleSwitch={handleRoleSwitch}
         />
         <main className="flex-1 p-6 overflow-y-auto">
-          {role === "pondok" ? <PondokDashboard /> : <SuperAdminDashboard />}
+          {children}
         </main>
       </div>
     </div>
   );
 };
-
-export default Index;

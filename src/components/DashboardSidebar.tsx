@@ -68,8 +68,9 @@ export const DashboardSidebar = ({ role, currentPath = "/" }: DashboardSidebarPr
             const isActive = currentPath === item.path;
             
             return (
-              <button
+              <NavLink
                 key={item.path}
+                to={item.path}
                 className={cn(
                   "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200",
                   isActive
@@ -79,7 +80,7 @@ export const DashboardSidebar = ({ role, currentPath = "/" }: DashboardSidebarPr
               >
                 <Icon className="w-5 h-5" />
                 <span className="text-sm">{item.label}</span>
-              </button>
+              </NavLink>
             );
           })}
         </nav>
