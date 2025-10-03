@@ -41,6 +41,8 @@ export const DashboardSidebar = ({ role, currentPath = "/" }: DashboardSidebarPr
     { icon: Database, label: "Backup & Restore", path: "/backup" },
     { icon: BarChart3, label: "Insight Global", path: "/global-insights" },
     { icon: Settings, label: "Konfigurasi Portal", path: "/portal-settings" },
+    { icon: Image, label: "Branding", path: "/branding" },
+    { icon: FileText, label: "Activity Logs", path: "/activity-logs" },
   ];
 
   const menuItems = role === "pondok" ? pondokMenuItems : superMenuItems;
