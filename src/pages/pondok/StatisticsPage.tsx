@@ -30,14 +30,81 @@ import {
 } from "recharts";
 import { StatCard } from "@/components/StatCard";
 
-// Sample data for charts
+// Data pertumbuhan santri per tahun (disederhanakan)
 const studentGrowthData = [
-  { year: "2019", total: 150, putra: 85, putri: 65 },
-  { year: "2020", total: 180, putra: 102, putri: 78 },
-  { year: "2021", total: 220, putra: 125, putri: 95 },
-  { year: "2022", total: 280, putra: 158, putri: 122 },
-  { year: "2023", total: 320, putra: 180, putri: 140 },
-  { year: "2024", total: 380, putra: 215, putri: 165 }
+  {
+    year: "2019",
+    total: 150,
+    putra: 85,
+    putri: 65,
+    pendaftaranBaru: 45,
+    lulus: 12,
+    keluar: 8
+  },
+  {
+    year: "2020",
+    total: 180,
+    putra: 102,
+    putri: 78,
+    pendaftaranBaru: 52,
+    lulus: 15,
+    keluar: 7
+  },
+  {
+    year: "2021",
+    total: 220,
+    putra: 125,
+    putri: 95,
+    pendaftaranBaru: 68,
+    lulus: 18,
+    keluar: 10
+  },
+  {
+    year: "2022",
+    total: 280,
+    putra: 158,
+    putri: 122,
+    pendaftaranBaru: 85,
+    lulus: 20,
+    keluar: 5
+  },
+  {
+    year: "2023",
+    total: 320,
+    putra: 180,
+    putri: 140,
+    pendaftaranBaru: 78,
+    lulus: 25,
+    keluar: 13
+  },
+  {
+    year: "2024",
+    total: 380,
+    putra: 215,
+    putri: 165,
+    pendaftaranBaru: 95,
+    lulus: 30,
+    keluar: 5
+  }
+];
+
+// Data tambahan untuk analisis yang lebih lengkap
+const graduationRateData = [
+  { year: "2019", rate: 92.0 },
+  { year: "2020", rate: 91.7 },
+  { year: "2021", rate: 91.8 },
+  { year: "2022", rate: 92.9 },
+  { year: "2023", rate: 92.2 },
+  { year: "2024", rate: 92.1 }
+];
+
+const newStudentTrendData = [
+  { year: "2019", baru: 45, target: 40, pencapaian: 112.5 },
+  { year: "2020", baru: 52, target: 45, pencapaian: 115.6 },
+  { year: "2021", baru: 68, target: 60, pencapaian: 113.3 },
+  { year: "2022", baru: 85, target: 75, pencapaian: 113.3 },
+  { year: "2023", baru: 78, target: 80, pencapaian: 97.5 },
+  { year: "2024", baru: 95, target: 85, pencapaian: 111.8 }
 ];
 
 const monthlyEngagementData = [
@@ -128,9 +195,10 @@ export const StatisticsPage = () => {
 
       {/* Charts Section */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="students">Santri</TabsTrigger>
+          <TabsTrigger value="pertumbuhan">Pertumbuhan</TabsTrigger>
           <TabsTrigger value="engagement">Engagement</TabsTrigger>
           <TabsTrigger value="website">Website</TabsTrigger>
         </TabsList>
@@ -282,6 +350,155 @@ export const StatisticsPage = () => {
                       <p className="text-2xl font-bold text-blue-600">98.5%</p>
                     </div>
                     <TrendingUp className="w-8 h-8 text-blue-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="pertumbuhan" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-primary" />
+                  Analisis Pertumbuhan Santri Tahunan
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Perbandingan pendaftaran baru, kelulusan, dan santri keluar per tahun
+                </p>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={350}>
+                  <BarChart data={studentGrowthData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="year" stroke="hsl(var(--muted-foreground))" />
+                    <YAxis stroke="hsl(var(--muted-foreground))" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--card))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '8px'
+                      }}
+                    />
+                    <Legend />
+                    <Bar dataKey="pendaftaranBaru" fill="hsl(120 60% 50%)" name="Pendaftaran Baru" />
+                    <Bar dataKey="lulus" fill="hsl(45 93% 47%)" name="Lulus" />
+                    <Bar dataKey="keluar" fill="hsl(0 60% 50%)" name="Keluar" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-primary" />
+                  Pencapaian Target Pendaftaran
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Perbandingan target vs realisasi pendaftaran santri baru
+                </p>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={350}>
+                  <LineChart data={newStudentTrendData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="year" stroke="hsl(var(--muted-foreground))" />
+                    <YAxis stroke="hsl(var(--muted-foreground))" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--card))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '8px'
+                      }}
+                    />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="target"
+                      stroke="hsl(var(--muted-foreground))"
+                      strokeWidth={2}
+                      strokeDasharray="5 5"
+                      name="Target"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="baru"
+                      stroke="hsl(var(--primary))"
+                      strokeWidth={3}
+                      name="Tercapai"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Metrik Pertumbuhan Detail */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-lg">Tingkat Pertumbuhan</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Rata-rata/Tahun</span>
+                    <span className="text-lg font-bold text-green-600">+20.4%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Tertinggi</span>
+                    <span className="text-lg font-bold text-green-600">+27.3% (2022)</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Terendah</span>
+                    <span className="text-lg font-bold text-yellow-600">+14.3% (2023)</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-lg">Retensi Santri</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Tingkat Retensi</span>
+                    <span className="text-lg font-bold text-blue-600">96.8%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Rata-rata Keluar/Tahun</span>
+                    <span className="text-lg font-bold text-orange-600">8 santri</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Alasan Utama</span>
+                    <span className="text-lg font-bold text-gray-600">Pindah</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-lg">Proyeksi 2025</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Target Pendaftaran</span>
+                    <span className="text-lg font-bold text-primary">100 santri</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Proyeksi Total</span>
+                    <span className="text-lg font-bold text-green-600">450 santri</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Target Kapasitas</span>
+                    <span className="text-lg font-bold text-blue-600">500 santri</span>
                   </div>
                 </div>
               </CardContent>

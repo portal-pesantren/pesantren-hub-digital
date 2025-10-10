@@ -31,6 +31,14 @@ export const RoleProvider: React.FC<RoleProviderProps> = ({ children }) => {
   const switchRole = () => {
     const newRole = role === 'pondok' ? 'super' : 'pondok';
     setRole(newRole);
+
+    // Add visual feedback for role switching
+    console.log(`Switching role from ${role} to ${newRole}`);
+
+    // Trigger custom event for other components to listen to
+    window.dispatchEvent(new CustomEvent('roleChanged', {
+      detail: { oldRole: role, newRole }
+    }));
   };
 
   useEffect(() => {
