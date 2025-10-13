@@ -15,6 +15,7 @@ import { GalleryPage } from "./pages/pondok/GalleryPage";
 import { StatisticsPage } from "./pages/pondok/StatisticsPage";
 // Super admin pages
 import { ManagePondokPage } from "./pages/super/ManagePondokPage";
+import { PondokProfilePage } from "./pages/super/PondokProfilePage";
 import { VerificationPage } from "./pages/super/VerificationPage";
 import { NotificationsPage } from "./pages/super/NotificationsPage";
 import { ModerationPage } from "./pages/super/ModerationPage";
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/settings" element={<DashboardLayout><SettingsPage /></DashboardLayout>} />
           {/* Super admin routes */}
           <Route path="/manage-pondok" element={<DashboardLayout><ManagePondokPage /></DashboardLayout>} />
+          <Route path="/manage-pondok/:id" element={<DashboardLayout><PondokProfilePage /></DashboardLayout>} />
           <Route path="/verification" element={<DashboardLayout><VerificationPage /></DashboardLayout>} />
           <Route path="/notifications" element={<DashboardLayout><NotificationsPage /></DashboardLayout>} />
           <Route path="/moderation" element={<DashboardLayout><ModerationPage /></DashboardLayout>} />

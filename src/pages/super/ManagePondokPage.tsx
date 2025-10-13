@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Search, Building2, CheckCircle2, XCircle, Star, Slash } from "lucide-react";
+import { Plus, Edit, Trash2, Search, Building2, CheckCircle2, XCircle, Star, Slash, Eye } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -36,6 +37,7 @@ interface PondokFormData {
 }
 
 export const ManagePondokPage = () => {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [items, setItems] = useState<Pondok[]>([
     { id: 1, name: "Pondok Pesantren Darul Falah", city: "Bogor", province: "Jawa Barat", status: "verified", founded: 1998, students: 520, description: "Pesantren dengan fokus tahfidz dan kitab kuning.", featured: true, suspended: false, lastLogin: "2025-10-03 08:02", lastUpdate: "2025-10-02" },
@@ -189,6 +191,9 @@ export const ManagePondokPage = () => {
                       </div>
                     </TableCell>
                     <TableCell className="text-right space-x-1">
+                      <Button size="sm" variant="outline" onClick={() => navigate(`/manage-pondok/${p.id}`)} title="Lihat Profil">
+                        <Eye className="w-4 h-4" />
+                      </Button>
                       <Button size="sm" variant={p.featured ? "default" : "outline"} onClick={() => toggleFeatured(p.id)}>
                         <Star className="w-4 h-4" />
                       </Button>
