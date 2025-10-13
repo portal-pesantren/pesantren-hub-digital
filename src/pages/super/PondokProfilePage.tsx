@@ -28,37 +28,38 @@ interface PondokProfile {
   name: string;
   city: string;
   province: string;
-  address: string;
-  phone: string;
-  email: string;
-  website?: string;
   status: "verified" | "pending" | "rejected";
   founded: number;
   students: number;
-  teachers: number;
   description: string;
-  vision: string;
-  mission: string[];
-  facilities: string[];
-  achievements: string[];
-  programs: string[];
   featured?: boolean;
   suspended?: boolean;
   lastLogin?: string;
   lastUpdate?: string;
-  gallery: {
+  // Extended fields that may be added later
+  address?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  teachers?: number;
+  vision?: string;
+  mission?: string[];
+  facilities?: string[];
+  achievements?: string[];
+  programs?: string[];
+  gallery?: {
     id: number;
     type: "image" | "document";
     title: string;
     url: string;
     uploadDate: string;
   }[];
-  socialMedia: {
+  socialMedia?: {
     platform: string;
     url: string;
     icon: string;
   }[];
-  contact: {
+  contact?: {
     name: string;
     position: string;
     phone: string;
@@ -73,69 +74,58 @@ export const PondokProfilePage = () => {
   const [loading, setLoading] = useState(true);
 
   // Mock data - dalam implementasi nyata ini akan diambil dari API
+  // Data ini konsisten dengan data yang tersimpan di ManagePondokPage
   const mockPondokData: PondokProfile = {
     id: 1,
     name: "Pondok Pesantren Darul Falah",
     city: "Bogor",
     province: "Jawa Barat",
+    status: "verified",
+    founded: 1998,
+    students: 520,
+    description: "Pesantren dengan fokus tahfidz dan kitab kuning.",
+    featured: true,
+    suspended: false,
+    lastLogin: "2025-10-03 08:02",
+    lastUpdate: "2025-10-02",
+    // Data tambahan yang mungkin ada (opsional)
     address: "Jl. KH. Abdul Halim No. 123, Kec. Bogor Tengah",
     phone: "(0251) 8321-4567",
     email: "info@darulfalah.sch.id",
     website: "www.darulfalah.sch.id",
-    status: "verified",
-    founded: 1998,
-    students: 520,
     teachers: 45,
-    description: "Pondok Pesantren Darul Falah adalah lembaga pendidikan Islam yang mengintegrasikan pendidikan formal dengan pendidikan agama Islam. Dengan fokus pada tahfidz Al-Qur'an dan kitab kuning, kami berkomitmen untuk menciptakan generasi yang berilmu dan berakhlak mulia.",
     vision: "Menjadi lembaga pendidikan Islam unggulan yang menghasilkan generasi qur'ani yang berkarakter dan berdaya saing global.",
     mission: [
       "Menyelenggarakan pendidikan Islam yang berkualitas dan komprehensif",
       "Membentuk karakter santri yang berakhlak mulia dan mandiri",
-      "Mengembangkan potensi santri dalam bidang akademik dan non-akademik",
-      "Menciptakan lingkungan belajar yang islami dan kondusif"
+      "Mengembangkan potensi santri dalam bidang akademik dan non-akademik"
     ],
     facilities: [
       "Masjid Jami' dengan kapasitas 1000 jamaah",
       "Perpustakaan dengan 10.000+ koleksi kitab",
       "Laboratorium Komputer dan Bahasa",
       "Lapangan Olahraga Multifungsi",
-      "Asrama Santri Laki-laki dan Perempuan",
-      "Kantin dan Koperasi Santri",
-      "Ruang Kelas Ber-AC",
-      "Hotspot Area"
+      "Asrama Santri Laki-laki dan Perempuan"
     ],
     achievements: [
       "Juara 1 Musabaqah Tilawatil Quran Tingkat Provinsi 2023",
-      "Sekolah Adiwiyata Nasional 2022",
-      "Akreditasi A dengan nilai 96",
-      "Juara Umum Olimpiade Sains Islami 2023"
+      "Akreditasi A dengan nilai 96"
     ],
     programs: [
       "Program Tahfidz 30 Juz",
       "Program Kitab Kuning 6 Tahun",
-      "Program Bahasa Arab dan Inggris Intensif",
-      "Program Leadership dan Entrepreneurship",
-      "Program Keterampilan Wirausaha"
+      "Program Bahasa Arab dan Inggris Intensif"
     ],
-    featured: true,
-    suspended: false,
-    lastLogin: "2025-10-03 08:02",
-    lastUpdate: "2025-10-02",
     gallery: [
       { id: 1, type: "image", title: "Masjid Jami' Darul Falah", url: "/images/masjid.jpg", uploadDate: "2025-09-15" },
-      { id: 2, type: "image", title: "Kegiatan Belajar Mengajar", url: "/images/kelas.jpg", uploadDate: "2025-09-20" },
-      { id: 3, type: "image", title: "Acara Perayaan HUT Pondok", url: "/images/hut.jpg", uploadDate: "2025-08-10" },
-      { id: 4, type: "document", title: "Profil Pondok 2025", url: "/documents/profil.pdf", uploadDate: "2025-01-01" },
-      { id: 5, type: "document", title: "Kurikulum Pendidikan", url: "/documents/kurikulum.pdf", uploadDate: "2025-01-15" }
+      { id: 2, type: "image", title: "Kegiatan Belajar Mengajar", url: "/images/kelas.jpg", uploadDate: "2025-09-20" }
     ],
     socialMedia: [
       { platform: "Facebook", url: "https://facebook.com/darulfalah", icon: "facebook" },
-      { platform: "Instagram", url: "https://instagram.com/darulfalah", icon: "instagram" },
-      { platform: "YouTube", url: "https://youtube.com/darulfalah", icon: "youtube" }
+      { platform: "Instagram", url: "https://instagram.com/darulfalah", icon: "instagram" }
     ],
     contact: [
-      { name: "Ustadz Ahmad Fauzi, Lc., M.Pd.", position: "Kepala Pondok", phone: "0812-3456-7890", email: " kepala@darulfalah.sch.id" },
-      { name: "Ustadzah Sarah Mahmudah, S.Pd.I.", position: "Wakil Kepala", phone: "0813-2345-6789", email: "wakil@darulfalah.sch.id" }
+      { name: "Ustadz Ahmad Fauzi, Lc., M.Pd.", position: "Kepala Pondok", phone: "0812-3456-7890", email: "kepala@darulfalah.sch.id" }
     ]
   };
 
@@ -290,21 +280,21 @@ export const PondokProfilePage = () => {
               <CardContent className="space-y-4">
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Alamat Lengkap</p>
-                  <p className="font-medium">{pondok.address}</p>
+                  <p className="font-medium">{pondok.address || "Belum ada data alamat"}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground mb-1">Telepon</p>
                     <p className="font-medium flex items-center gap-1">
                       <Phone className="w-4 h-4" />
-                      {pondok.phone}
+                      {pondok.phone || "Belum ada data telepon"}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground mb-1">Email</p>
                     <p className="font-medium flex items-center gap-1">
                       <Mail className="w-4 h-4" />
-                      {pondok.email}
+                      {pondok.email || "Belum ada data email"}
                     </p>
                   </div>
                 </div>
@@ -328,25 +318,32 @@ export const PondokProfilePage = () => {
                 <CardTitle>Media Sosial</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 gap-3">
-                  {pondok.socialMedia.map((social, index) => (
-                    <a
-                      key={index}
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted transition-colors"
-                    >
-                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                        <Star className="w-4 h-4 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-medium">{social.platform}</p>
-                        <p className="text-sm text-muted-foreground">{social.url.replace('https://', '')}</p>
-                      </div>
-                    </a>
-                  ))}
-                </div>
+                {pondok.socialMedia && pondok.socialMedia.length > 0 ? (
+                  <div className="grid grid-cols-1 gap-3">
+                    {pondok.socialMedia.map((social, index) => (
+                      <a
+                        key={index}
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted transition-colors"
+                      >
+                        <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                          <Star className="w-4 h-4 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-medium">{social.platform}</p>
+                          <p className="text-sm text-muted-foreground">{social.url.replace('https://', '')}</p>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6 text-muted-foreground">
+                    <Star className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    <p>Belum ada media sosial</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -359,18 +356,24 @@ export const PondokProfilePage = () => {
             <CardContent className="space-y-4">
               <div>
                 <h4 className="font-semibold mb-2 text-primary">Visi</h4>
-                <p className="text-muted-foreground leading-relaxed">{pondok.vision}</p>
+                <p className="text-muted-foreground leading-relaxed">
+                  {pondok.vision || "Belum ada data visi"}
+                </p>
               </div>
               <div>
                 <h4 className="font-semibold mb-2 text-primary">Misi</h4>
-                <ul className="space-y-2">
-                  {pondok.mission.map((item, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-muted-foreground">{item}</span>
-                    </li>
-                  ))}
-                </ul>
+                {pondok.mission && pondok.mission.length > 0 ? (
+                  <ul className="space-y-2">
+                    {pondok.mission.map((item, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span className="text-muted-foreground">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-muted-foreground">Belum ada data misi</p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -392,16 +395,23 @@ export const PondokProfilePage = () => {
               <CardTitle>Program Unggulan</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {pondok.programs.map((program, index) => (
-                  <div key={index} className="p-4 border rounded-lg">
-                    <div className="flex items-start gap-3">
-                      <Award className="w-5 h-5 text-primary mt-0.5" />
-                      <p className="text-muted-foreground">{program}</p>
+              {pondok.programs && pondok.programs.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {pondok.programs.map((program, index) => (
+                    <div key={index} className="p-4 border rounded-lg">
+                      <div className="flex items-start gap-3">
+                        <Award className="w-5 h-5 text-primary mt-0.5" />
+                        <p className="text-muted-foreground">{program}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <Award className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p>Belum ada data program unggulan</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -412,14 +422,21 @@ export const PondokProfilePage = () => {
               <CardTitle>Fasilitas Pondok</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {pondok.facilities.map((facility, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
-                    <Building2 className="w-5 h-5 text-primary mt-0.5" />
-                    <p className="text-muted-foreground">{facility}</p>
-                  </div>
-                ))}
-              </div>
+              {pondok.facilities && pondok.facilities.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {pondok.facilities.map((facility, index) => (
+                    <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
+                      <Building2 className="w-5 h-5 text-primary mt-0.5" />
+                      <p className="text-muted-foreground">{facility}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <Building2 className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p>Belum ada data fasilitas</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -433,25 +450,32 @@ export const PondokProfilePage = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {pondok.gallery.map((item) => (
-                  <div key={item.id} className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-                    {item.type === "image" ? (
-                      <div className="aspect-video bg-muted flex items-center justify-center">
-                        <Image className="w-8 h-8 text-muted-foreground" />
+              {pondok.gallery && pondok.gallery.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {pondok.gallery.map((item) => (
+                    <div key={item.id} className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                      {item.type === "image" ? (
+                        <div className="aspect-video bg-muted flex items-center justify-center">
+                          <Image className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                      ) : (
+                        <div className="aspect-video bg-muted flex items-center justify-center">
+                          <FileText className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                      )}
+                      <div className="p-3">
+                        <h4 className="font-medium text-sm mb-1">{item.title}</h4>
+                        <p className="text-xs text-muted-foreground">Upload: {item.uploadDate}</p>
                       </div>
-                    ) : (
-                      <div className="aspect-video bg-muted flex items-center justify-center">
-                        <FileText className="w-8 h-8 text-muted-foreground" />
-                      </div>
-                    )}
-                    <div className="p-3">
-                      <h4 className="font-medium text-sm mb-1">{item.title}</h4>
-                      <p className="text-xs text-muted-foreground">Upload: {item.uploadDate}</p>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <Image className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p>Belum ada galeri atau dokumen</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -465,14 +489,21 @@ export const PondokProfilePage = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {pondok.achievements.map((achievement, index) => (
-                  <div key={index} className="flex items-start gap-3 p-4 border rounded-lg">
-                    <Award className="w-5 h-5 text-yellow-500 mt-0.5" />
-                    <p className="text-muted-foreground">{achievement}</p>
-                  </div>
-                ))}
-              </div>
+              {pondok.achievements && pondok.achievements.length > 0 ? (
+                <div className="space-y-4">
+                  {pondok.achievements.map((achievement, index) => (
+                    <div key={index} className="flex items-start gap-3 p-4 border rounded-lg">
+                      <Award className="w-5 h-5 text-yellow-500 mt-0.5" />
+                      <p className="text-muted-foreground">{achievement}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <Award className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p>Belum ada data prestasi</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -483,24 +514,31 @@ export const PondokProfilePage = () => {
               <CardTitle>Kontak Pondok</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {pondok.contact.map((contact, index) => (
-                  <div key={index} className="p-4 border rounded-lg">
-                    <h4 className="font-semibold mb-1">{contact.name}</h4>
-                    <p className="text-sm text-muted-foreground mb-3">{contact.position}</p>
-                    <div className="space-y-2">
-                      <p className="text-sm flex items-center gap-2">
-                        <Phone className="w-4 h-4" />
-                        {contact.phone}
-                      </p>
-                      <p className="text-sm flex items-center gap-2">
-                        <Mail className="w-4 h-4" />
-                        {contact.email}
-                      </p>
+              {pondok.contact && pondok.contact.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {pondok.contact.map((contact, index) => (
+                    <div key={index} className="p-4 border rounded-lg">
+                      <h4 className="font-semibold mb-1">{contact.name}</h4>
+                      <p className="text-sm text-muted-foreground mb-3">{contact.position}</p>
+                      <div className="space-y-2">
+                        <p className="text-sm flex items-center gap-2">
+                          <Phone className="w-4 h-4" />
+                          {contact.phone}
+                        </p>
+                        <p className="text-sm flex items-center gap-2">
+                          <Mail className="w-4 h-4" />
+                          {contact.email}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <Phone className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p>Belum ada data kontak</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

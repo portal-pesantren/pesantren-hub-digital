@@ -34,6 +34,17 @@ interface PondokFormData {
   province: string;
   founded: number;
   description: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  students?: number;
+  teachers?: number;
+  vision?: string;
+  mission?: string;
+  facilities?: string;
+  achievements?: string;
+  programs?: string;
 }
 
 export const ManagePondokPage = () => {
@@ -51,7 +62,24 @@ export const ManagePondokPage = () => {
   const [suspendFilter, setSuspendFilter] = useState<string>("all");
 
   const form = useForm<PondokFormData>({
-    defaultValues: { name: "", city: "", province: "", founded: new Date().getFullYear(), description: "" },
+    defaultValues: {
+      name: "",
+      city: "",
+      province: "",
+      founded: new Date().getFullYear(),
+      description: "",
+      address: "",
+      phone: "",
+      email: "",
+      website: "",
+      students: 0,
+      teachers: 0,
+      vision: "",
+      mission: "",
+      facilities: "",
+      achievements: "",
+      programs: ""
+    },
   });
 
   const filtered = items.filter(i => {
@@ -64,19 +92,63 @@ export const ManagePondokPage = () => {
 
   const startCreate = () => {
     setEditing(null);
-    form.reset({ name: "", city: "", province: "", founded: new Date().getFullYear(), description: "" });
+    form.reset({
+      name: "",
+      city: "",
+      province: "",
+      founded: new Date().getFullYear(),
+      description: "",
+      address: "",
+      phone: "",
+      email: "",
+      website: "",
+      students: 0,
+      teachers: 0,
+      vision: "",
+      mission: "",
+      facilities: "",
+      achievements: "",
+      programs: ""
+    });
     setOpenForm(true);
   };
 
   const startEdit = (row: Pondok) => {
     setEditing(row);
-    form.reset({ name: row.name, city: row.city, province: row.province, founded: row.founded, description: row.description });
+    form.reset({
+      name: row.name,
+      city: row.city,
+      province: row.province,
+      founded: row.founded,
+      description: row.description,
+      students: row.students || 0,
+      teachers: row.teachers || 0
+    });
     setOpenForm(true);
   };
 
   const onSubmit = (data: PondokFormData) => {
+    // Process array fields from comma-separated strings
+    const processArrayField = (field?: string): string[] => {
+      if (!field || !field.trim()) return [];
+      return field.split(',').map(item => item.trim()).filter(item => item.length > 0);
+    };
+
+    const processedData = {
+      ...data,
+      mission: processArrayField(data.mission),
+      programs: processArrayField(data.programs),
+      facilities: processArrayField(data.facilities),
+      achievements: processArrayField(data.achievements)
+    };
+
     if (editing) {
-      setItems(prev => prev.map(p => p.id === editing.id ? { ...p, ...data } as Pondok : p));
+      setItems(prev => prev.map(p => p.id === editing.id ? {
+        ...p,
+        ...processedData,
+        students: data.students || p.students,
+        teachers: data.teachers || p.teachers
+      } as Pondok : p));
     } else {
       const newItem: Pondok = {
         id: Math.max(0, ...items.map(i => i.id)) + 1,
@@ -84,9 +156,12 @@ export const ManagePondokPage = () => {
         city: data.city,
         province: data.province,
         founded: data.founded,
-        students: 0,
+        students: data.students || 0,
         status: "pending",
         description: data.description,
+        featured: false,
+        suspended: false,
+        lastUpdate: new Date().toISOString().split('T')[0]
       };
       setItems(prev => [...prev, newItem]);
     }
@@ -243,50 +318,151 @@ export const ManagePondokPage = () => {
       </Card>
 
       <Dialog open={openForm} onOpenChange={setOpenForm}>
-        <DialogContent className="max-w-xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editing ? "Edit Pondok" : "Tambah Pondok"}</DialogTitle>
           </DialogHeader>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField name="name" control={form.control} render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nama Pondok</FormLabel>
-                  <FormControl><Input {...field} placeholder="Nama pondok" /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField name="city" control={form.control} render={({ field }) => (
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {/* Informasi Dasar */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Informasi Dasar</h3>
+                <FormField name="name" control={form.control} render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Kota/Kabupaten</FormLabel>
-                    <FormControl><Input {...field} placeholder="Kota" /></FormControl>
+                    <FormLabel>Nama Pondok</FormLabel>
+                    <FormControl><Input {...field} placeholder="Nama pondok" /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
-                <FormField name="province" control={form.control} render={({ field }) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField name="city" control={form.control} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Kota/Kabupaten</FormLabel>
+                      <FormControl><Input {...field} placeholder="Kota" /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField name="province" control={form.control} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Provinsi</FormLabel>
+                      <FormControl><Input {...field} placeholder="Provinsi" /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </div>
+                <FormField name="address" control={form.control} render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Provinsi</FormLabel>
-                    <FormControl><Input {...field} placeholder="Provinsi" /></FormControl>
+                    <FormLabel>Alamat Lengkap</FormLabel>
+                    <FormControl><Textarea rows={2} {...field} placeholder="Alamat lengkap" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField name="founded" control={form.control} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tahun Berdiri</FormLabel>
+                    <FormControl><Input type="number" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField name="description" control={form.control} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Deskripsi</FormLabel>
+                    <FormControl><Textarea rows={3} {...field} placeholder="Deskripsi singkat pondok" /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
               </div>
-              <FormField name="founded" control={form.control} render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tahun Berdiri</FormLabel>
-                  <FormControl><Input type="number" {...field} /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <FormField name="description" control={form.control} render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Deskripsi</FormLabel>
-                  <FormControl><Textarea rows={4} {...field} placeholder="Deskripsi singkat" /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <div className="flex justify-end gap-2">
+
+              {/* Kontak */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Informasi Kontak</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField name="phone" control={form.control} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Telepon</FormLabel>
+                      <FormControl><Input {...field} placeholder="Nomor telepon" /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField name="email" control={form.control} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl><Input type="email" {...field} placeholder="Email pondok" /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </div>
+                <FormField name="website" control={form.control} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Website</FormLabel>
+                    <FormControl><Input {...field} placeholder="Website (opsional)" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+              </div>
+
+              {/* Data Kuantitatif */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Data Kuantitatif</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField name="students" control={form.control} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Jumlah Santri</FormLabel>
+                      <FormControl><Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value) || 0)} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField name="teachers" control={form.control} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Jumlah Guru/Ustadz</FormLabel>
+                      <FormControl><Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value) || 0)} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </div>
+              </div>
+
+              {/* Informasi Tambahan */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Informasi Tambahan</h3>
+                <FormField name="vision" control={form.control} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Visi</FormLabel>
+                    <FormControl><Textarea rows={2} {...field} placeholder="Visi pondok" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField name="mission" control={form.control} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Misi</FormLabel>
+                    <FormControl><Textarea rows={3} {...field} placeholder="Misi pondok (pisahkan dengan koma)" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField name="programs" control={form.control} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Program Unggulan</FormLabel>
+                    <FormControl><Textarea rows={2} {...field} placeholder="Program unggulan (pisahkan dengan koma)" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField name="facilities" control={form.control} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Fasilitas</FormLabel>
+                    <FormControl><Textarea rows={3} {...field} placeholder="Fasilitas pondok (pisahkan dengan koma)" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField name="achievements" control={form.control} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Prestasi</FormLabel>
+                    <FormControl><Textarea rows={2} {...field} placeholder="Prestasi (pisahkan dengan koma)" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-4 border-t">
                 <Button type="button" variant="outline" onClick={() => setOpenForm(false)}>Batal</Button>
                 <Button type="submit">Simpan</Button>
               </div>
