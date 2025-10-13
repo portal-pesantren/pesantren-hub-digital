@@ -170,7 +170,7 @@ export const PondokProfilePage = () => {
     return (
       <div className="text-center py-12">
         <h2 className="text-2xl font-semibold text-muted-foreground mb-4">Data pondok tidak ditemukan</h2>
-        <Button onClick={() => navigate("/super/manage-pondok")}>
+        <Button onClick={() => navigate("/manage-pondok")}>
           <ArrowLeft className="w-4 h-4 mr-2" />
           Kembali ke Daftar Pondok
         </Button>
@@ -185,7 +185,7 @@ export const PondokProfilePage = () => {
         <div className="flex items-center gap-4">
           <Button
             variant="outline"
-            onClick={() => navigate("/super/manage-pondok")}
+            onClick={() => navigate("/manage-pondok")}
             className="flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Search, Building2, CheckCircle2, XCircle, Star, Slash, Eye } from "lucide-react";
+import { Plus, Edit, Trash2, Search, Building2, CheckCircle2, XCircle, Star, Slash } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -171,7 +171,11 @@ export const ManagePondokPage = () => {
               </TableHeader>
               <TableBody>
                 {filtered.map((p, idx) => (
-                  <TableRow key={p.id}>
+                  <TableRow
+                    key={p.id}
+                    className="cursor-pointer hover:bg-muted/50 transition-colors duration-200 hover:shadow-md"
+                    onClick={() => navigate(`/manage-pondok/${p.id}`)}
+                  >
                     <TableCell>{idx + 1}</TableCell>
                     <TableCell className="font-medium">{p.name}</TableCell>
                     <TableCell>{p.city}, {p.province}</TableCell>
@@ -190,32 +194,29 @@ export const ManagePondokPage = () => {
                         <div>Update: {p.lastUpdate || "-"}</div>
                       </div>
                     </TableCell>
-                    <TableCell className="text-right space-x-1">
-                      <Button size="sm" variant="outline" onClick={() => navigate(`/manage-pondok/${p.id}`)} title="Lihat Profil">
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      <Button size="sm" variant={p.featured ? "default" : "outline"} onClick={() => toggleFeatured(p.id)}>
+                    <TableCell className="text-right space-x-1" onClick={(e) => e.stopPropagation()}>
+                      <Button size="sm" variant={p.featured ? "default" : "outline"} onClick={() => toggleFeatured(p.id)} title="Featured">
                         <Star className="w-4 h-4" />
                       </Button>
-                      <Button size="sm" variant={p.suspended ? "default" : "outline"} onClick={() => toggleSuspend(p.id)}>
+                      <Button size="sm" variant={p.suspended ? "default" : "outline"} onClick={() => toggleSuspend(p.id)} title="Suspend">
                         <Slash className="w-4 h-4" />
                       </Button>
                       {p.status !== "verified" && (
-                        <Button size="sm" variant="outline" onClick={() => verify(p.id)}>
+                        <Button size="sm" variant="outline" onClick={() => verify(p.id)} title="Verify">
                           <CheckCircle2 className="w-4 h-4" />
                         </Button>
                       )}
                       {p.status !== "rejected" && (
-                        <Button size="sm" variant="outline" onClick={() => reject(p.id)}>
+                        <Button size="sm" variant="outline" onClick={() => reject(p.id)} title="Reject">
                           <XCircle className="w-4 h-4" />
                         </Button>
                       )}
-                      <Button size="sm" variant="outline" onClick={() => startEdit(p)}>
+                      <Button size="sm" variant="outline" onClick={() => startEdit(p)} title="Edit">
                         <Edit className="w-4 h-4" />
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button size="sm" variant="outline" className="text-destructive">
+                          <Button size="sm" variant="outline" className="text-destructive" title="Hapus">
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </AlertDialogTrigger>
