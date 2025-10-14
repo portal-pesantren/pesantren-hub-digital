@@ -12,16 +12,16 @@ interface Submission {
   pondok: string;
   city: string;
   documents: number;
-  status: "pending" | "review" | "verified" | "rejected";
+  status: "pending" | "waiting" | "in-progress" | "verified" | "suspended";
   date: string;
 }
 
 export const VerificationPage = () => {
   const [search, setSearch] = useState("");
   const [rows, setRows] = useState<Submission[]>([
-    { id: 101, pondok: "Darul Falah", city: "Bogor", documents: 6, status: "review", date: "2025-10-02" },
+    { id: 101, pondok: "Darul Falah", city: "Bogor", documents: 6, status: "in-progress", date: "2025-10-02" },
     { id: 102, pondok: "Al-Ikhlas", city: "Surabaya", documents: 5, status: "pending", date: "2025-10-01" },
-    { id: 103, pondok: "Tahfidz Al-Qur'an", city: "Bandung", documents: 7, status: "pending", date: "2025-09-30" },
+    { id: 103, pondok: "Tahfidz Al-Qur'an", city: "Bandung", documents: 7, status: "waiting", date: "2025-09-30" },
   ]);
 
   const filtered = rows.filter(r => [r.pondok, r.city].some(v => v.toLowerCase().includes(search.toLowerCase())));
@@ -76,13 +76,18 @@ export const VerificationPage = () => {
                         <TableCell>{r.city}</TableCell>
                         <TableCell>{r.documents} file</TableCell>
                         <TableCell>
-                          <Badge variant={r.status === "verified" ? "default" : r.status === "rejected" ? "outline" : "secondary"}>{r.status}</Badge>
+                          <Badge variant={r.status === "verified" ? "verified" :
+                                       r.status === "in-progress" ? "in-progress" :
+                                       r.status === "pending" ? "waiting" :
+                                       r.status === "waiting" ? "waiting" :
+                                       r.status === "suspended" ? "suspended" :
+                                       "outline"}>{r.status === "in-progress" ? "In Progress" : r.status}</Badge>
                         </TableCell>
                         <TableCell className="text-right space-x-1">
                           <Button size="sm" variant="outline" onClick={() => setStatus(r.id, "verified")}>
                             <CheckCircle2 className="w-4 h-4" />
                           </Button>
-                          <Button size="sm" variant="outline" onClick={() => setStatus(r.id, "rejected")}>
+                          <Button size="sm" variant="outline" onClick={() => setStatus(r.id, "suspended")}>
                             <XCircle className="w-4 h-4" />
                           </Button>
                         </TableCell>

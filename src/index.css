@@ -77,15 +77,33 @@ All colors MUST be HSL.
     --table-header: 210 13% 36%;
     --table-header-foreground: 0 0% 100%;
 
-    /* Verification Status Colors */
-    --verified: 106 65% 41%;
-    --verified-foreground: 0 0% 100%;
-    --in-progress: 217 91% 50%;
-    --in-progress-foreground: 0 0% 100%;
-    --waiting: 48 93% 65%;
-    --waiting-foreground: 216 91% 18%;
-    --suspend: 17 65% 51%;
-    --suspend-foreground: 0 0% 100%;
+    /*
+     * Verification Status Colors - Custom Color Scheme
+     *
+     * VERIFIED: Status sudah disetujui atau tervalidasi
+     *   Background: #C4F2A6 (HSL: 91 59% 83%) - Light green
+     *   Font Color: #2D821C (HSL: 88 49% 15%) - Dark green
+     *
+     * IN PROGRESS: Proses sedang berjalan atau belum selesai
+     *   Background: #C7F8EE (HSL: 176 79% 91%) - Light cyan
+     *   Font Color: #57DAD4 (HSL: 174 74% 38%) - Medium cyan
+     *
+     * WAITING: Menunggu tindakan lanjutan atau verifikasi
+     *   Background: #FFF59C (HSL: 55 100% 87%) - Light yellow
+     *   Font Color: #F9D74F (HSL: 46 100% 30%) - Medium yellow
+     *
+     * SUSPENDED: Status sedang ditangguhkan atau diblokir sementara
+     *   Background: #FFB4A2 (HSL: 17 88% 81%) - Light orange
+     *   Font Color: #D95F2F (HSL: 14 71% 41%) - Dark orange
+     */
+    --verified: 91 59% 83%;           /* #C4F2A6 - Verified Background */
+    --verified-foreground: 88 49% 15%; /* #2D821C - Verified Font Color */
+    --in-progress: 176 79% 91%;       /* #C7F8EE - In Progress Background */
+    --in-progress-foreground: 174 74% 38%; /* #57DAD4 - In Progress Font Color */
+    --waiting: 55 100% 87%;           /* #FFF59C - Waiting Background */
+    --waiting-foreground: 46 100% 30%; /* #F9D74F - Waiting Font Color */
+    --suspend: 17 88% 81%;            /* #FFB4A2 - Suspended Background */
+    --suspend-foreground: 14 71% 41%; /* #D95F2F - Suspended Font Color */
   }
 
   .dark {
@@ -154,14 +172,14 @@ All colors MUST be HSL.
     --table-header-foreground: 0 0% 100%;
 
     /* Verification Status Colors - Dark Mode */
-    --verified: 106 65% 45%;
-    --verified-foreground: 0 0% 100%;
-    --in-progress: 217 91% 60%;
-    --in-progress-foreground: 0 0% 100%;
-    --waiting: 48 93% 55%;
-    --waiting-foreground: 0 0% 95%;
-    --suspend: 17 65% 55%;
-    --suspend-foreground: 0 0% 100%;
+    --verified: 91 59% 88%;           /* Slightly darker for dark mode */
+    --verified-foreground: 88 49% 15%;
+    --in-progress: 176 79% 94%;       /* Slightly darker for dark mode */
+    --in-progress-foreground: 174 74% 38%;
+    --waiting: 55 100% 90%;           /* Slightly darker for dark mode */
+    --waiting-foreground: 46 100% 25%; /* Slightly adjusted for contrast */
+    --suspend: 17 88% 84%;            /* Slightly darker for dark mode */
+    --suspend-foreground: 14 71% 38%;  /* Slightly adjusted for contrast */
   }
 }
 

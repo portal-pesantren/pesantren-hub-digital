@@ -27,10 +27,10 @@ const monthlyRegistrations = [
 ];
 
 const pendingPondok = [
-  { name: "Pondok Pesantren Darul Falah", location: "Bogor, Jawa Barat", date: "2025-10-02", status: "Menunggu Verifikasi", statusType: "waiting" },
-  { name: "Pesantren Modern Al-Ikhlas", location: "Surabaya, Jawa Timur", date: "2025-10-01", status: "Review Dokumen", statusType: "in-progress" },
-  { name: "Pondok Tahfidz Al-Qur'an", location: "Bandung, Jawa Barat", date: "2025-09-30", status: "Menunggu Verifikasi", statusType: "waiting" },
-  { name: "Pondok Modern Darussalam", location: "Jakarta Selatan, DKI Jakarta", date: "2025-09-29", status: "Suspend", statusType: "suspend" },
+  { name: "Pondok Pesantren Darul Falah", location: "Bogor, Jawa Barat", date: "2025-10-02", status: "waiting", statusType: "waiting" },
+  { name: "Pesantren Modern Al-Ikhlas", location: "Surabaya, Jawa Timur", date: "2025-10-01", status: "in-progress", statusType: "in-progress" },
+  { name: "Pondok Tahfidz Al-Qur'an", location: "Bandung, Jawa Barat", date: "2025-09-30", status: "pending", statusType: "waiting" },
+  { name: "Pondok Modern Darussalam", location: "Jakarta Selatan, DKI Jakarta", date: "2025-09-29", status: "suspended", statusType: "suspended" },
 ];
 
 const COLORS = pondokDistribution.map(item => item.color);
@@ -164,7 +164,7 @@ export const SuperAdminDashboard = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant={pondok.statusType as any}>
-                    {pondok.status}
+                    {pondok.status === "in-progress" ? "In Progress" : pondok.status}
                   </Badge>
                   <Button size="sm" variant="default">
                     Review

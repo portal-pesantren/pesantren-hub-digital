@@ -18,7 +18,7 @@ interface Pondok {
   name: string;
   city: string;
   province: string;
-  status: "verified" | "pending" | "waiting" | "rejected";
+  status: "verified" | "pending" | "waiting" | "in-progress" | "suspended";
   founded: number;
   students: number;
   teachers: number;
@@ -55,10 +55,11 @@ export const ManagePondokPage = () => {
     { id: 1, name: "Pondok Pesantren Darul Falah", city: "Bogor", province: "Jawa Barat", status: "verified", founded: 1998, students: 520, teachers: 35, description: "Pesantren dengan fokus tahfidz dan kitab kuning.", featured: true, suspended: false, lastLogin: "2025-10-03 08:02", lastUpdate: "2025-10-02" },
     { id: 2, name: "Pesantren Modern Al-Ikhlas", city: "Surabaya", province: "Jawa Timur", status: "pending", founded: 2005, students: 340, teachers: 28, description: "Pendidikan modern berpadu nilai Islam.", featured: false, suspended: false, lastLogin: "2025-10-02 20:10", lastUpdate: "2025-09-30" },
     { id: 3, name: "Pondok Tahfidz Al-Qur'an", city: "Bandung", province: "Jawa Barat", status: "verified", founded: 2010, students: 280, teachers: 22, description: "Fokus pada tahfidz dan tahsin.", featured: true, suspended: false, lastLogin: "2025-10-01 10:22", lastUpdate: "2025-10-01" },
-    { id: 4, name: "Pondok Modern Al-Hikmah", city: "Jakarta", province: "DKI Jakarta", status: "rejected", founded: 2015, students: 150, teachers: 18, description: "Pesantren dengan kurikulum modern.", featured: false, suspended: false, lastLogin: "2025-09-28 14:30", lastUpdate: "2025-09-28" },
+    { id: 4, name: "Pondok Modern Al-Hikmah", city: "Jakarta", province: "DKI Jakarta", status: "suspended", founded: 2015, students: 150, teachers: 18, description: "Pesantren dengan kurikulum modern.", featured: false, suspended: true, lastLogin: "2025-09-28 14:30", lastUpdate: "2025-09-28" },
     { id: 5, name: "Pondok Pesantren Nurul Iman", city: "Malang", province: "Jawa Timur", status: "verified", founded: 1992, students: 450, teachers: 30, description: "Pesantren salaf dengan pendidikan formal.", featured: false, suspended: true, lastLogin: "2025-09-15 09:15", lastUpdate: "2025-09-20" },
     { id: 6, name: "Pondok IT Al-Azhar", city: "Tangerang", province: "Banten", status: "waiting", founded: 2018, students: 120, teachers: 15, description: "Pesantren dengan fokus teknologi dan coding.", featured: false, suspended: false, lastLogin: "2025-10-01 15:45", lastUpdate: "2025-10-01" },
     { id: 7, name: "Pondok Entrepreneur Muslim", city: "Depok", province: "Jawa Barat", status: "waiting", founded: 2020, students: 85, teachers: 12, description: "Pesantren kewirausahaan dan bisnis Islam.", featured: false, suspended: false, lastLogin: "2025-09-30 11:20", lastUpdate: "2025-09-30" },
+    { id: 8, name: "Pondok Al-Fatih", city: "Semarang", province: "Jawa Tengah", status: "in-progress", founded: 2016, students: 200, teachers: 16, description: "Sedang dalam proses verifikasi dokumen.", featured: false, suspended: false, lastLogin: "2025-10-05 09:30", lastUpdate: "2025-10-05" },
   ]);
   const [openForm, setOpenForm] = useState(false);
   const [editing, setEditing] = useState<Pondok | null>(null);
@@ -176,7 +177,7 @@ export const ManagePondokPage = () => {
 
   const remove = (id: number) => setItems(prev => prev.filter(p => p.id !== id));
   const verify = (id: number) => setItems(prev => prev.map(p => p.id === id ? { ...p, status: "verified" } : p));
-  const reject = (id: number) => setItems(prev => prev.map(p => p.id === id ? { ...p, status: "rejected" } : p));
+  const reject = (id: number) => setItems(prev => prev.map(p => p.id === id ? { ...p, status: "suspended" } : p));
   const toggleFeatured = (id: number) => setItems(prev => prev.map(p => p.id === id ? { ...p, featured: !p.featured } : p));
   const toggleSuspend = (id: number) => setItems(prev => prev.map(p => p.id === id ? { ...p, suspended: !p.suspended } : p));
 
@@ -206,7 +207,8 @@ export const ManagePondokPage = () => {
                 <SelectItem value="verified">Verified</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="waiting">Waiting</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
+                <SelectItem value="in-progress">In Progress</SelectItem>
+                <SelectItem value="suspended">Suspended</SelectItem>
               </SelectContent>
             </Select>
             <Select value={provinceFilter} onValueChange={setProvinceFilter}>
@@ -270,21 +272,14 @@ export const ManagePondokPage = () => {
                         <Badge
                           variant={
                             p.status === "verified" ? "verified" :
-                            p.status === "pending" ? "waiting" :
-                            p.status === "waiting" ? "waiting" :
-                            p.status === "rejected" ? "suspend" :
-                            "outline"
-                          }
+                            p.status === "in-progress" ? "in-progress" :
+                            p.status === "suspended" ? "suspended" :
+                            p.status === "waiting" || p.status === "pending" ? "waiting" :
+                            "outline"}
                         >
-                          {
-                          p.status === "verified" ? "verified" :
-                          p.status === "pending" ? "pending" :
-                          p.status === "waiting" ? "waiting" :
-                          p.status === "rejected" ? "rejected" :
-                          p.status
-                          }
+                          {p.status === "in-progress" ? "In Progress" : p.status}
                         </Badge>
-                        {p.suspended && (<Badge variant="suspend">suspended</Badge>)}
+                        {p.suspended && (<Badge variant="suspended">suspended</Badge>)}
                         {p.featured && (<Badge variant="secondary">featured</Badge>)}
                       </div>
                     </TableCell>
@@ -301,13 +296,13 @@ export const ManagePondokPage = () => {
                       <Button size="sm" variant={p.suspended ? "default" : "outline"} onClick={() => toggleSuspend(p.id)} title="Suspend">
                         <Slash className="w-4 h-4" />
                       </Button>
-                      {p.status !== "verified" && (
+                      {(p.status !== "verified" && p.status !== "in-progress") && (
                         <Button size="sm" variant="outline" onClick={() => verify(p.id)} title="Verify">
                           <CheckCircle2 className="w-4 h-4" />
                         </Button>
                       )}
-                      {p.status !== "rejected" && (
-                        <Button size="sm" variant="outline" onClick={() => reject(p.id)} title="Reject">
+                      {(p.status !== "suspended" && p.status !== "in-progress") && (
+                        <Button size="sm" variant="outline" onClick={() => reject(p.id)} title="Suspend">
                           <XCircle className="w-4 h-4" />
                         </Button>
                       )}

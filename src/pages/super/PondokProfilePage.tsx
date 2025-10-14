@@ -28,7 +28,7 @@ interface PondokProfile {
   name: string;
   city: string;
   province: string;
-  status: "verified" | "pending" | "rejected";
+  status: "verified" | "pending" | "waiting" | "in-progress" | "suspended";
   founded: number;
   students: number;
   description: string;
@@ -190,13 +190,19 @@ export const PondokProfilePage = () => {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant={pondok.status === "verified" ? "default" : pondok.status === "pending" ? "secondary" : "outline"}>
+          <Badge variant={pondok.status === "verified" ? "verified" :
+                         pondok.status === "in-progress" ? "in-progress" :
+                         pondok.status === "pending" ? "waiting" :
+                         pondok.status === "waiting" ? "waiting" :
+                         pondok.status === "suspended" ? "suspended" :
+                         "outline"}>
             {pondok.status === "verified" && <CheckCircle2 className="w-3 h-3 mr-1" />}
-            {pondok.status === "rejected" && <XCircle className="w-3 h-3 mr-1" />}
-            {pondok.status}
+            {pondok.status === "in-progress" && <CheckCircle2 className="w-3 h-3 mr-1" />}
+            {pondok.status === "suspended" && <XCircle className="w-3 h-3 mr-1" />}
+            {pondok.status === "in-progress" ? "In Progress" : pondok.status}
           </Badge>
           {pondok.featured && <Badge variant="secondary">Featured</Badge>}
-          {pondok.suspended && <Badge variant="destructive">Suspended</Badge>}
+          {pondok.suspended && <Badge variant="suspended">Suspended</Badge>}
         </div>
       </div>
 
