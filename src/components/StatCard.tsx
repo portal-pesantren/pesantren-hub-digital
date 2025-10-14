@@ -23,9 +23,15 @@ export const StatCard = ({ title, value, icon: Icon, trend, className }: StatCar
             <h3 className="text-3xl font-bold text-foreground">{value}</h3>
             {trend && (
               <p className={cn(
-                "text-xs mt-2 font-medium",
-                trend.isPositive ? "text-primary" : "text-destructive"
+                "text-xs mt-2 font-medium flex items-center gap-1",
+                trend.isPositive ? "text-success" : "text-danger"
               )}>
+                <span className={cn(
+                  "inline-flex items-center justify-center w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent",
+                  trend.isPositive
+                    ? "border-b-8 border-b-success"
+                    : "border-t-8 border-t-danger"
+                )}></span>
                 {trend.isPositive ? "+" : ""}{trend.value}% dari bulan lalu
               </p>
             )}

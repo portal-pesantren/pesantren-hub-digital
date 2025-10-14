@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 interface SantriFormProps {
   isOpen: boolean;
   onClose: () => void;
-  santriData?: any;
+  santriData?: SantriFormData;
   mode: "create" | "edit";
   onSubmit?: (data: SantriFormData) => void;
 }

@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 interface EventFormProps {
   isOpen: boolean;
   onClose: () => void;
-  eventData?: any;
+  eventData?: EventFormData;
   mode: "create" | "edit";
   onSubmit?: (data: EventFormData) => void;
 }

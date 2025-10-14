@@ -6,11 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 const pondokDistribution = [
-  { name: "Jawa Barat", value: 145, color: "hsl(var(--primary))" },
-  { name: "Jawa Timur", value: 132, color: "hsl(160 70% 50%)" },
-  { name: "Jawa Tengah", value: 98, color: "hsl(160 60% 60%)" },
-  { name: "Banten", value: 67, color: "hsl(160 50% 70%)" },
-  { name: "Lainnya", value: 89, color: "hsl(var(--muted))" },
+  { name: "Jawa Barat", value: 145, color: "hsl(216 91% 35%)" },
+  { name: "Jawa Timur", value: 132, color: "hsl(45 93% 55%)" },
+  { name: "Jawa Tengah", value: 98, color: "hsl(106 65% 45%)" },
+  { name: "Banten", value: 67, color: "hsl(17 65% 50%)" },
+  { name: "Lainnya", value: 89, color: "hsl(177 65% 60%)" },
 ];
 
 const monthlyRegistrations = [
@@ -20,12 +20,17 @@ const monthlyRegistrations = [
   { month: "Apr", pondok: 14, users: 298 },
   { month: "Mei", pondok: 20, users: 356 },
   { month: "Jun", pondok: 22, users: 401 },
+  { month: "Jul", pondok: 19, users: 387 },
+  { month: "Agu", pondok: 25, users: 423 },
+  { month: "Sep", pondok: 21, users: 398 },
+  { month: "Okt", pondok: 28, users: 456 },
 ];
 
 const pendingPondok = [
-  { name: "Pondok Pesantren Darul Falah", location: "Bogor, Jawa Barat", date: "2025-10-02", status: "Menunggu Verifikasi" },
-  { name: "Pesantren Modern Al-Ikhlas", location: "Surabaya, Jawa Timur", date: "2025-10-01", status: "Review Dokumen" },
-  { name: "Pondok Tahfidz Al-Qur'an", location: "Bandung, Jawa Barat", date: "2025-09-30", status: "Menunggu Verifikasi" },
+  { name: "Pondok Pesantren Darul Falah", location: "Bogor, Jawa Barat", date: "2025-10-02", status: "Menunggu Verifikasi", statusType: "waiting" },
+  { name: "Pesantren Modern Al-Ikhlas", location: "Surabaya, Jawa Timur", date: "2025-10-01", status: "Review Dokumen", statusType: "in-progress" },
+  { name: "Pondok Tahfidz Al-Qur'an", location: "Bandung, Jawa Barat", date: "2025-09-30", status: "Menunggu Verifikasi", statusType: "waiting" },
+  { name: "Pondok Modern Darussalam", location: "Jakarta Selatan, DKI Jakarta", date: "2025-09-29", status: "Suspend", statusType: "suspend" },
 ];
 
 const COLORS = pondokDistribution.map(item => item.color);
@@ -57,6 +62,7 @@ export const SuperAdminDashboard = () => {
           title="Menunggu Verifikasi"
           value={33}
           icon={AlertTriangle}
+          trend={{ value: 2.1, isPositive: false }}
         />
         <StatCard
           title="Total Pengguna"
@@ -157,7 +163,7 @@ export const SuperAdminDashboard = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-accent border-accent">
+                  <Badge variant={pondok.statusType as any}>
                     {pondok.status}
                   </Badge>
                   <Button size="sm" variant="default">

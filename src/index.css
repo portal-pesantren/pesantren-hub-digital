@@ -34,6 +34,23 @@ All colors MUST be HSL.
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
+    /* Semantic Colors */
+    --success: 106 65% 31%;
+    --success-foreground: 0 0% 100%;
+    --success-press: 85 65% 81%;
+
+    --info: 177 65% 64%;
+    --info-foreground: 216 91% 18%;
+    --info-press: 177 65% 93%;
+
+    --warning: 48 93% 65%;
+    --warning-foreground: 216 91% 18%;
+    --warning-press: 48 93% 99%;
+
+    --danger: 17 65% 51%;
+    --danger-foreground: 0 0% 100%;
+    --danger-press: 17 65% 83%;
+
     --border: 216 10% 90%;
     --input: 216 10% 90%;
     --ring: 216 91% 18%;
@@ -55,6 +72,20 @@ All colors MUST be HSL.
     --gradient-accent: linear-gradient(135deg, hsl(45 93% 47%), hsl(45 93% 60%));
     --shadow-elegant: 0 4px 20px -4px hsl(216 91% 18% / 0.15);
     --shadow-card: 0 2px 8px -2px hsl(216 20% 20% / 0.08);
+
+    /* Table Header Colors */
+    --table-header: 210 13% 36%;
+    --table-header-foreground: 0 0% 100%;
+
+    /* Verification Status Colors */
+    --verified: 106 65% 41%;
+    --verified-foreground: 0 0% 100%;
+    --in-progress: 217 91% 50%;
+    --in-progress-foreground: 0 0% 100%;
+    --waiting: 48 93% 65%;
+    --waiting-foreground: 216 91% 18%;
+    --suspend: 17 65% 51%;
+    --suspend-foreground: 0 0% 100%;
   }
 
   .dark {
@@ -83,6 +114,23 @@ All colors MUST be HSL.
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 100%;
 
+    /* Semantic Colors - Dark Mode */
+    --success: 106 65% 41%;
+    --success-foreground: 0 0% 100%;
+    --success-press: 106 65% 86%;
+
+    --info: 177 65% 54%;
+    --info-foreground: 0 0% 95%;
+    --info-press: 177 65% 88%;
+
+    --warning: 48 93% 55%;
+    --warning-foreground: 0 0% 95%;
+    --warning-press: 48 93% 95%;
+
+    --danger: 17 65% 41%;
+    --danger-foreground: 0 0% 100%;
+    --danger-press: 17 65% 88%;
+
     --border: 216 15% 20%;
     --input: 216 15% 20%;
     --ring: 216 91% 30%;
@@ -100,6 +148,20 @@ All colors MUST be HSL.
     --gradient-accent: linear-gradient(135deg, hsl(45 93% 55%), hsl(45 93% 68%));
     --shadow-elegant: 0 4px 20px -4px hsl(216 91% 30% / 0.25);
     --shadow-card: 0 2px 8px -2px hsl(0 0% 0% / 0.3);
+
+    /* Table Header Colors - Dark Mode */
+    --table-header: 210 13% 46%;
+    --table-header-foreground: 0 0% 100%;
+
+    /* Verification Status Colors - Dark Mode */
+    --verified: 106 65% 45%;
+    --verified-foreground: 0 0% 100%;
+    --in-progress: 217 91% 60%;
+    --in-progress-foreground: 0 0% 100%;
+    --waiting: 48 93% 55%;
+    --waiting-foreground: 0 0% 95%;
+    --suspend: 17 65% 55%;
+    --suspend-foreground: 0 0% 100%;
   }
 }
 

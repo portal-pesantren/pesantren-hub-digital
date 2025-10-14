@@ -18,9 +18,10 @@ interface Pondok {
   name: string;
   city: string;
   province: string;
-  status: "verified" | "pending" | "rejected";
+  status: "verified" | "pending" | "waiting" | "rejected";
   founded: number;
   students: number;
+  teachers: number;
   description: string;
   featured?: boolean;
   suspended?: boolean;
@@ -51,9 +52,13 @@ export const ManagePondokPage = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [items, setItems] = useState<Pondok[]>([
-    { id: 1, name: "Pondok Pesantren Darul Falah", city: "Bogor", province: "Jawa Barat", status: "verified", founded: 1998, students: 520, description: "Pesantren dengan fokus tahfidz dan kitab kuning.", featured: true, suspended: false, lastLogin: "2025-10-03 08:02", lastUpdate: "2025-10-02" },
-    { id: 2, name: "Pesantren Modern Al-Ikhlas", city: "Surabaya", province: "Jawa Timur", status: "pending", founded: 2005, students: 340, description: "Pendidikan modern berpadu nilai Islam.", featured: false, suspended: false, lastLogin: "2025-10-02 20:10", lastUpdate: "2025-09-30" },
-    { id: 3, name: "Pondok Tahfidz Al-Qur'an", city: "Bandung", province: "Jawa Barat", status: "verified", founded: 2010, students: 280, description: "Fokus pada tahfidz dan tahsin.", featured: true, suspended: false, lastLogin: "2025-10-01 10:22", lastUpdate: "2025-10-01" },
+    { id: 1, name: "Pondok Pesantren Darul Falah", city: "Bogor", province: "Jawa Barat", status: "verified", founded: 1998, students: 520, teachers: 35, description: "Pesantren dengan fokus tahfidz dan kitab kuning.", featured: true, suspended: false, lastLogin: "2025-10-03 08:02", lastUpdate: "2025-10-02" },
+    { id: 2, name: "Pesantren Modern Al-Ikhlas", city: "Surabaya", province: "Jawa Timur", status: "pending", founded: 2005, students: 340, teachers: 28, description: "Pendidikan modern berpadu nilai Islam.", featured: false, suspended: false, lastLogin: "2025-10-02 20:10", lastUpdate: "2025-09-30" },
+    { id: 3, name: "Pondok Tahfidz Al-Qur'an", city: "Bandung", province: "Jawa Barat", status: "verified", founded: 2010, students: 280, teachers: 22, description: "Fokus pada tahfidz dan tahsin.", featured: true, suspended: false, lastLogin: "2025-10-01 10:22", lastUpdate: "2025-10-01" },
+    { id: 4, name: "Pondok Modern Al-Hikmah", city: "Jakarta", province: "DKI Jakarta", status: "rejected", founded: 2015, students: 150, teachers: 18, description: "Pesantren dengan kurikulum modern.", featured: false, suspended: false, lastLogin: "2025-09-28 14:30", lastUpdate: "2025-09-28" },
+    { id: 5, name: "Pondok Pesantren Nurul Iman", city: "Malang", province: "Jawa Timur", status: "verified", founded: 1992, students: 450, teachers: 30, description: "Pesantren salaf dengan pendidikan formal.", featured: false, suspended: true, lastLogin: "2025-09-15 09:15", lastUpdate: "2025-09-20" },
+    { id: 6, name: "Pondok IT Al-Azhar", city: "Tangerang", province: "Banten", status: "waiting", founded: 2018, students: 120, teachers: 15, description: "Pesantren dengan fokus teknologi dan coding.", featured: false, suspended: false, lastLogin: "2025-10-01 15:45", lastUpdate: "2025-10-01" },
+    { id: 7, name: "Pondok Entrepreneur Muslim", city: "Depok", province: "Jawa Barat", status: "waiting", founded: 2020, students: 85, teachers: 12, description: "Pesantren kewirausahaan dan bisnis Islam.", featured: false, suspended: false, lastLogin: "2025-09-30 11:20", lastUpdate: "2025-09-30" },
   ]);
   const [openForm, setOpenForm] = useState(false);
   const [editing, setEditing] = useState<Pondok | null>(null);
@@ -157,6 +162,7 @@ export const ManagePondokPage = () => {
         province: data.province,
         founded: data.founded,
         students: data.students || 0,
+        teachers: data.teachers || 0,
         status: "pending",
         description: data.description,
         featured: false,
@@ -199,6 +205,7 @@ export const ManagePondokPage = () => {
                 <SelectItem value="all">Semua Status</SelectItem>
                 <SelectItem value="verified">Verified</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="waiting">Waiting</SelectItem>
                 <SelectItem value="rejected">Rejected</SelectItem>
               </SelectContent>
             </Select>
@@ -208,6 +215,8 @@ export const ManagePondokPage = () => {
                 <SelectItem value="all">Semua Provinsi</SelectItem>
                 <SelectItem value="Jawa Barat">Jawa Barat</SelectItem>
                 <SelectItem value="Jawa Timur">Jawa Timur</SelectItem>
+                <SelectItem value="DKI Jakarta">DKI Jakarta</SelectItem>
+                <SelectItem value="Banten">Banten</SelectItem>
               </SelectContent>
             </Select>
             <Select value={suspendFilter} onValueChange={setSuspendFilter}>
@@ -257,9 +266,25 @@ export const ManagePondokPage = () => {
                     <TableCell>{p.founded}</TableCell>
                     <TableCell>{p.students.toLocaleString()}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Badge variant={p.status === "verified" ? "default" : p.status === "pending" ? "secondary" : "outline"}>{p.status}</Badge>
-                        {p.suspended && (<Badge variant="destructive">suspended</Badge>)}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Badge
+                          variant={
+                            p.status === "verified" ? "verified" :
+                            p.status === "pending" ? "waiting" :
+                            p.status === "waiting" ? "waiting" :
+                            p.status === "rejected" ? "suspend" :
+                            "outline"
+                          }
+                        >
+                          {
+                          p.status === "verified" ? "verified" :
+                          p.status === "pending" ? "pending" :
+                          p.status === "waiting" ? "waiting" :
+                          p.status === "rejected" ? "rejected" :
+                          p.status
+                          }
+                        </Badge>
+                        {p.suspended && (<Badge variant="suspend">suspended</Badge>)}
                         {p.featured && (<Badge variant="secondary">featured</Badge>)}
                       </div>
                     </TableCell>
