@@ -74,36 +74,36 @@ All colors MUST be HSL.
     --shadow-card: 0 2px 8px -2px hsl(216 20% 20% / 0.08);
 
     /* Table Header Colors */
-    --table-header: 210 13% 36%;
-    --table-header-foreground: 0 0% 100%;
+    --table-header: 197 100% 96%; /* #E9F7FF - Table Header Background */
+    --table-header-foreground: 216 91% 18%; /* Dark blue text for contrast */
 
     /*
      * Verification Status Colors - Custom Color Scheme
      *
      * VERIFIED: Status sudah disetujui atau tervalidasi
      *   Background: #C4F2A6 (HSL: 91 59% 83%) - Light green
-     *   Font Color: #2D821C (HSL: 88 49% 15%) - Dark green
+     *   Font Color: #25BD07 (HSL: 113 84% 14%) - Dark green
      *
      * IN PROGRESS: Proses sedang berjalan atau belum selesai
      *   Background: #C7F8EE (HSL: 176 79% 91%) - Light cyan
-     *   Font Color: #57DAD4 (HSL: 174 74% 38%) - Medium cyan
+     *   Font Color: #214ADD (HSL: 216 100% 45%) - Dark blue
      *
      * WAITING: Menunggu tindakan lanjutan atau verifikasi
      *   Background: #FFF59C (HSL: 55 100% 87%) - Light yellow
-     *   Font Color: #F9D74F (HSL: 46 100% 30%) - Medium yellow
+     *   Font Color: #EFBD28 (HSL: 49 100% 39%) - Dark yellow
      *
      * SUSPENDED: Status sedang ditangguhkan atau diblokir sementara
      *   Background: #FFB4A2 (HSL: 17 88% 81%) - Light orange
-     *   Font Color: #D95F2F (HSL: 14 71% 41%) - Dark orange
+     *   Font Color: #E64C0F (HSL: 17 86% 46%) - Dark orange
      */
     --verified: 91 59% 83%;           /* #C4F2A6 - Verified Background */
-    --verified-foreground: 88 49% 15%; /* #2D821C - Verified Font Color */
+    --verified-foreground: 113 84% 14%; /* #25BD07 - Verified Font Color */
     --in-progress: 176 79% 91%;       /* #C7F8EE - In Progress Background */
-    --in-progress-foreground: 174 74% 38%; /* #57DAD4 - In Progress Font Color */
+    --in-progress-foreground: 216 100% 45%; /* #214ADD - In Progress Font Color */
     --waiting: 55 100% 87%;           /* #FFF59C - Waiting Background */
-    --waiting-foreground: 46 100% 30%; /* #F9D74F - Waiting Font Color */
+    --waiting-foreground: 49 100% 39%; /* #EFBD28 - Waiting Font Color */
     --suspend: 17 88% 81%;            /* #FFB4A2 - Suspended Background */
-    --suspend-foreground: 14 71% 41%; /* #D95F2F - Suspended Font Color */
+    --suspend-foreground: 17 86% 46%; /* #E64C0F - Suspended Font Color */
   }
 
   .dark {
@@ -168,18 +168,18 @@ All colors MUST be HSL.
     --shadow-card: 0 2px 8px -2px hsl(0 0% 0% / 0.3);
 
     /* Table Header Colors - Dark Mode */
-    --table-header: 210 13% 46%;
+    --table-header: 197 100% 20%; /* Darker version of #E9F7FF for dark mode */
     --table-header-foreground: 0 0% 100%;
 
     /* Verification Status Colors - Dark Mode */
     --verified: 91 59% 88%;           /* Slightly darker for dark mode */
-    --verified-foreground: 88 49% 15%;
+    --verified-foreground: 113 84% 14%; /* #25BD07 - Verified Font Color */
     --in-progress: 176 79% 94%;       /* Slightly darker for dark mode */
-    --in-progress-foreground: 174 74% 38%;
+    --in-progress-foreground: 216 100% 45%; /* #214ADD - In Progress Font Color */
     --waiting: 55 100% 90%;           /* Slightly darker for dark mode */
-    --waiting-foreground: 46 100% 25%; /* Slightly adjusted for contrast */
+    --waiting-foreground: 49 100% 39%; /* #EFBD28 - Waiting Font Color */
     --suspend: 17 88% 84%;            /* Slightly darker for dark mode */
-    --suspend-foreground: 14 71% 38%;  /* Slightly adjusted for contrast */
+    --suspend-foreground: 17 86% 46%; /* #E64C0F - Suspended Font Color */
   }
 }
 
