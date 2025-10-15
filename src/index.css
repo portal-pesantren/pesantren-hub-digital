@@ -2,62 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here.
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 160 10% 10%;
+    /* ==================================
+     * CORE COLOR SYSTEM
+     * ================================== */
 
-    --card: 0 0% 100%;
-    --card-foreground: 160 10% 10%;
+    /* Background Colors */
+    --background: 218 100% 98%; /* #F5F8FF - Main background */
+    --foreground: 216 10% 10%;  /* Dark text color */
 
+    /* Surface Colors */
+    --card: 0 0% 100%;            /* White cards */
+    --card-foreground: 216 10% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 160 10% 10%;
+    --popover-foreground: 216 10% 10%;
 
-    /* Brand blue theme (#042558 => hsl(216 91% 18%)) */
-    --primary: 216 91% 18%;
-    --primary-foreground: 0 0% 100%;
+    /* ==================================
+     * BRAND COLORS
+     * ================================== */
 
-    --secondary: 216 20% 96%;
-    --secondary-foreground: 216 91% 25%;
+    /* Primary Blue Theme */
+    --primary: 216 91% 18%;        /* #042558 - Brand blue */
+    --primary-foreground: 0 0% 100%; /* White text */
 
-    --muted: 216 10% 95%;
-    --muted-foreground: 216 5% 45%;
+    /* Secondary & Muted */
+    --secondary: 217 32% 92%;      /* Light blue-gray */
+    --secondary-foreground: 216 91% 25%; /* Dark blue text */
+    --muted: 217 20% 90%;         /* Muted background */
+    --muted-foreground: 216 5% 45%; /* Muted text */
 
-    /* Gold accent for Islamic aesthetic */
-    --accent: 45 93% 47%;
-    --accent-foreground: 216 91% 10%;
+    /* Accent (Gold for Islamic aesthetic) */
+    --accent: 45 93% 47%;         /* Gold accent */
+    --accent-foreground: 216 91% 10%; /* Dark blue text */
 
+    /* ==================================
+     * SEMANTIC COLORS
+     * ================================== */
+
+    /* Destructive */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Semantic Colors */
+    /* Success */
     --success: 106 65% 31%;
     --success-foreground: 0 0% 100%;
     --success-press: 85 65% 81%;
 
+    /* Info */
     --info: 177 65% 64%;
     --info-foreground: 216 91% 18%;
     --info-press: 177 65% 93%;
 
+    /* Warning */
     --warning: 48 93% 65%;
     --warning-foreground: 216 91% 18%;
     --warning-press: 48 93% 99%;
 
+    /* Danger (used for suspended states) */
     --danger: 17 65% 51%;
     --danger-foreground: 0 0% 100%;
     --danger-press: 17 65% 83%;
 
+    /* ==================================
+     * INTERACTION & BORDERS
+     * ================================== */
+
     --border: 216 10% 90%;
     --input: 216 10% 90%;
     --ring: 216 91% 18%;
-
     --radius: 0.75rem;
 
-    /* Sidebar with brand blue theme */
+    /* ==================================
+     * SIDEBAR SPECIFIC COLORS
+     * ================================== */
+
     --sidebar-background: 216 91% 18%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 0 0% 100%;
@@ -67,19 +90,31 @@ All colors MUST be HSL.
     --sidebar-border: 216 91% 22%;
     --sidebar-ring: 45 93% 47%;
 
-    /* Custom gradients */
+    /* ==================================
+     * ADVANCED STYLING
+     * ================================== */
+
+    /* Custom Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(216 91% 18%), hsl(216 91% 35%));
     --gradient-accent: linear-gradient(135deg, hsl(45 93% 47%), hsl(45 93% 60%));
+
+    /* Custom Shadows */
     --shadow-elegant: 0 4px 20px -4px hsl(216 91% 18% / 0.15);
     --shadow-card: 0 2px 8px -2px hsl(216 20% 20% / 0.08);
 
-    /* Table Header Colors */
-    --table-header: 197 100% 96%; /* #E9F7FF - Table Header Background */
-    --table-header-foreground: 216 91% 18%; /* Dark blue text for contrast */
+    /* ==================================
+     * COMPONENT SPECIFIC COLORS
+     * ================================== */
+
+    /* Table Header */
+    --table-header: 217 45% 98%;
+    --table-header-foreground: 216 91% 18%;
+
+    /* ==================================
+     * VERIFICATION STATUS COLORS
+     * ================================== */
 
     /*
-     * Verification Status Colors - Custom Color Scheme
-     *
      * VERIFIED: Status sudah disetujui atau tervalidasi
      *   Background: #C4F2A6 (HSL: 91 59% 83%) - Light green
      *   Font Color: #25BD07 (HSL: 113 84% 14%) - Dark green
@@ -92,67 +127,72 @@ All colors MUST be HSL.
      *   Background: #FFF59C (HSL: 55 100% 87%) - Light yellow
      *   Font Color: #EFBD28 (HSL: 49 100% 39%) - Dark yellow
      *
-     * SUSPENDED: Status sedang ditangguhkan atau diblokir sementara
+     * SUSPENDED/DANGER: Status sedang ditangguhkan atau diblokir sementara
      *   Background: #FFB4A2 (HSL: 17 88% 81%) - Light orange
      *   Font Color: #E64C0F (HSL: 17 86% 46%) - Dark orange
      */
-    --verified: 91 59% 83%;           /* #C4F2A6 - Verified Background */
-    --verified-foreground: 113 84% 14%; /* #25BD07 - Verified Font Color */
-    --in-progress: 176 79% 91%;       /* #C7F8EE - In Progress Background */
-    --in-progress-foreground: 216 100% 45%; /* #214ADD - In Progress Font Color */
-    --waiting: 55 100% 87%;           /* #FFF59C - Waiting Background */
-    --waiting-foreground: 49 100% 39%; /* #EFBD28 - Waiting Font Color */
-    --suspend: 17 88% 81%;            /* #FFB4A2 - Suspended Background */
-    --suspend-foreground: 17 86% 46%; /* #E64C0F - Suspended Font Color */
+
+    --verified: 91 59% 83%;
+    --verified-foreground: 113 84% 14%;
+    --in-progress: 176 79% 91%;
+    --in-progress-foreground: 216 100% 45%;
+    --waiting: 55 100% 87%;
+    --waiting-foreground: 49 100% 39%;
+    --suspended: 17 88% 81%;
+    --suspended-foreground: 17 86% 46%;
   }
 
+  /* ==================================
+   * DARK MODE THEME
+   * ================================== */
+
   .dark {
+    /* Background Colors */
     --background: 216 20% 8%;
     --foreground: 0 0% 95%;
 
+    /* Surface Colors */
     --card: 216 15% 12%;
     --card-foreground: 0 0% 95%;
-
     --popover: 216 15% 12%;
     --popover-foreground: 0 0% 95%;
 
-    /* Slightly brighter primary for dark mode */
-    --primary: 216 91% 30%;
+    /* Brand Colors - Dark Mode */
+    --primary: 216 91% 30%;        /* Brighter primary for dark mode */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 216 15% 18%;
+    /* Secondary & Muted - Dark Mode */
+    --secondary: 217 20% 16%;
     --secondary-foreground: 0 0% 95%;
-
-    --muted: 216 15% 18%;
+    --muted: 217 20% 16%;
     --muted-foreground: 216 5% 65%;
 
+    /* Accent - Dark Mode */
     --accent: 45 93% 55%;
     --accent-foreground: 216 20% 10%;
 
+    /* Semantic Colors - Dark Mode */
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 100%;
-
-    /* Semantic Colors - Dark Mode */
     --success: 106 65% 41%;
     --success-foreground: 0 0% 100%;
     --success-press: 106 65% 86%;
-
     --info: 177 65% 54%;
     --info-foreground: 0 0% 95%;
     --info-press: 177 65% 88%;
-
     --warning: 48 93% 55%;
     --warning-foreground: 0 0% 95%;
     --warning-press: 48 93% 95%;
-
     --danger: 17 65% 41%;
     --danger-foreground: 0 0% 100%;
     --danger-press: 17 65% 88%;
 
+    /* Interaction & Borders - Dark Mode */
     --border: 216 15% 20%;
     --input: 216 15% 20%;
     --ring: 216 91% 30%;
 
+    /* Sidebar - Dark Mode */
     --sidebar-background: 216 20% 10%;
     --sidebar-foreground: 0 0% 95%;
     --sidebar-primary: 0 0% 95%;
@@ -162,33 +202,79 @@ All colors MUST be HSL.
     --sidebar-border: 216 15% 20%;
     --sidebar-ring: 45 93% 55%;
 
+    /* Advanced Styling - Dark Mode */
     --gradient-primary: linear-gradient(135deg, hsl(216 91% 30%), hsl(216 91% 45%));
     --gradient-accent: linear-gradient(135deg, hsl(45 93% 55%), hsl(45 93% 68%));
     --shadow-elegant: 0 4px 20px -4px hsl(216 91% 30% / 0.25);
     --shadow-card: 0 2px 8px -2px hsl(0 0% 0% / 0.3);
 
-    /* Table Header Colors - Dark Mode */
-    --table-header: 197 100% 20%; /* Darker version of #E9F7FF for dark mode */
+    /* Component Specific - Dark Mode */
+    --table-header: 217 40% 18%;
     --table-header-foreground: 0 0% 100%;
 
-    /* Verification Status Colors - Dark Mode */
-    --verified: 91 59% 88%;           /* Slightly darker for dark mode */
-    --verified-foreground: 113 84% 14%; /* #25BD07 - Verified Font Color */
-    --in-progress: 176 79% 94%;       /* Slightly darker for dark mode */
-    --in-progress-foreground: 216 100% 45%; /* #214ADD - In Progress Font Color */
-    --waiting: 55 100% 90%;           /* Slightly darker for dark mode */
-    --waiting-foreground: 49 100% 39%; /* #EFBD28 - Waiting Font Color */
-    --suspend: 17 88% 84%;            /* Slightly darker for dark mode */
-    --suspend-foreground: 17 86% 46%; /* #E64C0F - Suspended Font Color */
+    /* Verification Status - Dark Mode */
+    --verified: 91 59% 88%;
+    --verified-foreground: 113 84% 14%;
+    --in-progress: 176 79% 94%;
+    --in-progress-foreground: 216 100% 45%;
+    --waiting: 55 100% 90%;
+    --waiting-foreground: 49 100% 39%;
+    --suspended: 17 88% 84%;
+    --suspended-foreground: 17 86% 46%;
   }
-}
 
-@layer base {
+  /* ==================================
+   * BASE STYLES
+   * ================================== */
+
   * {
     @apply border-border;
   }
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* ==================================
+ * VERIFICATION STATUS UTILITY CLASSES
+ * ================================== */
+
+@layer utilities {
+  .status-verified {
+    @apply bg-[hsl(var(--verified))] text-[hsl(var(--verified-foreground))];
+  }
+
+  .status-in-progress {
+    @apply bg-[hsl(var(--in-progress))] text-[hsl(var(--in-progress-foreground))];
+  }
+
+  .status-waiting {
+    @apply bg-[hsl(var(--waiting))] text-[hsl(var(--waiting-foreground))];
+  }
+
+  .status-suspended {
+    @apply bg-[hsl(var(--suspended))] text-[hsl(var(--suspended-foreground))];
+  }
+
+  /* Status badges with consistent sizing and borders */
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border;
+  }
+
+  .status-badge-verified {
+    @apply status-badge status-verified border-[hsl(var(--verified-foreground))];
+  }
+
+  .status-badge-in-progress {
+    @apply status-badge status-in-progress border-[hsl(var(--in-progress-foreground))];
+  }
+
+  .status-badge-waiting {
+    @apply status-badge status-waiting border-[hsl(var(--waiting-foreground))];
+  }
+
+  .status-badge-suspended {
+    @apply status-badge status-suspended border-[hsl(var(--suspended-foreground))];
   }
 }
