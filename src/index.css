@@ -138,8 +138,8 @@ All colors MUST be HSL.
     --in-progress-foreground: 216 100% 45%;
     --waiting: 55 100% 87%;
     --waiting-foreground: 49 100% 39%;
-    --suspended: 17 88% 81%;
-    --suspended-foreground: 17 86% 46%;
+    --suspend: 17 88% 81%;
+    --suspend-foreground: 17 86% 46%;
   }
 
   /* ==================================
@@ -219,8 +219,8 @@ All colors MUST be HSL.
     --in-progress-foreground: 216 100% 45%;
     --waiting: 55 100% 90%;
     --waiting-foreground: 49 100% 39%;
-    --suspended: 17 88% 84%;
-    --suspended-foreground: 17 86% 46%;
+    --suspend: 17 88% 84%;
+    --suspend-foreground: 17 86% 46%;
   }
 
   /* ==================================
