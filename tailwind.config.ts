@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: ["./pages/**/*.{ts,tsx,css,html}", "./components/**/*.{ts,tsx,css,html}", "./app/**/*.{ts,tsx,css,html}", "./src/**/*.{ts,tsx,css,html}"],
   prefix: "",
   theme: {
     container: {
@@ -12,6 +12,19 @@ export default {
         "2xl": "1400px",
       },
     },
+    safelist: [
+      // Verification status utilities
+      'bg-verified', 'bg-in-progress', 'bg-waiting', 'bg-suspended',
+      'text-verified', 'text-in-progress', 'text-waiting', 'text-suspended',
+      'border-verified', 'border-in-progress', 'border-waiting', 'border-suspended',
+
+      // Status badges
+      'status-verified', 'status-in-progress', 'status-waiting', 'status-suspended',
+      'status-badge-verified', 'status-badge-in-progress', 'status-badge-waiting', 'status-badge-suspended',
+
+      // Common utilities that might be purged
+      'bg-background', 'text-foreground', 'border-border',
+    ],
     extend: {
       colors: {
         border: "hsl(var(--border))",
@@ -97,8 +110,8 @@ export default {
           foreground: "hsl(var(--waiting-foreground))",
         },
         suspend: {
-          DEFAULT: "hsl(var(--suspend))",
-          foreground: "hsl(var(--suspend-foreground))",
+          DEFAULT: "hsl(var(--suspended))",
+          foreground: "hsl(var(--suspended-foreground))",
         },
       },
       backgroundImage: {
@@ -138,5 +151,47 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    function({ addUtilities }) {
+      addUtilities({
+        '.bg-verified': {
+          'background-color': 'hsl(var(--verified))',
+        },
+        '.bg-in-progress': {
+          'background-color': 'hsl(var(--in-progress))',
+        },
+        '.bg-waiting': {
+          'background-color': 'hsl(var(--waiting))',
+        },
+        '.bg-suspended': {
+          'background-color': 'hsl(var(--suspended))',
+        },
+        '.text-verified': {
+          'color': 'hsl(var(--verified-foreground))',
+        },
+        '.text-in-progress': {
+          'color': 'hsl(var(--in-progress-foreground))',
+        },
+        '.text-waiting': {
+          'color': 'hsl(var(--waiting-foreground))',
+        },
+        '.text-suspended': {
+          'color': 'hsl(var(--suspended-foreground))',
+        },
+        '.border-verified': {
+          'border-color': 'hsl(var(--verified-foreground))',
+        },
+        '.border-in-progress': {
+          'border-color': 'hsl(var(--in-progress-foreground))',
+        },
+        '.border-waiting': {
+          'border-color': 'hsl(var(--waiting-foreground))',
+        },
+        '.border-suspended': {
+          'border-color': 'hsl(var(--suspended-foreground))',
+        },
+      });
+    }
+  ],
 } satisfies Config;

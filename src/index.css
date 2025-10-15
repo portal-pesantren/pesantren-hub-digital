@@ -13,7 +13,7 @@ All colors MUST be HSL.
      * ================================== */
 
     /* Background Colors */
-    --background: 218 100% 98%; /* #F5F8FF - Main background */
+    --background: 218 38% 98%; /* #F9FAFC - Main background */
     --foreground: 216 10% 10%;  /* Dark text color */
 
     /* Surface Colors */
@@ -138,8 +138,8 @@ All colors MUST be HSL.
     --in-progress-foreground: 216 100% 45%;
     --waiting: 55 100% 87%;
     --waiting-foreground: 49 100% 39%;
-    --suspend: 17 88% 81%;
-    --suspend-foreground: 17 86% 46%;
+    --suspended: 17 88% 81%;
+    --suspended-foreground: 17 86% 46%;
   }
 
   /* ==================================
@@ -162,7 +162,7 @@ All colors MUST be HSL.
     --primary-foreground: 0 0% 100%;
 
     /* Secondary & Muted - Dark Mode */
-    --secondary: 217 20% 16%;
+    --secondary: 217 20% 16%;  
     --secondary-foreground: 0 0% 95%;
     --muted: 217 20% 16%;
     --muted-foreground: 216 5% 65%;
@@ -219,8 +219,8 @@ All colors MUST be HSL.
     --in-progress-foreground: 216 100% 45%;
     --waiting: 55 100% 90%;
     --waiting-foreground: 49 100% 39%;
-    --suspend: 17 88% 84%;
-    --suspend-foreground: 17 86% 46%;
+    --suspended: 17 88% 84%;
+    --suspended-foreground: 17 86% 46%;
   }
 
   /* ==================================
@@ -242,19 +242,19 @@ All colors MUST be HSL.
 
 @layer utilities {
   .status-verified {
-    @apply bg-[hsl(var(--verified))] text-[hsl(var(--verified-foreground))];
+    @apply bg-verified text-verified;
   }
 
   .status-in-progress {
-    @apply bg-[hsl(var(--in-progress))] text-[hsl(var(--in-progress-foreground))];
+    @apply bg-in-progress text-in-progress;
   }
 
   .status-waiting {
-    @apply bg-[hsl(var(--waiting))] text-[hsl(var(--waiting-foreground))];
+    @apply bg-waiting text-waiting;
   }
 
   .status-suspended {
-    @apply bg-[hsl(var(--suspended))] text-[hsl(var(--suspended-foreground))];
+    @apply bg-suspended text-suspended;
   }
 
   /* Status badges with consistent sizing and borders */
@@ -263,18 +263,18 @@ All colors MUST be HSL.
   }
 
   .status-badge-verified {
-    @apply status-badge status-verified border-[hsl(var(--verified-foreground))];
+    @apply status-badge status-verified border-verified;
   }
 
   .status-badge-in-progress {
-    @apply status-badge status-in-progress border-[hsl(var(--in-progress-foreground))];
+    @apply status-badge status-in-progress border-in-progress;
   }
 
   .status-badge-waiting {
-    @apply status-badge status-waiting border-[hsl(var(--waiting-foreground))];
+    @apply status-badge status-waiting border-waiting;
   }
 
   .status-badge-suspended {
-    @apply status-badge status-suspended border-[hsl(var(--suspended-foreground))];
+    @apply status-badge status-suspended border-suspended;
   }
 }
