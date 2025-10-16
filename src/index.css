@@ -162,7 +162,7 @@ All colors MUST be HSL.
     --primary-foreground: 0 0% 100%;
 
     /* Secondary & Muted - Dark Mode */
-    --secondary: 217 20% 16%;  
+    --secondary: 217 20% 16%;   
     --secondary-foreground: 0 0% 95%;
     --muted: 217 20% 16%;
     --muted-foreground: 216 5% 65%;
