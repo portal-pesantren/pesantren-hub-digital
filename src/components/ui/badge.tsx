@@ -20,6 +20,10 @@ const badgeVariants = cva(
         "in-progress": "border-transparent bg-in-progress text-in-progress-foreground hover:bg-in-progress/80",
         waiting: "border-transparent bg-waiting text-waiting-foreground hover:bg-waiting/80",
         suspended: "border-transparent bg-suspend text-suspend-foreground hover:bg-suspend/80",
+        approved: "border-transparent bg-verified text-verified-foreground hover:bg-verified/80",
+        rejected: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+        flagged: "border-transparent bg-warning text-warning-foreground hover:bg-warning/80",
+        pending: "border-transparent bg-waiting text-waiting-foreground hover:bg-waiting/80",
       },
     },
     defaultVariants: {
