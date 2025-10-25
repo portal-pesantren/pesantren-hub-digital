@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { Shield, Check, X, Search, Filter, FileText, Image, Video, MessageCircle } from "lucide-react";
+import { Shield, Check, X, Search, Filter, FileText, Image, Video, MessageCircle, RefreshCw, ChevronUp, ChevronDown, CheckSquare, Square } from "lucide-react";
 
 interface ModerationItem {
   id: number;
@@ -30,6 +30,11 @@ interface FilterState {
   status: string;
   priority: string;
   pondok: string;
+}
+
+interface SortState {
+  field: string;
+  direction: 'asc' | 'desc';
 }
 
 export const ModerationPage = () => {
@@ -117,6 +122,21 @@ export const ModerationPage = () => {
     pondok: ""
   });
 
+  const updateFilters = (newFilters: Partial<FilterState>) => {
+    setFilters(prev => ({ ...prev, ...newFilters }));
+    setCurrentPage(1); // Reset to first page when filters change
+  };
+
+  const [sort, setSort] = useState<SortState>({
+    field: "submittedDate",
+    direction: "desc"
+  });
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [showBatchActions, setShowBatchActions] = useState(false);
+
   const updateStatus = (id: number, status: ModerationItem["status"]) => {
     setRows(prev => prev.map(r =>
       r.id === id ? {
@@ -131,6 +151,34 @@ export const ModerationPage = () => {
   const accept = (id: number) => updateStatus(id, "approved");
   const reject = (id: number) => updateStatus(id, "rejected");
   const flag = (id: number) => updateStatus(id, "flagged");
+
+  const handleSort = (field: string) => {
+    setSort(prev => ({
+      field,
+      direction: prev.field === field && prev.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
+
+  const sortData = (data: ModerationItem[]) => {
+    return [...data].sort((a, b) => {
+      let aValue: any = a[sort.field as keyof ModerationItem];
+      let bValue: any = b[sort.field as keyof ModerationItem];
+
+      if (aValue === undefined) aValue = '';
+      if (bValue === undefined) bValue = '';
+
+      if (typeof aValue === 'string') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
+
+      if (sort.direction === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+  };
 
   const getTypeIcon = (type: ModerationItem["type"]) => {
     switch (type) {
@@ -156,15 +204,35 @@ export const ModerationPage = () => {
 
   const getStatusBadge = (status: ModerationItem["status"]) => {
     const statusConfig = {
-      pending: { variant: "waiting" as const, label: "Menunggu" },
-      "in-progress": { variant: "in-progress" as const, label: "Diproses" },
-      approved: { variant: "verified" as const, label: "Disetujui" },
-      rejected: { variant: "destructive" as const, label: "Ditolak" },
-      flagged: { variant: "warning" as const, label: "Ditandai" }
+      pending: {
+        variant: "secondary" as const,
+        label: "Menunggu",
+        className: "bg-yellow-100 text-yellow-800 border-yellow-200"
+      },
+      "in-progress": {
+        variant: "default" as const,
+        label: "Diproses",
+        className: "bg-green-500 text-white border-green-600"
+      },
+      approved: {
+        variant: "verified" as const,
+        label: "Disetujui",
+        className: "bg-green-100 text-green-800 border-green-200"
+      },
+      rejected: {
+        variant: "destructive" as const,
+        label: "Ditolak",
+        className: "bg-red-100 text-red-800 border-red-200"
+      },
+      flagged: {
+        variant: "warning" as const,
+        label: "Ditandai",
+        className: "bg-red-500 text-white border-red-600"
+      }
     };
 
     const config = statusConfig[status];
-    return <Badge variant={config.variant}>{config.label}</Badge>;
+    return <Badge variant={config.variant} className={config.className}>{config.label}</Badge>;
   };
 
   const getPriorityBadge = (priority: ModerationItem["priority"]) => {
@@ -178,7 +246,7 @@ export const ModerationPage = () => {
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
-  const filteredRows = rows.filter(row => {
+  const filteredAndSortedRows = rows.filter(row => {
     if (filters.search && !row.title.toLowerCase().includes(filters.search.toLowerCase()) &&
         !row.pondok.toLowerCase().includes(filters.search.toLowerCase()) &&
         !row.reason.toLowerCase().includes(filters.search.toLowerCase())) {
@@ -190,6 +258,57 @@ export const ModerationPage = () => {
     if (filters.pondok && !row.pondok.toLowerCase().includes(filters.pondok.toLowerCase())) return false;
     return true;
   });
+
+  const sortedRows = sortData(filteredAndSortedRows);
+
+  // Pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = sortedRows.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(sortedRows.length / itemsPerPage);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const toggleItemSelection = (id: number) => {
+    setSelectedItems(prev => {
+      const newSelection = prev.includes(id)
+        ? prev.filter(item => item !== id)
+        : [...prev, id];
+      setShowBatchActions(newSelection.length > 0);
+      return newSelection;
+    });
+  };
+
+  const toggleAllSelection = () => {
+    if (selectedItems.length === currentItems.length) {
+      setSelectedItems([]);
+      setShowBatchActions(false);
+    } else {
+      const allIds = currentItems.map(item => item.id);
+      setSelectedItems(allIds);
+      setShowBatchActions(true);
+    }
+  };
+
+  const batchApprove = () => {
+    selectedItems.forEach(id => updateStatus(id, "approved"));
+    setSelectedItems([]);
+    setShowBatchActions(false);
+  };
+
+  const batchReject = () => {
+    selectedItems.forEach(id => updateStatus(id, "rejected"));
+    setSelectedItems([]);
+    setShowBatchActions(false);
+  };
+
+  const batchFlag = () => {
+    selectedItems.forEach(id => updateStatus(id, "flagged"));
+    setSelectedItems([]);
+    setShowBatchActions(false);
+  };
 
   const uniquePondoks = Array.from(new Set(rows.map(r => r.pondok)));
   const pendingCount = rows.filter(r => r.status === "pending").length;
@@ -266,7 +385,7 @@ export const ModerationPage = () => {
                     className="pl-10"
                     placeholder="Cari judul, pondok, alasan..."
                     value={filters.search}
-                    onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                    onChange={e => updateFilters({ search: e.target.value })}
                   />
                 </div>
               </div>
@@ -287,7 +406,7 @@ export const ModerationPage = () => {
                 <select
                   className="w-full px-3 py-2 border rounded-md bg-background"
                   value={filters.type}
-                  onChange={e => setFilters(prev => ({ ...prev, type: e.target.value }))}
+                  onChange={e => updateFilters({ type: e.target.value })}
                 >
                   <option value="all">Semua Jenis</option>
                   <option value="news">Berita</option>
@@ -303,7 +422,7 @@ export const ModerationPage = () => {
                 <select
                   className="w-full px-3 py-2 border rounded-md bg-background"
                   value={filters.status}
-                  onChange={e => setFilters(prev => ({ ...prev, status: e.target.value }))}
+                  onChange={e => updateFilters({ status: e.target.value })}
                 >
                   <option value="all">Semua Status</option>
                   <option value="pending">Menunggu</option>
@@ -319,7 +438,7 @@ export const ModerationPage = () => {
                 <select
                   className="w-full px-3 py-2 border rounded-md bg-background"
                   value={filters.priority}
-                  onChange={e => setFilters(prev => ({ ...prev, priority: e.target.value }))}
+                  onChange={e => updateFilters({ priority: e.target.value })}
                 >
                   <option value="all">Semua Prioritas</option>
                   <option value="high">Tinggi</option>
@@ -333,7 +452,7 @@ export const ModerationPage = () => {
                 <select
                   className="w-full px-3 py-2 border rounded-md bg-background"
                   value={filters.pondok}
-                  onChange={e => setFilters(prev => ({ ...prev, pondok: e.target.value }))}
+                  onChange={e => updateFilters({ pondok: e.target.value })}
                 >
                   <option value="">Semua Pondok</option>
                   {uniquePondoks.map(pondok => (
@@ -346,164 +465,346 @@ export const ModerationPage = () => {
         </CardContent>
       </Card>
 
-      {/* Moderation Cards */}
+      {/* Batch Actions Bar */}
+      {showBatchActions && (
+        <Card className="shadow-card mb-4 bg-blue-50 border-blue-200">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CheckSquare className="w-5 h-5 text-blue-600" />
+                <span className="font-medium text-blue-900">
+                  {selectedItems.length} item dipilih
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  onClick={batchApprove}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <Check className="w-4 h-4 mr-1" />
+                  Setujui Semua
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={batchReject}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  <X className="w-4 h-4 mr-1" />
+                  Tolak Semua
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={batchFlag}
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white"
+                >
+                  <Shield className="w-4 h-4 mr-1" />
+                  Tandai Semua
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setSelectedItems([]);
+                    setShowBatchActions(false);
+                  }}
+                >
+                  Batal Pilih
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Moderation Table */}
       <Card className="shadow-card">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-primary" /> Daftar Moderasi ({filteredRows.length})
+            <Shield className="w-5 h-5 text-primary" /> Daftar Moderasi ({filteredAndSortedRows.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredRows.map(r => (
-              <Card
-                key={r.id}
-                className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] border border-gray-200 overflow-hidden"
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-2">
-                      {getTypeIcon(r.type)}
-                      <span className="text-sm font-medium text-gray-600">
-                        {getTypeLabel(r.type)}
-                      </span>
+          <div className="overflow-x-auto border border-gray-200 rounded-lg">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b border-gray-200">
+                  <TableHead className="w-12">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={toggleAllSelection}
+                      className="h-auto p-1 hover:bg-transparent"
+                    >
+                      {selectedItems.length === currentItems.length && currentItems.length > 0 ? (
+                        <CheckSquare className="w-4 h-4 text-blue-600" />
+                      ) : (
+                        <Square className="w-4 h-4 text-gray-400" />
+                      )}
+                    </Button>
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSort('id')}
+                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                    >
+                      ID
+                      {sort.field === 'id' && (
+                        sort.direction === 'asc' ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />
+                      )}
+                    </Button>
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSort('type')}
+                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                    >
+                      Jenis
+                      {sort.field === 'type' && (
+                        sort.direction === 'asc' ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />
+                      )}
+                    </Button>
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSort('pondok')}
+                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                    >
+                      Nama Pondok
+                      {sort.field === 'pondok' && (
+                        sort.direction === 'asc' ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />
+                      )}
+                    </Button>
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">Alasan Moderasi</TableHead>
+                  <TableHead className="font-semibold text-gray-700">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSort('status')}
+                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                    >
+                      Status
+                      {sort.field === 'status' && (
+                        sort.direction === 'asc' ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />
+                      )}
+                    </Button>
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSort('priority')}
+                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                    >
+                      Tingkat Risiko
+                      {sort.field === 'priority' && (
+                        sort.direction === 'asc' ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />
+                      )}
+                    </Button>
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSort('submittedDate')}
+                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                    >
+                      Tanggal Diajukan
+                      {sort.field === 'submittedDate' && (
+                        sort.direction === 'asc' ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />
+                      )}
+                    </Button>
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700 text-center">Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {currentItems.map((r: ModerationItem) => (
+                  <TableRow
+                    key={r.id}
+                    className={`border-b border-gray-100 hover:bg-gray-50 ${selectedItems.includes(r.id) ? 'bg-blue-50' : ''}`}
+                  >
+                    <TableCell className="w-12">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleItemSelection(r.id)}
+                        className="h-auto p-1 hover:bg-transparent"
+                      >
+                        {selectedItems.includes(r.id) ? (
+                          <CheckSquare className="w-4 h-4 text-blue-600" />
+                        ) : (
+                          <Square className="w-4 h-4 text-gray-400" />
+                        )}
+                      </Button>
+                    </TableCell>
+                    <TableCell className="font-medium">
                       <Badge variant="outline" className="text-xs">
                         #{r.id}
                       </Badge>
-                    </div>
-                    <div className="flex gap-1">
-                      {getPriorityBadge(r.priority)}
-                    </div>
-                  </div>
-                  <CardTitle className="text-lg font-semibold line-clamp-2">
-                    {r.title}
-                  </CardTitle>
-                </CardHeader>
-
-                <CardContent className="space-y-4">
-                  {/* Meta Information */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-700">Pondok:</span>
-                      <div className="text-right">
-                        <div className="text-sm font-medium">{r.pondok}</div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {getTypeIcon(r.type)}
+                        <span className="text-sm font-medium">{getTypeLabel(r.type)}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium text-sm">{r.pondok}</div>
                         <div className="text-xs text-gray-500">ID: {r.pondokId}</div>
                       </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-700">Alasan:</span>
+                    </TableCell>
+                    <TableCell>
                       <span className="text-sm text-red-600 font-medium">{r.reason}</span>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-700">Status:</span>
-                      <div className="text-right">
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
                         {getStatusBadge(r.status)}
                         {r.moderatorName && r.status !== "pending" && (
-                          <div className="text-xs text-gray-500 mt-1">
+                          <div className="text-xs text-gray-500">
                             oleh {r.moderatorName}
                           </div>
                         )}
                       </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-700">Tanggal:</span>
-                      <div className="text-right text-sm">
+                    </TableCell>
+                    <TableCell>
+                      {getPriorityBadge(r.priority)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
                         <div>{r.submittedDate}</div>
                         {r.moderatedDate && (
                           <div className="text-xs text-gray-500">
-                            Dimoderasi: {r.moderatedDate}
+                            Mod: {r.moderatedDate}
                           </div>
                         )}
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex justify-center gap-2 pt-4 border-t">
-
-                    {r.status === "pending" || r.status === "flagged" ? (
-                      <>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => accept(r.id)}
-                          title="Setujui"
-                          className="px-4 py-2 min-w-[80px] border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700 transition-colors duration-200"
-                        >
-                          <Check className="w-4 h-4 mr-1" />
-                          Setujui
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => reject(r.id)}
-                          title="Tolak"
-                          className="px-4 py-2 min-w-[80px] border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors duration-200"
-                        >
-                          <X className="w-4 h-4 mr-1" />
-                          Tolak
-                        </Button>
-                        {r.status !== "flagged" && (
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex justify-center gap-1">
+                        {r.status === "pending" || r.status === "flagged" ? (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => accept(r.id)}
+                              title="Setujui"
+                              className="px-3 py-1 border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700 transition-colors duration-200"
+                            >
+                              <Check className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => reject(r.id)}
+                              title="Tolak"
+                              className="px-3 py-1 border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors duration-200"
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                            {r.status !== "flagged" && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => flag(r.id)}
+                                title="Tandai"
+                                className="px-3 py-1 border-yellow-200 hover:bg-yellow-50 text-yellow-600 hover:text-yellow-700 transition-colors duration-200"
+                              >
+                                <Shield className="w-4 h-4" />
+                              </Button>
+                            )}
+                          </>
+                        ) : r.status === "in-progress" ? (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => accept(r.id)}
+                              title="Setujui"
+                              className="px-3 py-1 border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700 transition-colors duration-200"
+                            >
+                              <Check className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => reject(r.id)}
+                              title="Tolak"
+                              className="px-3 py-1 border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors duration-200"
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </>
+                        ) : (
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => flag(r.id)}
-                            title="Tandai"
-                            className="px-4 py-2 min-w-[80px] border-yellow-200 hover:bg-yellow-50 text-yellow-600 hover:text-yellow-700 transition-colors duration-200"
+                            onClick={() => updateStatus(r.id, "pending")}
+                            title="Buka Ulang"
+                            className="px-3 py-1 border-blue-200 hover:bg-blue-50 text-blue-600 hover:text-blue-700 transition-colors duration-200"
                           >
-                            <Shield className="w-4 h-4 mr-1" />
-                            Tandai
+                            <RefreshCw className="w-4 h-4" />
                           </Button>
                         )}
-                      </>
-                    ) : r.status === "in-progress" ? (
-                      <>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => accept(r.id)}
-                          title="Setujui"
-                          className="px-4 py-2 min-w-[80px] border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700 transition-colors duration-200"
-                        >
-                          <Check className="w-4 h-4 mr-1" />
-                          Setujui
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => reject(r.id)}
-                          title="Tolak"
-                          className="px-4 py-2 min-w-[80px] border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors duration-200"
-                        >
-                          <X className="w-4 h-4 mr-1" />
-                          Tolak
-                        </Button>
-                      </>
-                    ) : (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => updateStatus(r.id, "pending")}
-                        title="Buka Ulang"
-                        className="px-4 py-2 min-w-[100px] border-blue-200 hover:bg-blue-50 text-blue-600 hover:text-blue-700 transition-colors duration-200"
-                      >
-                        <Shield className="w-4 h-4 mr-1" />
-                        Buka Ulang
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
-          {filteredRows.length === 0 && (
+          {currentItems.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <Shield className="w-12 h-12 mx-auto mb-4 text-gray-400" />
               <p className="text-lg font-medium">Tidak ada konten yang sesuai dengan filter yang dipilih.</p>
             </div>
+          ) : (
+            totalPages > 1 && (
+              <div className="flex items-center justify-between mt-4">
+                <div className="text-sm text-gray-600">
+                  Menampilkan {indexOfFirstItem + 1} hingga {Math.min(indexOfLastItem, sortedRows.length)} dari {sortedRows.length} data
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="border-gray-300"
+                  >
+                    Previous
+                  </Button>
+                  {[...Array(totalPages)].map((_, index) => (
+                    <Button
+                      key={index}
+                      variant={currentPage === index + 1 ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handlePageChange(index + 1)}
+                      className={currentPage === index + 1 ? "bg-primary" : "border-gray-300"}
+                    >
+                      {index + 1}
+                    </Button>
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="border-gray-300"
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )
           )}
         </CardContent>
       </Card>
