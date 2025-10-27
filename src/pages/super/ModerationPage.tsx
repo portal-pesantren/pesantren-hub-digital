@@ -661,14 +661,7 @@ export const ModerationPage = () => {
                       <span className="text-sm text-red-600 font-medium">{r.reason}</span>
                     </TableCell>
                     <TableCell>
-                      <div className="space-y-1">
-                        {getStatusBadge(r.status)}
-                        {r.moderatorName && r.status !== "pending" && (
-                          <div className="text-xs text-gray-500">
-                            oleh {r.moderatorName}
-                          </div>
-                        )}
-                      </div>
+                      {getStatusBadge(r.status)}
                     </TableCell>
                     <TableCell>
                       {getPriorityBadge(r.priority)}
