@@ -10,6 +10,7 @@ import { Users, GraduationCap, Plus, Search, Download, Filter, Edit, Trash2, Eye
 import { StatCard } from "@/components/StatCard";
 import { SantriForm } from "@/components/forms/SantriForm";
 import { UstadzForm } from "@/components/forms/UstadzForm";
+import { ResponsiveTable } from "@/components/ui/responsive-table";
 import { type SantriFormData } from "@/lib/validations";
 
 // Types
@@ -148,15 +149,219 @@ export const PeoplePage = () => {
   const santriPutri = totalSantri - santriPutra;
   const totalUstadz = ustadzData.length;
 
+  // Santri table columns
+  const santriTableColumns = [
+    {
+      key: 'name',
+      label: 'Nama Santri',
+      render: (value: string) => (
+        <span className="font-medium text-sm">{value}</span>
+      ),
+      hideOnMobile: false
+    },
+    {
+      key: 'class',
+      label: 'Kelas',
+      render: (value: string) => (
+        <span className="text-sm">{value}</span>
+      ),
+      hideOnMobile: false
+    },
+    {
+      key: 'age',
+      label: 'Usia',
+      render: (value: number) => (
+        <span className="text-sm">{value} tahun</span>
+      ),
+      hideOnMobile: false
+    },
+    {
+      key: 'dormitory',
+      label: 'Asrama',
+      render: (value: string) => (
+        <span className="text-sm">{value}</span>
+      ),
+      hideOnMobile: true
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (value: string) => (
+        <Badge variant={value === "Aktif" ? "default" : "secondary"}>
+          {value}
+        </Badge>
+      ),
+      hideOnMobile: false
+    },
+    {
+      key: 'parentContact',
+      label: 'Kontak Ortu',
+      render: (value: string) => (
+        <span className="text-sm">{value}</span>
+      ),
+      hideOnMobile: true
+    },
+    {
+      key: 'address',
+      label: 'Alamat',
+      render: (value: string) => (
+        <span className="text-sm truncate max-w-32">{value}</span>
+      ),
+      hideOnMobile: true
+    }
+  ];
+
+  // Ustadz table columns
+  const ustadzTableColumns = [
+    {
+      key: 'name',
+      label: 'Nama Ustadz',
+      render: (value: string) => (
+        <span className="font-medium text-sm">{value}</span>
+      ),
+      hideOnMobile: false
+    },
+    {
+      key: 'subject',
+      label: 'Mata Pelajaran',
+      render: (value: string) => (
+        <span className="text-sm">{value}</span>
+      ),
+      hideOnMobile: false
+    },
+    {
+      key: 'experience',
+      label: 'Pengalaman',
+      render: (value: string) => (
+        <span className="text-sm">{value}</span>
+      ),
+      hideOnMobile: false
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (value: string) => (
+        <Badge variant="default">{value}</Badge>
+      ),
+      hideOnMobile: false
+    },
+    {
+      key: 'education',
+      label: 'Pendidikan',
+      render: (value: string) => (
+        <span className="text-sm">{value}</span>
+      ),
+      hideOnMobile: true
+    },
+    {
+      key: 'phone',
+      label: 'Telepon',
+      render: (value: string) => (
+        <span className="text-sm">{value}</span>
+      ),
+      hideOnMobile: true
+    },
+    {
+      key: 'email',
+      label: 'Email',
+      render: (value: string) => (
+        <span className="text-sm truncate max-w-32">{value}</span>
+      ),
+      hideOnMobile: true
+    }
+  ];
+
+  // Render actions for Santri
+  const renderSantriActions = (santri: Santri) => (
+    <div className="flex gap-1">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => {
+          setEditingSantri(santri);
+          setIsSantriFormOpen(true);
+        }}
+      >
+        <Edit className="w-4 h-4" />
+      </Button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button variant="ghost" size="sm" className="text-destructive">
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus data santri <strong>{santri.name}</strong>?
+              Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => handleDeleteSantri(santri.id)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+
+  // Render actions for Ustadz
+  const renderUstadzActions = (ustadz: Ustadz) => (
+    <div className="flex gap-1">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => {
+          setEditingUstadz(ustadz);
+          setIsUstadzFormOpen(true);
+        }}
+      >
+        <Edit className="w-4 h-4" />
+      </Button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button variant="ghost" size="sm" className="text-destructive">
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus data ustadz <strong>{ustadz.name}</strong>?
+              Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => handleDeleteUstadz(ustadz.id)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Santri & Ustadz</h1>
           <p className="text-muted-foreground">Kelola data santri dan ustadz pondok pesantren</p>
         </div>
-        <Button 
-          className="bg-gradient-primary text-white shadow-elegant"
+        <Button
+          className="bg-gradient-primary text-white shadow-elegant w-full sm:w-auto"
           onClick={() => {
             if (activeTab === "santri") {
               setEditingSantri(null);
@@ -205,166 +410,48 @@ export const PeoplePage = () => {
               <TabsTrigger value="ustadz">Ustadz ({totalUstadz})</TabsTrigger>
             </TabsList>
 
-            <div className="flex items-center gap-3 my-6">
+            <div className="flex flex-col sm:flex-row gap-3 my-6">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input 
+                <Input
                   placeholder={`Cari ${activeTab}...`}
                   className="pl-10"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <Button variant="outline">
-                <Filter className="w-4 h-4 mr-2" />
-                Filter
-              </Button>
-              <Button variant="outline">
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="outline" className="w-full sm:w-auto">
+                  <Filter className="w-4 h-4 mr-2" />
+                  <span className="hidden sm:inline">Filter</span>
+                </Button>
+                <Button variant="outline" className="w-full sm:w-auto">
+                  <Download className="w-4 h-4 mr-2" />
+                  <span className="hidden sm:inline">Export</span>
+                </Button>
+              </div>
             </div>
 
             <TabsContent value="santri" className="mt-0">
-              <div className="border rounded-lg">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>No</TableHead>
-                      <TableHead>Nama Santri</TableHead>
-                      <TableHead>Kelas</TableHead>
-                      <TableHead>Usia</TableHead>
-                      <TableHead>Asrama</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Aksi</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredSantri.map((santri, index) => (
-                      <TableRow key={santri.id}>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell className="font-medium">{santri.name}</TableCell>
-                        <TableCell>{santri.class}</TableCell>
-                        <TableCell>{santri.age} tahun</TableCell>
-                        <TableCell>{santri.dormitory}</TableCell>
-                        <TableCell>
-                          <Badge variant={santri.status === "Aktif" ? "default" : "secondary"}>
-                            {santri.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex gap-1 justify-end">
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              onClick={() => {
-                                setEditingSantri(santri);
-                                setIsSantriFormOpen(true);
-                              }}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="sm" className="text-destructive">
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Apakah Anda yakin ingin menghapus data santri <strong>{santri.name}</strong>? 
-                                    Tindakan ini tidak dapat dibatalkan.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Batal</AlertDialogCancel>
-                                  <AlertDialogAction 
-                                    onClick={() => handleDeleteSantri(santri.id)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  >
-                                    Hapus
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+              <ResponsiveTable
+                data={filteredSantri}
+                columns={santriTableColumns}
+                keyField="id"
+                actions={renderSantriActions}
+                emptyMessage="Tidak ada data santri yang tersedia"
+                className="border rounded-lg"
+              />
             </TabsContent>
 
             <TabsContent value="ustadz" className="mt-0">
-              <div className="border rounded-lg">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>No</TableHead>
-                      <TableHead>Nama Ustadz</TableHead>
-                      <TableHead>Mata Pelajaran</TableHead>
-                      <TableHead>Pengalaman</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Aksi</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredUstadz.map((ustadz, index) => (
-                      <TableRow key={ustadz.id}>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell className="font-medium">{ustadz.name}</TableCell>
-                        <TableCell>{ustadz.subject}</TableCell>
-                        <TableCell>{ustadz.experience}</TableCell>
-                        <TableCell>
-                          <Badge variant="default">{ustadz.status}</Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex gap-1 justify-end">
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              onClick={() => {
-                                setEditingUstadz(ustadz);
-                                setIsUstadzFormOpen(true);
-                              }}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="sm" className="text-destructive">
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Apakah Anda yakin ingin menghapus data ustadz <strong>{ustadz.name}</strong>? 
-                                    Tindakan ini tidak dapat dibatalkan.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Batal</AlertDialogCancel>
-                                  <AlertDialogAction 
-                                    onClick={() => handleDeleteUstadz(ustadz.id)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  >
-                                    Hapus
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+              <ResponsiveTable
+                data={filteredUstadz}
+                columns={ustadzTableColumns}
+                keyField="id"
+                actions={renderUstadzActions}
+                emptyMessage="Tidak ada data ustadz yang tersedia"
+                className="border rounded-lg"
+              />
             </TabsContent>
           </Tabs>
         </CardContent>

@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { Shield, Check, X, Search, Filter, FileText, Image, Video, MessageCircle, RefreshCw, ChevronUp, ChevronDown, CheckSquare, Square } from "lucide-react";
+import { ResponsiveTable } from "@/components/ui/responsive-table";
+import { Shield, Check, X, Search, Filter, FileText, Image, Video, MessageCircle, RefreshCw, CheckSquare } from "lucide-react";
 
 interface ModerationItem {
   id: number;
@@ -310,6 +310,147 @@ export const ModerationPage = () => {
   const flaggedCount = rows.filter(r => r.status === "flagged").length;
   const inProgressCount = rows.filter(r => r.status === "in-progress").length;
 
+  // Responsive table columns configuration
+  const tableColumns = [
+    {
+      key: 'id',
+      label: 'ID',
+      render: (value: number) => (
+        <Badge variant="outline" className="text-xs">
+          #{value}
+        </Badge>
+      ),
+      hideOnMobile: false
+    },
+    {
+      key: 'type',
+      label: 'Jenis',
+      render: (value: string, row: ModerationItem) => (
+        <div className="flex items-center gap-2">
+          {getTypeIcon(value as ModerationItem["type"])}
+          <span className="text-sm font-medium">{getTypeLabel(value as ModerationItem["type"])}</span>
+        </div>
+      ),
+      hideOnMobile: false
+    },
+    {
+      key: 'pondok',
+      label: 'Nama Pondok',
+      render: (value: string, row: ModerationItem) => (
+        <div>
+          <div className="font-medium text-sm">{value}</div>
+          <div className="text-xs text-gray-500">ID: {row.pondokId}</div>
+        </div>
+      ),
+      hideOnMobile: false
+    },
+    {
+      key: 'reason',
+      label: 'Alasan Moderasi',
+      render: (value: string) => (
+        <span className="text-sm text-red-600 font-medium">{value}</span>
+      ),
+      hideOnMobile: true
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (value: string) => getStatusBadge(value as ModerationItem["status"]),
+      hideOnMobile: false
+    },
+    {
+      key: 'priority',
+      label: 'Tingkat Risiko',
+      render: (value: string) => getPriorityBadge(value as ModerationItem["priority"]),
+      hideOnMobile: true
+    },
+    {
+      key: 'submittedDate',
+      label: 'Tanggal Diajukan',
+      render: (value: string, row: ModerationItem) => (
+        <div className="text-sm">
+          <div>{value}</div>
+          {row.moderatedDate && (
+            <div className="text-xs text-gray-500">
+              Mod: {row.moderatedDate}
+            </div>
+          )}
+        </div>
+      ),
+      hideOnMobile: true
+    }
+  ];
+
+  // Render actions for each row
+  const renderActions = (row: ModerationItem) => (
+    <div className="flex justify-center gap-1">
+      {row.status === "pending" || row.status === "flagged" ? (
+        <>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => accept(row.id)}
+            title="Setujui"
+            className="px-3 py-1 border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700 transition-colors duration-200"
+          >
+            <Check className="w-4 h-4" />
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => reject(row.id)}
+            title="Tolak"
+            className="px-3 py-1 border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors duration-200"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+          {row.status !== "flagged" && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => flag(row.id)}
+              title="Tandai"
+              className="px-3 py-1 border-yellow-200 hover:bg-yellow-50 text-yellow-600 hover:text-yellow-700 transition-colors duration-200"
+            >
+              <Shield className="w-4 h-4" />
+            </Button>
+          )}
+        </>
+      ) : row.status === "in-progress" ? (
+        <>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => accept(row.id)}
+            title="Setujui"
+            className="px-3 py-1 border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700 transition-colors duration-200"
+          >
+            <Check className="w-4 h-4" />
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => reject(row.id)}
+            title="Tolak"
+            className="px-3 py-1 border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors duration-200"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </>
+      ) : (
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => updateStatus(row.id, "pending")}
+          title="Buka Ulang"
+          className="px-3 py-1 border-blue-200 hover:bg-blue-50 text-blue-600 hover:text-blue-700 transition-colors duration-200"
+        >
+          <RefreshCw className="w-4 h-4" />
+        </Button>
+      )}
+    </div>
+  );
+
   return (
     <div className="space-y-6">
       <div>
@@ -520,279 +661,52 @@ export const ModerationPage = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto border border-gray-200 rounded-lg">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-b border-gray-200">
-                  <TableHead className="w-12">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={toggleAllSelection}
-                      className="h-auto p-1 hover:bg-transparent"
-                    >
-                      {selectedItems.length === currentItems.length && currentItems.length > 0 ? (
-                        <CheckSquare className="w-4 h-4 text-blue-600" />
-                      ) : (
-                        <Square className="w-4 h-4 text-gray-400" />
-                      )}
-                    </Button>
-                  </TableHead>
-                  <TableHead className="font-semibold text-gray-700">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleSort('id')}
-                      className="h-auto p-0 font-semibold hover:bg-transparent"
-                    >
-                      ID
-                      {sort.field === 'id' && (
-                        sort.direction === 'asc' ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />
-                      )}
-                    </Button>
-                  </TableHead>
-                  <TableHead className="font-semibold text-gray-700">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleSort('type')}
-                      className="h-auto p-0 font-semibold hover:bg-transparent"
-                    >
-                      Jenis
-                      {sort.field === 'type' && (
-                        sort.direction === 'asc' ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />
-                      )}
-                    </Button>
-                  </TableHead>
-                  <TableHead className="font-semibold text-gray-700">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleSort('pondok')}
-                      className="h-auto p-0 font-semibold hover:bg-transparent"
-                    >
-                      Nama Pondok
-                      {sort.field === 'pondok' && (
-                        sort.direction === 'asc' ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />
-                      )}
-                    </Button>
-                  </TableHead>
-                  <TableHead className="font-semibold text-gray-700">Alasan Moderasi</TableHead>
-                  <TableHead className="font-semibold text-gray-700">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleSort('status')}
-                      className="h-auto p-0 font-semibold hover:bg-transparent"
-                    >
-                      Status
-                      {sort.field === 'status' && (
-                        sort.direction === 'asc' ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />
-                      )}
-                    </Button>
-                  </TableHead>
-                  <TableHead className="font-semibold text-gray-700">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleSort('priority')}
-                      className="h-auto p-0 font-semibold hover:bg-transparent"
-                    >
-                      Tingkat Risiko
-                      {sort.field === 'priority' && (
-                        sort.direction === 'asc' ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />
-                      )}
-                    </Button>
-                  </TableHead>
-                  <TableHead className="font-semibold text-gray-700">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleSort('submittedDate')}
-                      className="h-auto p-0 font-semibold hover:bg-transparent"
-                    >
-                      Tanggal Diajukan
-                      {sort.field === 'submittedDate' && (
-                        sort.direction === 'asc' ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />
-                      )}
-                    </Button>
-                  </TableHead>
-                  <TableHead className="font-semibold text-gray-700 text-center">Aksi</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {currentItems.map((r: ModerationItem) => (
-                  <TableRow
-                    key={r.id}
-                    className={`border-b border-gray-100 hover:bg-gray-50 ${selectedItems.includes(r.id) ? 'bg-blue-50' : ''}`}
-                  >
-                    <TableCell className="w-12">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleItemSelection(r.id)}
-                        className="h-auto p-1 hover:bg-transparent"
-                      >
-                        {selectedItems.includes(r.id) ? (
-                          <CheckSquare className="w-4 h-4 text-blue-600" />
-                        ) : (
-                          <Square className="w-4 h-4 text-gray-400" />
-                        )}
-                      </Button>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      <Badge variant="outline" className="text-xs">
-                        #{r.id}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {getTypeIcon(r.type)}
-                        <span className="text-sm font-medium">{getTypeLabel(r.type)}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium text-sm">{r.pondok}</div>
-                        <div className="text-xs text-gray-500">ID: {r.pondokId}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-sm text-red-600 font-medium">{r.reason}</span>
-                    </TableCell>
-                    <TableCell>
-                      {getStatusBadge(r.status)}
-                    </TableCell>
-                    <TableCell>
-                      {getPriorityBadge(r.priority)}
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <div>{r.submittedDate}</div>
-                        {r.moderatedDate && (
-                          <div className="text-xs text-gray-500">
-                            Mod: {r.moderatedDate}
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex justify-center gap-1">
-                        {r.status === "pending" || r.status === "flagged" ? (
-                          <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => accept(r.id)}
-                              title="Setujui"
-                              className="px-3 py-1 border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700 transition-colors duration-200"
-                            >
-                              <Check className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => reject(r.id)}
-                              title="Tolak"
-                              className="px-3 py-1 border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors duration-200"
-                            >
-                              <X className="w-4 h-4" />
-                            </Button>
-                            {r.status !== "flagged" && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => flag(r.id)}
-                                title="Tandai"
-                                className="px-3 py-1 border-yellow-200 hover:bg-yellow-50 text-yellow-600 hover:text-yellow-700 transition-colors duration-200"
-                              >
-                                <Shield className="w-4 h-4" />
-                              </Button>
-                            )}
-                          </>
-                        ) : r.status === "in-progress" ? (
-                          <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => accept(r.id)}
-                              title="Setujui"
-                              className="px-3 py-1 border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700 transition-colors duration-200"
-                            >
-                              <Check className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => reject(r.id)}
-                              title="Tolak"
-                              className="px-3 py-1 border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors duration-200"
-                            >
-                              <X className="w-4 h-4" />
-                            </Button>
-                          </>
-                        ) : (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => updateStatus(r.id, "pending")}
-                            title="Buka Ulang"
-                            className="px-3 py-1 border-blue-200 hover:bg-blue-50 text-blue-600 hover:text-blue-700 transition-colors duration-200"
-                          >
-                            <RefreshCw className="w-4 h-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-          {currentItems.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <Shield className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-              <p className="text-lg font-medium">Tidak ada konten yang sesuai dengan filter yang dipilih.</p>
-            </div>
-          ) : (
-            totalPages > 1 && (
-              <div className="flex items-center justify-between mt-4">
-                <div className="text-sm text-gray-600">
-                  Menampilkan {indexOfFirstItem + 1} hingga {Math.min(indexOfLastItem, sortedRows.length)} dari {sortedRows.length} data
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="border-gray-300"
-                  >
-                    Previous
-                  </Button>
-                  {[...Array(totalPages)].map((_, index) => (
-                    <Button
-                      key={index}
-                      variant={currentPage === index + 1 ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => handlePageChange(index + 1)}
-                      className={currentPage === index + 1 ? "bg-primary" : "border-gray-300"}
-                    >
-                      {index + 1}
-                    </Button>
-                  ))}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="border-gray-300"
-                  >
-                    Next
-                  </Button>
-                </div>
+          <ResponsiveTable
+            data={currentItems}
+            columns={tableColumns}
+            keyField="id"
+            actions={renderActions}
+            emptyMessage="Tidak ada konten yang sesuai dengan filter yang dipilih"
+            className="border border-gray-200 rounded-lg overflow-hidden"
+          />
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4">
+              <div className="text-sm text-gray-600">
+                Menampilkan {indexOfFirstItem + 1} hingga {Math.min(indexOfLastItem, sortedRows.length)} dari {sortedRows.length} data
               </div>
-            )
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="border-gray-300"
+                >
+                  Previous
+                </Button>
+                {[...Array(totalPages)].map((_, index) => (
+                  <Button
+                    key={index}
+                    variant={currentPage === index + 1 ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handlePageChange(index + 1)}
+                    className={currentPage === index + 1 ? "bg-primary" : "border-gray-300"}
+                  >
+                    {index + 1}
+                  </Button>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="border-gray-300"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>
