@@ -23,7 +23,7 @@ interface ModerationItem {
   contentExcerpt?: string;
   fullContent?: string;
 }
-
+ 
 interface FilterState {
   search: string;
   type: string;
@@ -205,34 +205,29 @@ export const ModerationPage = () => {
   const getStatusBadge = (status: ModerationItem["status"]) => {
     const statusConfig = {
       pending: {
-        variant: "secondary" as const,
-        label: "Menunggu",
-        className: "bg-yellow-100 text-yellow-800 border-yellow-200"
+        variant: "waiting" as const,
+        label: "Menunggu"
       },
       "in-progress": {
-        variant: "default" as const,
-        label: "Diproses",
-        className: "bg-green-500 text-white border-green-600"
+        variant: "in-progress" as const,
+        label: "Diproses"
       },
       approved: {
         variant: "verified" as const,
-        label: "Disetujui",
-        className: "bg-green-100 text-green-800 border-green-200"
+        label: "Disetujui"
       },
       rejected: {
         variant: "destructive" as const,
-        label: "Ditolak",
-        className: "bg-red-100 text-red-800 border-red-200"
+        label: "Ditolak"
       },
       flagged: {
         variant: "warning" as const,
-        label: "Ditandai",
-        className: "bg-red-500 text-white border-red-600"
+        label: "Ditandai"
       }
     };
 
     const config = statusConfig[status];
-    return <Badge variant={config.variant} className={config.className}>{config.label}</Badge>;
+    return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
   const getPriorityBadge = (priority: ModerationItem["priority"]) => {
