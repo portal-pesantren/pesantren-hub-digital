@@ -78,20 +78,6 @@ export const DashboardSidebar = ({ role, currentPath = "/", onClose }: Dashboard
             </div>
           </div>
 
-          {/* Close button for mobile drawer */}
-          {isMobileDrawer && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              className="h-8 w-8 text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Tutup menu</span>
-            </Button>
-          )}
-        </div>
-
         {/* Navigation Menu */}
         <nav className="space-y-1">
           {menuItems.map((item) => {

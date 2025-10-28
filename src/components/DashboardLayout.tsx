@@ -59,16 +59,6 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
       {/* Mobile Sidebar - Drawer */}
       <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-        <SheetTrigger asChild className="md:hidden">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="fixed top-4 left-4 z-50 bg-background/80 backdrop-blur-sm border shadow-md"
-          >
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle menu</span>
-          </Button>
-        </SheetTrigger>
         <SheetContent side="left" className="w-64 p-0 bg-sidebar">
           <DashboardSidebar
             role={role}
@@ -82,6 +72,8 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <DashboardNavbar
           role={role}
           onRoleSwitch={switchRole}
+          onMenuToggle={() => setMobileMenuOpen(true)}
+          showMenuButton={true}
         />
         <main className="flex-1 p-4 md:p-6 overflow-y-auto">
           {children}

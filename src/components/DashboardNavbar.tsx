@@ -1,4 +1,4 @@
-import { Bell, Search, User, LogOut, ChevronDown } from "lucide-react";
+import { Bell, Search, User, LogOut, ChevronDown, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,17 +13,43 @@ interface DashboardNavbarProps {
   role: "pondok" | "super";
   pondokName?: string;
   onRoleSwitch?: () => void;
+  onMenuToggle?: () => void;
+  showMenuButton?: boolean;
 }
 
-export const DashboardNavbar = ({ role, pondokName = "Pondok Pesantren Al-Hikmah", onRoleSwitch }: DashboardNavbarProps) => {
+export const DashboardNavbar = ({ role, pondokName = "Pondok Pesantren Al-Hikmah", onRoleSwitch, onMenuToggle, showMenuButton = false }: DashboardNavbarProps) => {
   return (
-    <header className="h-16 border-b bg-card flex items-center justify-between px-6 shadow-card">
+    <header className="h-16 border-b bg-card flex items-center justify-between px-4 md:px-6 shadow-card">
       <div className="flex items-center gap-4">
-        <h1 className="text-xl font-bold text-foreground">
-          {role === "pondok" ? pondokName : "Portal Pesantren Indonesia"}
-        </h1>
+        {/* Hamburger Menu Button for Mobile */}
+        {showMenuButton && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onMenuToggle}
+            className="md:hidden"
+          >
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Toggle menu</span>
+          </Button>
+        )}
+
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center shadow-elegant">
+            <span className="text-white font-bold text-sm">PP</span>
+          </div>
+          <div>
+            <h1 className="text-lg md:text-xl font-bold text-foreground">
+              Portal Pondok Pesantren
+            </h1>
+            <p className="text-xs text-muted-foreground hidden md:block">
+              {role === "pondok" ? "Dashboard Pondok" : "Dashboard Super Admin"}
+            </p>
+          </div>
+        </div>
+
         {role === "pondok" && (
-          <span className="px-3 py-1 text-xs font-medium bg-gradient-primary text-white rounded-full">
+          <span className="hidden sm:flex px-3 py-1 text-xs font-medium bg-gradient-primary text-white rounded-full">
             Terverifikasi
           </span>
         )}
