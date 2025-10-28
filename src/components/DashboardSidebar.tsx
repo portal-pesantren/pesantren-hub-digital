@@ -60,26 +60,43 @@ export const DashboardSidebar = ({ role, currentPath = "/", onClose }: Dashboard
   const isMobileDrawer = !!onClose;
 
   return (
-    <aside className="w-64 min-h-screen bg-sidebar border-r border-sidebar-border">
-      <div className="p-6">
+    <aside className={cn(
+      "w-64 bg-sidebar border-r border-sidebar-border",
+      isMobileDrawer ? "min-h-screen h-screen" : "min-h-screen"
+    )}>
+      <div className="flex flex-col h-full">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-elegant">
-              <School className="w-6 h-6 text-white" />
+        <div className="p-6 border-b border-sidebar-border">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-elegant">
+                <School className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-sidebar-foreground">
+                  {role === "pondok" ? "Pondok Portal" : "Super Admin"}
+                </h2>
+                <p className="text-xs text-sidebar-foreground/70">
+                  {role === "pondok" ? "Admin Dashboard" : "Global Control"}
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-lg font-bold text-sidebar-foreground">
-                {role === "pondok" ? "Pondok Portal" : "Super Admin"}
-              </h2>
-              <p className="text-xs text-sidebar-foreground/70">
-                {role === "pondok" ? "Admin Dashboard" : "Global Control"}
-              </p>
-            </div>
+            {isMobileDrawer && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                className="text-sidebar-foreground hover:bg-sidebar-accent"
+              >
+                <X className="w-5 h-5" />
+                <span className="sr-only">Close menu</span>
+              </Button>
+            )}
           </div>
+        </div>
 
-        {/* Navigation Menu */}
-        <nav className="space-y-1">
+        {/* Navigation Menu - Scrollable */}
+        <nav className="flex-1 overflow-y-auto p-4 space-y-1">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentPath === item.path;

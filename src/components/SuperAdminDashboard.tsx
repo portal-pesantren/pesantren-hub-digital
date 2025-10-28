@@ -37,15 +37,15 @@ const COLORS = pondokDistribution.map(item => item.color);
 
 export const SuperAdminDashboard = () => {
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="space-y-3 sm:space-y-4 md:space-y-6">
       {/* Welcome Section */}
-      <div className="bg-gradient-primary rounded-xl p-6 md:p-8 text-white shadow-elegant">
-        <h1 className="text-2xl md:text-3xl font-bold mb-2">Dashboard Super Admin</h1>
-        <p className="text-white/90 text-sm md:text-base">Kelola dan pantau seluruh ekosistem Portal Pesantren Indonesia</p>
+      <div className="bg-gradient-primary rounded-xl p-4 sm:p-6 md:p-8 text-white shadow-elegant">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">Dashboard Super Admin</h1>
+        <p className="text-white/90 text-xs sm:text-sm md:text-base">Kelola dan pantau seluruh ekosistem Portal Pesantren Indonesia</p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
         <StatCard
           title="Total Pondok"
           value={531}
@@ -73,119 +73,191 @@ export const SuperAdminDashboard = () => {
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
         <Card className="shadow-card">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg md:text-base">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
               <MapPin className="w-5 h-5 text-primary" />
-              <span className="hidden sm:inline">Distribusi Pondok per Wilayah</span>
-              <span className="sm:hidden">Distribusi Wilayah</span>
+              <span className="hidden xs:inline">Distribusi Pondok</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="flex justify-center">
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={pondokDistribution}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => {
-                    const shortName = name.length > 8 ? name.substring(0, 6) + "..." : name;
-                    return window.innerWidth < 640 ? `${shortName}: ${(percent * 100).toFixed(0)}%` : `${name}: ${(percent * 100).toFixed(0)}%`;
-                  }}
-                  outerRadius={80}
-                  fill="hsl(var(--primary))"
-                  dataKey="value"
-                >
-                  {pondokDistribution.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '8px'
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            <div className="w-full overflow-x-auto">
+              <ResponsiveContainer width="100%" height={200} minWidth={300}>
+                <PieChart>
+                  <Pie
+                    data={pondokDistribution}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => {
+                      const shortName = name.length > 8 ? name.substring(0, 6) + "..." : name;
+                      return `${shortName}: ${(percent * 100).toFixed(0)}%`;
+                    }}
+                    outerRadius={60}
+                    fill="hsl(var(--primary))"
+                    dataKey="value"
+                  >
+                    {pondokDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px'
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </CardContent>
         </Card>
 
         <Card className="shadow-card">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg md:text-base">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
               <TrendingUp className="w-5 h-5 text-primary" />
-              <span className="hidden sm:inline">Pendaftaran Bulanan</span>
-              <span className="sm:hidden">Pendaftaran</span>
+              <span className="hidden xs:inline">Pendaftaran Bulanan</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={monthlyRegistrations}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis
-                  dataKey="month"
-                  stroke="hsl(var(--muted-foreground))"
-                  tick={{ fontSize: 12 }}
-                />
-                <YAxis stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 12 }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '8px'
-                  }}
-                />
-                <Legend
-                  wrapperStyle={{ fontSize: '12px' }}
-                  iconSize={12}
-                />
-                <Bar dataKey="pondok" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Pondok" />
-                <Bar dataKey="users" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} name="Pengguna" />
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="w-full overflow-x-auto">
+              <ResponsiveContainer width="100%" height={200} minWidth={300}>
+                <BarChart data={monthlyRegistrations}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis
+                    dataKey="month"
+                    stroke="hsl(var(--muted-foreground))"
+                    tick={{ fontSize: 10 }}
+                  />
+                  <YAxis stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 10 }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Legend
+                    wrapperStyle={{ fontSize: '10px' }}
+                    iconSize={10}
+                  />
+                  <Bar dataKey="pondok" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Pondok" />
+                  <Bar dataKey="users" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} name="Pengguna" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Pending Verifications */}
+      {/* Pending Verifications - Responsive Table */}
       <Card className="shadow-card">
-        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <CardTitle className="text-lg">Pondok Menunggu Verifikasi</CardTitle>
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 sm:p-6">
+          <CardTitle className="text-base sm:text-lg">Pondok Menunggu Verifikasi</CardTitle>
           <Button variant="outline" size="sm" className="w-full sm:w-auto">
             Lihat Semua
           </Button>
         </CardHeader>
-        <CardContent className="p-4 md:p-6">
-          <div className="space-y-3">
+        <CardContent className="p-0">
+          {/* Mobile View - Card Layout */}
+          <div className="sm:hidden p-4 space-y-3">
             {pendingPondok.map((pondok, index) => (
               <div
                 key={index}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 md:p-4 rounded-lg border hover:bg-secondary/50 transition-colors gap-3"
+                className="bg-card rounded-lg border p-3 space-y-2"
               >
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-foreground mb-1 truncate">{pondok.name}</h4>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3 flex-shrink-0" />
-                      <span className="truncate">{pondok.location}</span>
-                    </span>
-                    <span>{pondok.date}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 sm:flex-shrink-0">
-                  <Badge variant={pondok.statusType as any} className="text-xs">
+                <div className="flex items-start justify-between gap-2">
+                  <h4 className="font-medium text-sm leading-tight line-clamp-2">{pondok.name}</h4>
+                  <Badge variant={pondok.statusType as any} className="text-xs flex-shrink-0">
                     {pondok.status === "in-progress" ? "In Progress" : pondok.status}
                   </Badge>
-                  <Button size="sm" variant="default" className="flex-shrink-0">
-                    Review
-                  </Button>
                 </div>
+                <div className="space-y-1 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="w-3 h-3 flex-shrink-0" />
+                    <span className="truncate">{pondok.location}</span>
+                  </div>
+                  <div>{pondok.date}</div>
+                </div>
+                <Button size="sm" variant="default" className="w-full">
+                  Review
+                </Button>
               </div>
             ))}
+          </div>
+
+          {/* Tablet & Desktop View - Table Layout */}
+          <div className="hidden sm:block p-4 sm:p-6">
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <div className="inline-block min-w-full align-middle">
+                <div className="overflow-hidden rounded-lg border">
+                  <table className="min-w-full divide-y divide-border">
+                    <thead className="bg-muted/50">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                          Nama Pondok
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">
+                          Lokasi
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">
+                          Tanggal
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                          Status
+                        </th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                          Aksi
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-card divide-y divide-border">
+                      {pendingPondok.map((pondok, index) => (
+                        <tr key={index} className="hover:bg-muted/25 transition-colors">
+                          <td className="px-4 py-3">
+                            <div className="text-sm font-medium text-foreground max-w-xs lg:max-w-md">
+                              <div className="truncate">{pondok.name}</div>
+                              <div className="text-xs text-muted-foreground lg:hidden mt-1">
+                                <div className="flex items-center gap-1">
+                                  <MapPin className="w-3 h-3" />
+                                  <span className="truncate">{pondok.location}</span>
+                                </div>
+                              </div>
+                              <div className="text-xs text-muted-foreground md:hidden lg:hidden mt-1">
+                                {pondok.date}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 hidden lg:table-cell">
+                            <div className="text-sm text-muted-foreground max-w-xs truncate">
+                              {pondok.location}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 hidden md:table-cell">
+                            <div className="text-sm text-muted-foreground">
+                              {pondok.date}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <Badge variant={pondok.statusType as any} className="text-xs">
+                              {pondok.status === "in-progress" ? "In Progress" : pondok.status}
+                            </Badge>
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <Button size="sm" variant="default" className="flex-shrink-0">
+                              Review
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>

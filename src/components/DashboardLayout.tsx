@@ -52,14 +52,14 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   return (
     <div key={key} className="min-h-screen bg-background flex w-full">
-      {/* Desktop Sidebar */}
-      <div className="hidden md:block">
+      {/* Desktop Sidebar - Hidden on mobile and tablet */}
+      <div className="hidden lg:block">
         <DashboardSidebar role={role} currentPath={location.pathname} />
       </div>
 
-      {/* Mobile Sidebar - Drawer */}
+      {/* Mobile & Tablet Sidebar - Drawer */}
       <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-        <SheetContent side="left" className="w-64 p-0 bg-sidebar">
+        <SheetContent side="left" className="w-64 p-0 bg-sidebar max-w-[80vw]">
           <DashboardSidebar
             role={role}
             currentPath={location.pathname}
@@ -68,15 +68,17 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </SheetContent>
       </Sheet>
 
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <DashboardNavbar
           role={role}
           onRoleSwitch={switchRole}
           onMenuToggle={() => setMobileMenuOpen(true)}
           showMenuButton={true}
         />
-        <main className="flex-1 p-4 md:p-6 overflow-y-auto">
-          {children}
+        <main className="flex-1 p-3 sm:p-4 md:p-6 overflow-y-auto overflow-x-hidden">
+          <div className="max-w-full">
+            {children}
+          </div>
         </main>
       </div>
     </div>
