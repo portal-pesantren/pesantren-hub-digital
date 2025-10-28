@@ -169,6 +169,10 @@ export const GalleryPage = () => {
     setMediaData(mediaData.filter(media => media.id !== id));
   };
 
+  const handleDeleteVideo = (id: number) => {
+    setMediaData(mediaData.filter(media => media.id !== id));
+  };
+
   // Filter data berdasarkan pencarian dan kategori
   const filteredPhotos = mediaData.filter(media => {
     const matchesSearch = media.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -215,14 +219,15 @@ export const GalleryPage = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Galeri Media</h1>
-          <p className="text-muted-foreground">Kelola foto dan video pondok pesantren</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Galeri Media</h1>
+          <p className="text-responsive-sm text-muted-foreground">Kelola foto dan video pondok pesantren</p>
         </div>
-        <Button 
-          className="bg-gradient-primary text-white shadow-elegant"
+        <Button
+          className="bg-gradient-primary text-white shadow-elegant w-full sm:w-auto touch-target"
           onClick={() => {
             setEditingMedia(null);
             form.reset();
@@ -235,7 +240,7 @@ export const GalleryPage = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
         <StatCard
           title="Total Foto"
           value={totalPhotos}
@@ -261,24 +266,28 @@ export const GalleryPage = () => {
 
       {/* Search and Filter */}
       <Card className="shadow-card">
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative flex-1">
+        <CardContent className="p-4 sm:p-6">
+          <div className="space-y-4">
+            {/* Search Input */}
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Cari foto atau video..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 w-full"
               />
             </div>
-            <div className="flex gap-2">
+
+            {/* Category Filters */}
+            <div className="flex flex-wrap gap-2">
               {categories.map((category) => (
                 <Button
                   key={category}
                   variant={selectedCategory === category ? "default" : "outline"}
                   size="sm"
                   onClick={() => setSelectedCategory(category)}
+                  className="touch-target-sm"
                 >
                   {category === "all" ? "Semua" : category}
                 </Button>
@@ -290,158 +299,217 @@ export const GalleryPage = () => {
 
       {/* Media Gallery */}
       <Card className="shadow-card">
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full max-w-md grid-cols-2">
-              <TabsTrigger value="photos">Foto ({filteredPhotos.length})</TabsTrigger>
-              <TabsTrigger value="videos">Video ({filteredVideos.length})</TabsTrigger>
+            <TabsList className="grid w-full max-w-md grid-cols-2 h-12">
+              <TabsTrigger value="photos" className="text-responsive-sm touch-target">
+                Foto ({filteredPhotos.length})
+              </TabsTrigger>
+              <TabsTrigger value="videos" className="text-responsive-sm touch-target">
+                Video ({filteredVideos.length})
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="photos" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredPhotos.map((photo) => (
-                  <div key={photo.id} className="group relative">
-                    <Card className="overflow-hidden hover:shadow-elegant transition-shadow">
-                      <div className="aspect-square relative">
-                        <div className="w-full h-full bg-gradient-primary/10 flex items-center justify-center">
-                          <Image className="w-16 h-16 text-primary" />
-                        </div>
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="secondary">
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="secondary"
-                              onClick={() => openEditForm(photo)}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button size="sm" variant="destructive">
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Apakah Anda yakin ingin menghapus foto <strong>{photo.title}</strong>? 
-                                    Tindakan ini tidak dapat dibatalkan.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Batal</AlertDialogCancel>
-                                  <AlertDialogAction 
-                                    onClick={() => handleDeleteMedia(photo.id)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  >
-                                    Hapus
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
+              {filteredPhotos.length === 0 ? (
+                <div className="text-center py-12">
+                  <Image className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-responsive-base text-muted-foreground">
+                    Tidak ada foto yang ditemukan
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                  {filteredPhotos.map((photo) => (
+                    <div key={photo.id} className="group relative">
+                      <Card className="overflow-hidden hover:shadow-elegant transition-all duration-200 border border-border/50">
+                        <div className="aspect-square relative">
+                          <div className="w-full h-full bg-gradient-primary/10 flex items-center justify-center">
+                            <Image className="w-12 h-12 sm:w-16 sm:h-16 text-primary" />
+                          </div>
+                          {/* Hover Actions - Desktop Only */}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                            <div className="flex gap-2">
+                              <Button size="sm" variant="secondary" className="touch-target-sm hidden sm:flex">
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => openEditForm(photo)}
+                                className="touch-target-sm"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button size="sm" variant="destructive" className="touch-target-sm">
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent className="max-w-md mx-4">
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
+                                    <AlertDialogDescription className="text-sm">
+                                      Apakah Anda yakin ingin menghapus foto <strong>{photo.title}</strong>?
+                                      Tindakan ini tidak dapat dibatalkan.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel className="touch-target">Batal</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDeleteMedia(photo.id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90 touch-target"
+                                    >
+                                      Hapus
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <CardContent className="p-4">
-                        <div className="space-y-2">
-                          <div className="flex items-start justify-between">
-                            <h3 className="font-medium text-sm line-clamp-1">{photo.title}</h3>
-                            <Badge variant="outline" className="text-xs">
-                              {photo.category}
-                            </Badge>
+                        <CardContent className="p-3 sm:p-4">
+                          <div className="space-y-2 sm:space-y-3">
+                            <div className="flex items-start justify-between gap-2">
+                              <h3 className="font-medium text-responsive-sm line-clamp-2 flex-1">{photo.title}</h3>
+                              <Badge variant="outline" className="text-xs flex-shrink-0">
+                                {photo.category}
+                              </Badge>
+                            </div>
+                            <p className="text-responsive-xs text-muted-foreground line-clamp-2">
+                              {photo.description}
+                            </p>
+                            <div className="flex justify-between text-responsive-xs text-muted-foreground">
+                              <span>{photo.dimensions}</span>
+                              <span>{photo.size}</span>
+                            </div>
+                            {/* Mobile Quick Actions */}
+                            <div className="flex gap-2 pt-2 border-t border-border/50 sm:hidden">
+                              <Button size="sm" variant="outline" className="flex-1 touch-target-sm">
+                                <Eye className="w-3 h-3 mr-1" />
+                                Lihat
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => openEditForm(photo)}
+                                className="flex-1 touch-target-sm"
+                              >
+                                <Edit className="w-3 h-3 mr-1" />
+                                Edit
+                              </Button>
+                            </div>
                           </div>
-                          <p className="text-xs text-muted-foreground line-clamp-2">
-                            {photo.description}
-                          </p>
-                          <div className="flex justify-between text-xs text-muted-foreground">
-                            <span>{photo.dimensions}</span>
-                            <span>{photo.size}</span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                ))}
-              </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  ))}
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="videos" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredVideos.map((video) => (
-                  <div key={video.id} className="group relative">
-                    <Card className="overflow-hidden hover:shadow-elegant transition-shadow">
-                      <div className="aspect-video relative">
-                        <div className="w-full h-full bg-gradient-primary/10 flex items-center justify-center">
-                          <Video className="w-16 h-16 text-primary" />
-                        </div>
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="secondary">
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="secondary"
-                              onClick={() => openEditForm(video)}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button size="sm" variant="destructive">
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Apakah Anda yakin ingin menghapus video <strong>{video.title}</strong>? 
-                                    Tindakan ini tidak dapat dibatalkan.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Batal</AlertDialogCancel>
-                                  <AlertDialogAction 
-                                    onClick={() => handleDeleteMedia(video.id)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  >
-                                    Hapus
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
+              {filteredVideos.length === 0 ? (
+                <div className="text-center py-12">
+                  <Video className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-responsive-base text-muted-foreground">
+                    Tidak ada video yang ditemukan
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                  {filteredVideos.map((video) => (
+                    <div key={video.id} className="group relative">
+                      <Card className="overflow-hidden hover:shadow-elegant transition-all duration-200 border border-border/50">
+                        <div className="aspect-video relative">
+                          <div className="w-full h-full bg-gradient-primary/10 flex items-center justify-center">
+                            <Video className="w-12 h-12 sm:w-16 sm:h-16 text-primary" />
+                          </div>
+                          {/* Duration Badge */}
+                          <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                            {video.duration}
+                          </div>
+                          {/* Hover Actions - Desktop Only */}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                            <div className="flex gap-2">
+                              <Button size="sm" variant="secondary" className="touch-target-sm hidden sm:flex">
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => openEditForm(video)}
+                                className="touch-target-sm"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button size="sm" variant="destructive" className="touch-target-sm">
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent className="max-w-md mx-4">
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
+                                    <AlertDialogDescription className="text-sm">
+                                      Apakah Anda yakin ingin menghapus video <strong>{video.title}</strong>?
+                                      Tindakan ini tidak dapat dibatalkan.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel className="touch-target">Batal</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDeleteVideo(video.id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90 touch-target"
+                                    >
+                                      Hapus
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
                           </div>
                         </div>
-                        <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                          {video.duration}
-                        </div>
-                      </div>
-                      <CardContent className="p-4">
-                        <div className="space-y-2">
-                          <div className="flex items-start justify-between">
-                            <h3 className="font-medium text-sm line-clamp-1">{video.title}</h3>
-                            <Badge variant="outline" className="text-xs">
-                              {video.category}
-                            </Badge>
+                        <CardContent className="p-3 sm:p-4">
+                          <div className="space-y-2 sm:space-y-3">
+                            <div className="flex items-start justify-between gap-2">
+                              <h3 className="font-medium text-responsive-sm line-clamp-2 flex-1">{video.title}</h3>
+                              <Badge variant="outline" className="text-xs flex-shrink-0">
+                                {video.category}
+                              </Badge>
+                            </div>
+                            <p className="text-responsive-xs text-muted-foreground line-clamp-2">
+                              {video.description}
+                            </p>
+                            <div className="flex justify-between text-responsive-xs text-muted-foreground">
+                              <span>{video.duration}</span>
+                              <span>{video.size}</span>
+                            </div>
+                            {/* Mobile Quick Actions */}
+                            <div className="flex gap-2 pt-2 border-t border-border/50 sm:hidden">
+                              <Button size="sm" variant="outline" className="flex-1 touch-target-sm">
+                                <Eye className="w-3 h-3 mr-1" />
+                                Play
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => openEditForm(video)}
+                                className="flex-1 touch-target-sm"
+                              >
+                                <Edit className="w-3 h-3 mr-1" />
+                                Edit
+                              </Button>
+                            </div>
                           </div>
-                          <p className="text-xs text-muted-foreground line-clamp-2">
-                            {video.description}
-                          </p>
-                          <div className="flex justify-between text-xs text-muted-foreground">
-                            <span>{video.duration}</span>
-                            <span>{video.size}</span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                ))}
-              </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  ))}
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </CardContent>

@@ -10,7 +10,11 @@ export default {
       padding: "2rem",
       screens: {
         "xs": "480px",
-        "2xl": "1400px",
+        "sm": "640px",   // Mobile large
+        "md": "768px",   // Tablet
+        "lg": "1024px",  // Desktop
+        "xl": "1280px",  // Desktop large
+        "2xl": "1400px", // Desktop extra large
       },
     },
     safelist: [

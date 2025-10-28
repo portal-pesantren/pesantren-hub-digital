@@ -61,22 +61,22 @@ export const DashboardSidebar = ({ role, currentPath = "/", onClose }: Dashboard
 
   return (
     <aside className={cn(
-      "w-64 bg-sidebar border-r border-sidebar-border",
+      "w-64 sm:w-72 bg-sidebar border-r border-sidebar-border",
       isMobileDrawer ? "min-h-screen h-screen" : "min-h-screen"
     )}>
       <div className="flex flex-col h-full">
         {/* Header */}
-        <div className="p-6 border-b border-sidebar-border">
+        <div className="p-4 sm:p-6 border-b border-sidebar-border">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-elegant">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-elegant flex-shrink-0">
                 <School className="w-6 h-6 text-white" />
               </div>
-              <div>
-                <h2 className="text-lg font-bold text-sidebar-foreground">
+              <div className="min-w-0 flex-1">
+                <h2 className="text-responsive-base font-bold text-sidebar-foreground truncate">
                   {role === "pondok" ? "Pondok Portal" : "Super Admin"}
                 </h2>
-                <p className="text-xs text-sidebar-foreground/70">
+                <p className="text-responsive-xs text-sidebar-foreground/70 truncate">
                   {role === "pondok" ? "Admin Dashboard" : "Global Control"}
                 </p>
               </div>
@@ -86,7 +86,7 @@ export const DashboardSidebar = ({ role, currentPath = "/", onClose }: Dashboard
                 variant="ghost"
                 size="icon"
                 onClick={onClose}
-                className="text-sidebar-foreground hover:bg-sidebar-accent"
+                className="text-sidebar-foreground hover:bg-sidebar-accent flex-shrink-0 touch-target"
               >
                 <X className="w-5 h-5" />
                 <span className="sr-only">Close menu</span>
@@ -96,7 +96,7 @@ export const DashboardSidebar = ({ role, currentPath = "/", onClose }: Dashboard
         </div>
 
         {/* Navigation Menu - Scrollable */}
-        <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+        <nav className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-1 hide-scrollbar">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentPath === item.path;
@@ -106,18 +106,27 @@ export const DashboardSidebar = ({ role, currentPath = "/", onClose }: Dashboard
                 key={item.path}
                 onClick={() => handleNavigation(item.path)}
                 className={cn(
-                  "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-left",
+                  "w-full flex items-center gap-3 px-3 sm:px-4 py-3 rounded-lg transition-all duration-200 text-left touch-target",
                   isActive
                     ? "bg-sidebar-primary text-sidebar-primary-foreground font-medium shadow-sm"
                     : "text-sidebar-foreground/90 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                 )}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
-                <span className="text-sm truncate">{item.label}</span>
+                <span className="text-responsive-sm truncate">{item.label}</span>
               </button>
             );
           })}
         </nav>
+
+        {/* Footer - Optional for mobile */}
+        {isMobileDrawer && (
+          <div className="p-4 border-t border-sidebar-border">
+            <div className="text-xs text-sidebar-foreground/50 text-center">
+              © 2025 Portal Pondok Pesantren
+            </div>
+          </div>
+        )}
       </div>
     </aside>
   );

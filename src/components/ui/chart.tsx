@@ -34,10 +34,18 @@ const ChartContainer = React.forwardRef<
   React.ComponentProps<"div"> & {
     config: ChartConfig;
     children: React.ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>["children"];
+    aspectRatio?: "video" | "square" | "auto";
+    minHeight?: number;
   }
->(({ id, className, children, config, ...props }, ref) => {
+>(({ id, className, children, config, aspectRatio = "video", minHeight = 200, ...props }, ref) => {
   const uniqueId = React.useId();
   const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`;
+
+  const aspectClasses = {
+    video: "aspect-video",
+    square: "aspect-square",
+    auto: "h-auto min-h-[200px]"
+  };
 
   return (
     <ChartContext.Provider value={{ config }}>
@@ -45,13 +53,26 @@ const ChartContainer = React.forwardRef<
         data-chart={chartId}
         ref={ref}
         className={cn(
-          "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-none [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none",
+          "flex justify-center text-xs w-full overflow-hidden",
+          aspectClasses[aspectRatio],
+          minHeight && `min-h-[${minHeight}px]`,
+          "[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-none [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none",
+          // Mobile-specific styles
+          "[&_.recharts-cartesian-axis-tick_text]:text-xs sm:[&_.recharts-cartesian-axis-tick_text]:text-sm",
+          "[&_.recharts-legend-item-text]:text-xs sm:[&_.recharts-legend-item-text]:text-sm",
+          "[&_.recharts-tooltip-wrapper]:text-xs",
           className,
         )}
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        <RechartsPrimitive.ResponsiveContainer>{children}</RechartsPrimitive.ResponsiveContainer>
+        <RechartsPrimitive.ResponsiveContainer
+          width="100%"
+          height={minHeight}
+          minWidth={280}
+        >
+          {children}
+        </RechartsPrimitive.ResponsiveContainer>
       </div>
     </ChartContext.Provider>
   );
@@ -299,5 +320,76 @@ function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key:
 
   return configLabelKey in config ? config[configLabelKey] : config[key as keyof typeof config];
 }
+
+// Mobile-friendly Chart Wrapper
+export const ResponsiveChartWrapper = ({
+  children,
+  title,
+  className
+}: {
+  children: React.ReactNode;
+  title?: string;
+  className?: string;
+}) => (
+  <div className={cn("w-full space-y-4", className)}>
+    {title && (
+      <h3 className="text-responsive-base font-semibold text-foreground text-center sm:text-left">
+        {title}
+      </h3>
+    )}
+    <div className="w-full overflow-x-auto -mx-2 px-2 sm:mx-0 sm:px-0">
+      <div className="min-w-full">
+        {children}
+      </div>
+    </div>
+  </div>
+);
+
+// Mobile-friendly Legend Component
+export const MobileLegend = ({
+  payload,
+  config,
+  nameKey,
+  className
+}: {
+  payload: any[];
+  config: ChartConfig;
+  nameKey?: string;
+  className?: string;
+}) => {
+  if (!payload?.length) return null;
+
+  return (
+    <div className={cn(
+      "flex flex-wrap justify-center gap-2 sm:gap-4 mt-4",
+      className
+    )}>
+      {payload.map((item, index) => {
+        const key = `${nameKey || item.dataKey || "value"}`;
+        const itemConfig = getPayloadConfigFromPayload(config, item, key);
+
+        return (
+          <div
+            key={item.value || index}
+            className={cn(
+              "flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm",
+              "px-2 py-1 rounded-md bg-muted/30 border border-border/50"
+            )}
+          >
+            <div
+              className="w-2 h-2 sm:w-3 sm:h-3 shrink-0 rounded-[2px]"
+              style={{
+                backgroundColor: item.color,
+              }}
+            />
+            <span className="font-medium text-foreground">
+              {itemConfig?.label || item.name}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 export { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent, ChartStyle };

@@ -21,10 +21,13 @@ const buttonVariants = cva(
         danger: "bg-danger text-danger-foreground hover:bg-danger/90",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
+        xs: "h-8 px-3 py-1.5 text-xs rounded-md min-h-[32px]",
+        sm: "h-9 px-3 py-2 text-sm rounded-md min-h-[36px]",
+        default: "h-10 px-4 py-2 text-sm rounded-md min-h-[40px]",
+        lg: "h-11 px-6 py-2.5 text-base rounded-md min-h-[44px]",
+        icon: "h-10 w-10 min-h-[40px] min-w-[40px]",
+        "icon-sm": "h-8 w-8 min-h-[32px] min-w-[32px]",
+        "icon-lg": "h-12 w-12 min-h-[48px] min-w-[48px]",
       },
     },
     defaultVariants: {

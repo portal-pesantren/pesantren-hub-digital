@@ -59,7 +59,10 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
       {/* Mobile & Tablet Sidebar - Drawer */}
       <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-        <SheetContent side="left" className="w-64 p-0 bg-sidebar max-w-[80vw]">
+        <SheetContent
+          side="left"
+          className="w-64 sm:w-72 p-0 bg-sidebar max-w-[85vw] sm:max-w-[80vw] border-r border-sidebar-border"
+        >
           <DashboardSidebar
             role={role}
             currentPath={location.pathname}
@@ -75,9 +78,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           onMenuToggle={() => setMobileMenuOpen(true)}
           showMenuButton={true}
         />
-        <main className="flex-1 p-3 sm:p-4 md:p-6 overflow-y-auto overflow-x-hidden">
-          <div className="max-w-full">
-            {children}
+        <main className="flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="p-responsive p-responsive-sm sm:p-4 md:p-6 lg:p-8">
+            <div className="w-full max-w-full mx-auto">
+              {children}
+            </div>
           </div>
         </main>
       </div>
