@@ -3,42 +3,51 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { ResponsiveTable } from "@/components/ui/responsive-table";
-import { Shield, Check, X, Search, Filter, FileText, Image, Video, MessageCircle, RefreshCw, CheckSquare } from "lucide-react";
+import { ContentPreviewModal } from "@/components/moderation/ContentPreviewModal";
+import { Shield, Check, X, Search, Filter, FileText, Image, Video, MessageCircle, RefreshCw, Eye, Brain } from "lucide-react";
+import { ModerationItemEnhanced, AIContentAnalysis } from "@/types/moderation";
 
-interface ModerationItem {
-  id: number;
-  type: "news" | "article" | "photo" | "video" | "comment";
-  title: string;
-  pondok: string;
-  pondokId: number;
-  reason: string;
-  status: "pending" | "in-progress" | "approved" | "rejected" | "flagged";
-  submittedDate: string;
-  moderatedDate?: string;
-  moderatorName?: string;
-  priority: "low" | "medium" | "high";
-  contentExcerpt?: string;
-  fullContent?: string;
-}
- 
-interface FilterState {
-  search: string;
-  type: string;
-  status: string;
-  priority: string;
-  pondok: string;
-}
-
-interface SortState {
-  field: string;
-  direction: 'asc' | 'desc';
-}
+// Enhanced data with AI analysis simulation
+const sampleAIAnalysis: AIContentAnalysis[] = [
+  {
+    id: 1,
+    itemId: 1,
+    timestamp: "2025-10-30T07:36:00Z",
+    safetyScore: 85,
+    categories: {
+      spam: 10,
+      violence: 5,
+      adult: 0,
+      hate: 0,
+      misinformation: 15,
+      copyright: 20
+    },
+    flaggedPhrases: ["sensitif"],
+    suggestions: ["Konten terlihat aman namun perlu review manual untuk validitas"],
+    confidence: 92
+  },
+  {
+    id: 2,
+    itemId: 2,
+    timestamp: "2025-10-30T07:36:00Z",
+    safetyScore: 45,
+    categories: {
+      spam: 30,
+      violence: 0,
+      adult: 0,
+      hate: 0,
+      misinformation: 10,
+      copyright: 60
+    },
+    flaggedPhrases: ["hak cipta", "copy"],
+    suggestions: ["Perlu periksa lisensi dan hak cipta foto", "Pastikan ada izin penggunaan"],
+    confidence: 78
+  }
+];
 
 export const ModerationPage = () => {
-  const [rows, setRows] = useState<ModerationItem[]>([
+  const [rows, setRows] = useState<ModerationItemEnhanced[]>([
     {
       id: 1,
       type: "news",
@@ -50,7 +59,15 @@ export const ModerationPage = () => {
       submittedDate: "2025-10-15",
       priority: "high",
       contentExcerpt: "Sanwati kami berhasil meraih juara 1 dalam olimpiade sains tingkat nasional...",
-      fullContent: "Sanwati Pondok Pesantren Darul Falah, Anisa Rahmawati (15 tahun), berhasil meraih juara 1 dalam Olimpiade Sains Nasional bidang Matematika yang diselenggarakan di Jakarta. Prestasi ini diraih setelah melalui seleksi bertahap dari tingkat kabupaten hingga nasional. Anisa berhasil mengungguli 500 peserta dari seluruh Indonesia dengan menyajikan solusi matematis inovatif untuk masalah optimasi lingkungan."
+      fullContent: "Sanwati Pondok Pesantren Darul Falah, Anisa Rahmawati (15 tahun), berhasil meraih juara 1 dalam Olimpiade Sains Nasional bidang Matematika yang diselenggarakan di Jakarta. Prestasi ini diraih setelah melalui seleksi bertahap dari tingkat kabupaten hingga nasional.",
+      aiScore: 85,
+      flaggedKeywords: ["sensitif"],
+      escalationLevel: 1,
+      autoApproved: false,
+      version: 1,
+      createdBy: "Admin Pondok",
+      category: "Prestasi",
+      tags: ["pendidikan", "sains", "olimpiade", "sanwati"]
     },
     {
       id: 2,
@@ -65,7 +82,15 @@ export const ModerationPage = () => {
       moderatorName: "Admin Ahmad",
       priority: "medium",
       contentExcerpt: "Foto dokumentasi kegiatan pramuka pondok...",
-      fullContent: "Dokumentasi lengkap kegiatan Pramuka Pondok Al-Ikhlas yang berlangsung pada 12 Oktober 2025. Kegiatan diikuti oleh 150 santri dari tingkat SMP dan SMA. Foto-foto menampilkan berbagai kegiatan seperti upacara pembukaan, pelatihan baris-berbaris, kegiatan kemah, penerapan teknik bertahan hidup, dan penanaman pohon sebagai wujud kepedulian lingkungan. Kegiatan ini bertujuan untuk membentuk karakter disiplin dan jiwa kepemimpinan santri."
+      fullContent: "Dokumentasi lengkap kegiatan Pramuka Pondok Al-Ikhlas yang berlangsung pada 12 Oktober 2025.",
+      aiScore: 45,
+      flaggedKeywords: ["hak cipta", "copy"],
+      escalationLevel: 2,
+      autoApproved: false,
+      version: 1,
+      createdBy: "Admin Pondok",
+      fileSize: 2048576,
+      mimeType: "image/jpeg"
     },
     {
       id: 3,
@@ -80,41 +105,18 @@ export const ModerationPage = () => {
       moderatorName: "Admin Siti",
       priority: "high",
       contentExcerpt: "Pembahasan mengenai sistem manajemen keuangan yang transparan...",
-      fullContent: "Artikel mendalam mengenai implementasi sistem manajemen keuangan berbasis digital di Pondok Pesantren Tahfidz Al-Qur'an. Artikel ini membahas langkah-langkah praktis dalam menciptakan transparansi keuangan, mulai dari penggunaan software akuntansi, pelaporan berkala kepada wali santri, audit internal, hingga penerapan standar akuntansi pesantren modern. Juga dibahas strategi pengelolaan dana wakaf dan program beasiswa yang bertanggung jawab."
-    },
-    {
-      id: 4,
-      type: "video",
-      title: "Profil Pondok 2025",
-      pondok: "Darul Falah",
-      pondokId: 101,
-      reason: "Kualitas rendah",
-      status: "approved",
-      submittedDate: "2025-10-12",
-      moderatedDate: "2025-10-13",
-      moderatorName: "Admin Budi",
-      priority: "low",
-      contentExcerpt: "Video profil singkat pondok dengan durasi 5 menit...",
-      fullContent: "Video profil Pondok Darul Falah tahun 2025 yang menampilkan fasilitas lengkap, kegiatan akademik, program unggulan tahfidz, kegiatan ekstrakurikuler, dan testimoni para santri. Video berdurasi 5 menit ini juga menampilkan pencapaian-prestasi pondok, program pengembangan karakter, dan visi misi ke depan. Video diproduksi dengan kualitas HD dan dilengkapi subtitle bahasa Indonesia dan Inggris."
-    },
-    {
-      id: 5,
-      type: "comment",
-      title: "Komentar pada berita prestasi",
-      pondok: "Pondok Modern",
-      pondokId: 104,
-      reason: "Spam",
-      status: "rejected",
-      submittedDate: "2025-10-11",
-      moderatedDate: "2025-10-12",
-      moderatorName: "Admin Rina",
-      priority: "low",
-      contentExcerpt: "Komentar berisi link promosi yang tidak relevan...",
-      fullContent: "Komentar yang diposting oleh pengguna anonim pada berita prestasi santri. Komentar ini mengandung link promosi produk jualan online yang tidak terkait dengan konten berita, termasuk link afiliasi ke e-commerce dan nomor WhatsApp untuk pemesanan. Komentar ini dianggap spam karena tidak relevan dan mengganggu diskusi yang berkualitas di platform pesantren digital."
+      fullContent: "Artikel mendalam mengenai implementasi sistem manajemen keuangan berbasis digital di Pondok Pesantren Tahfidz Al-Qur'an.",
+      aiScore: 92,
+      flaggedKeywords: [],
+      escalationLevel: 0,
+      autoApproved: false,
+      version: 2,
+      createdBy: "Admin Pondok",
+      category: "Manajemen"
     }
   ]);
 
-  const [filters, setFilters] = useState<FilterState>({
+  const [filters, setFilters] = useState({
     search: "",
     type: "all",
     status: "all",
@@ -122,65 +124,29 @@ export const ModerationPage = () => {
     pondok: ""
   });
 
-  const updateFilters = (newFilters: Partial<FilterState>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
-    setCurrentPage(1); // Reset to first page when filters change
-  };
-
-  const [sort, setSort] = useState<SortState>({
-    field: "submittedDate",
-    direction: "desc"
-  });
-
+  const [selectedItem, setSelectedItem] = useState<ModerationItemEnhanced | null>(null);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
-  const [showBatchActions, setShowBatchActions] = useState(false);
 
-  const updateStatus = (id: number, status: ModerationItem["status"]) => {
+  const updateStatus = (id: number, status: ModerationItemEnhanced["status"], notes?: string) => {
     setRows(prev => prev.map(r =>
       r.id === id ? {
         ...r,
         status,
         moderatedDate: new Date().toISOString().split('T')[0],
-        moderatorName: "Super Admin"
+        moderatorName: "Super Admin",
+        version: r.version + 1,
+        lastModified: new Date().toISOString()
       } : r
     ));
   };
 
-  const accept = (id: number) => updateStatus(id, "approved");
-  const reject = (id: number) => updateStatus(id, "rejected");
-  const flag = (id: number) => updateStatus(id, "flagged");
+  const accept = (id: number, notes?: string) => updateStatus(id, "approved", notes);
+  const reject = (id: number, notes?: string) => updateStatus(id, "rejected", notes);
+  const flag = (id: number, notes?: string) => updateStatus(id, "flagged", notes);
 
-  const handleSort = (field: string) => {
-    setSort(prev => ({
-      field,
-      direction: prev.field === field && prev.direction === 'asc' ? 'desc' : 'asc'
-    }));
-  };
-
-  const sortData = (data: ModerationItem[]) => {
-    return [...data].sort((a, b) => {
-      let aValue: any = a[sort.field as keyof ModerationItem];
-      let bValue: any = b[sort.field as keyof ModerationItem];
-
-      if (aValue === undefined) aValue = '';
-      if (bValue === undefined) bValue = '';
-
-      if (typeof aValue === 'string') {
-        aValue = aValue.toLowerCase();
-        bValue = bValue.toLowerCase();
-      }
-
-      if (sort.direction === 'asc') {
-        return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
-      }
-    });
-  };
-
-  const getTypeIcon = (type: ModerationItem["type"]) => {
+  const getTypeIcon = (type: ModerationItemEnhanced["type"]) => {
     switch (type) {
       case "news": return <FileText className="w-4 h-4 text-blue-500" />;
       case "article": return <FileText className="w-4 h-4 text-green-500" />;
@@ -191,57 +157,40 @@ export const ModerationPage = () => {
     }
   };
 
-  const getTypeLabel = (type: ModerationItem["type"]) => {
-    switch (type) {
-      case "news": return "Berita";
-      case "article": return "Artikel";
-      case "photo": return "Foto";
-      case "video": return "Video";
-      case "comment": return "Komentar";
-      default: return type;
-    }
-  };
-
-  const getStatusBadge = (status: ModerationItem["status"]) => {
+  const getStatusBadge = (status: ModerationItemEnhanced["status"]) => {
     const statusConfig = {
-      pending: {
-        variant: "waiting" as const,
-        label: "Menunggu"
-      },
-      "in-progress": {
-        variant: "in-progress" as const,
-        label: "Diproses"
-      },
-      approved: {
-        variant: "verified" as const,
-        label: "Disetujui"
-      },
-      rejected: {
-        variant: "destructive" as const,
-        label: "Ditolak"
-      },
-      flagged: {
-        variant: "warning" as const,
-        label: "Ditandai"
-      }
+      pending: { variant: "waiting" as const, label: "Menunggu" },
+      "in-progress": { variant: "in-progress" as const, label: "Diproses" },
+      approved: { variant: "verified" as const, label: "Disetujui" },
+      rejected: { variant: "destructive" as const, label: "Ditolak" },
+      flagged: { variant: "warning" as const, label: "Ditandai" }
     };
-
     const config = statusConfig[status];
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
-  const getPriorityBadge = (priority: ModerationItem["priority"]) => {
+  const getPriorityBadge = (priority: ModerationItemEnhanced["priority"]) => {
     const priorityConfig = {
       low: { variant: "secondary" as const, label: "Rendah" },
       medium: { variant: "info" as const, label: "Sedang" },
       high: { variant: "destructive" as const, label: "Tinggi" }
     };
-
     const config = priorityConfig[priority];
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
-  const filteredAndSortedRows = rows.filter(row => {
+  const getAIBadge = (aiScore?: number) => {
+    if (!aiScore) return null;
+    const color = aiScore >= 90 ? "text-green-600" : aiScore >= 70 ? "text-yellow-600" : aiScore >= 50 ? "text-orange-600" : "text-red-600";
+    return (
+      <Badge variant="outline" className="gap-1">
+        <Brain className="w-3 h-3" />
+        <span className={color}>AI: {aiScore}/100</span>
+      </Badge>
+    );
+  };
+
+  const filteredRows = rows.filter(row => {
     if (filters.search && !row.title.toLowerCase().includes(filters.search.toLowerCase()) &&
         !row.pondok.toLowerCase().includes(filters.search.toLowerCase()) &&
         !row.reason.toLowerCase().includes(filters.search.toLowerCase())) {
@@ -254,63 +203,20 @@ export const ModerationPage = () => {
     return true;
   });
 
-  const sortedRows = sortData(filteredAndSortedRows);
-
-  // Pagination
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = sortedRows.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(sortedRows.length / itemsPerPage);
+  const currentItems = filteredRows.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const toggleItemSelection = (id: number) => {
-    setSelectedItems(prev => {
-      const newSelection = prev.includes(id)
-        ? prev.filter(item => item !== id)
-        : [...prev, id];
-      setShowBatchActions(newSelection.length > 0);
-      return newSelection;
-    });
-  };
-
-  const toggleAllSelection = () => {
-    if (selectedItems.length === currentItems.length) {
-      setSelectedItems([]);
-      setShowBatchActions(false);
-    } else {
-      const allIds = currentItems.map(item => item.id);
-      setSelectedItems(allIds);
-      setShowBatchActions(true);
-    }
-  };
-
-  const batchApprove = () => {
-    selectedItems.forEach(id => updateStatus(id, "approved"));
-    setSelectedItems([]);
-    setShowBatchActions(false);
-  };
-
-  const batchReject = () => {
-    selectedItems.forEach(id => updateStatus(id, "rejected"));
-    setSelectedItems([]);
-    setShowBatchActions(false);
-  };
-
-  const batchFlag = () => {
-    selectedItems.forEach(id => updateStatus(id, "flagged"));
-    setSelectedItems([]);
-    setShowBatchActions(false);
-  };
-
-  const uniquePondoks = Array.from(new Set(rows.map(r => r.pondok)));
   const pendingCount = rows.filter(r => r.status === "pending").length;
   const flaggedCount = rows.filter(r => r.status === "flagged").length;
   const inProgressCount = rows.filter(r => r.status === "in-progress").length;
 
-  // Responsive table columns configuration
+  const getAIAnalysis = (itemId: number) => {
+    return sampleAIAnalysis.find(analysis => analysis.itemId === itemId);
+  };
+
+  // Table columns configuration
   const tableColumns = [
     {
       key: 'id',
@@ -325,55 +231,51 @@ export const ModerationPage = () => {
     {
       key: 'type',
       label: 'Jenis',
-      render: (value: string, row: ModerationItem) => (
+      render: (value: string, row: ModerationItemEnhanced) => (
         <div className="flex items-center gap-2">
-          {getTypeIcon(value as ModerationItem["type"])}
-          <span className="text-sm font-medium">{getTypeLabel(value as ModerationItem["type"])}</span>
+          {getTypeIcon(value as ModerationItemEnhanced["type"])}
+          <span className="text-sm font-medium">{value === "news" ? "Berita" : value === "article" ? "Artikel" : value === "photo" ? "Foto" : value === "video" ? "Video" : "Komentar"}</span>
         </div>
       ),
       hideOnMobile: false
     },
     {
-      key: 'pondok',
-      label: 'Nama Pondok',
-      render: (value: string, row: ModerationItem) => (
-        <div>
-          <div className="font-medium text-sm">{value}</div>
-          <div className="text-xs text-gray-500">ID: {row.pondokId}</div>
+      key: 'title',
+      label: 'Judul Konten',
+      render: (value: string, row: ModerationItemEnhanced) => (
+        <div className="max-w-xs">
+          <div className="font-medium text-sm line-clamp-2">{value}</div>
+          <div className="text-xs text-gray-500 mt-1">{row.pondok} (ID: {row.pondokId})</div>
         </div>
       ),
       hideOnMobile: false
     },
     {
-      key: 'reason',
-      label: 'Alasan Moderasi',
-      render: (value: string) => (
-        <span className="text-sm text-red-600 font-medium">{value}</span>
-      ),
+      key: 'aiScore',
+      label: 'AI Score',
+      render: (value?: number) => getAIBadge(value),
       hideOnMobile: true
     },
     {
       key: 'status',
       label: 'Status',
-      render: (value: string) => getStatusBadge(value as ModerationItem["status"]),
+      render: (value: string) => getStatusBadge(value as ModerationItemEnhanced["status"]),
       hideOnMobile: false
     },
     {
       key: 'priority',
-      label: 'Tingkat Risiko',
-      render: (value: string) => getPriorityBadge(value as ModerationItem["priority"]),
+      label: 'Prioritas',
+      render: (value: string) => getPriorityBadge(value as ModerationItemEnhanced["priority"]),
       hideOnMobile: true
     },
     {
       key: 'submittedDate',
-      label: 'Tanggal Diajukan',
-      render: (value: string, row: ModerationItem) => (
+      label: 'Tanggal',
+      render: (value: string, row: ModerationItemEnhanced) => (
         <div className="text-sm">
           <div>{value}</div>
           {row.moderatedDate && (
-            <div className="text-xs text-gray-500">
-              Mod: {row.moderatedDate}
-            </div>
+            <div className="text-xs text-gray-500">Mod: {row.moderatedDate}</div>
           )}
         </div>
       ),
@@ -382,8 +284,21 @@ export const ModerationPage = () => {
   ];
 
   // Render actions for each row
-  const renderActions = (row: ModerationItem) => (
+  const renderActions = (row: ModerationItemEnhanced) => (
     <div className="flex justify-center gap-1">
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => {
+          setSelectedItem(row);
+          setShowPreviewModal(true);
+        }}
+        title="Preview"
+        className="px-3 py-1"
+      >
+        <Eye className="w-4 h-4" />
+      </Button>
+
       {row.status === "pending" || row.status === "flagged" ? (
         <>
           <Button
@@ -391,7 +306,7 @@ export const ModerationPage = () => {
             variant="outline"
             onClick={() => accept(row.id)}
             title="Setujui"
-            className="px-3 py-1 border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700 transition-colors duration-200"
+            className="px-3 py-1 border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700"
           >
             <Check className="w-4 h-4" />
           </Button>
@@ -400,7 +315,7 @@ export const ModerationPage = () => {
             variant="outline"
             onClick={() => reject(row.id)}
             title="Tolak"
-            className="px-3 py-1 border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors duration-200"
+            className="px-3 py-1 border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700"
           >
             <X className="w-4 h-4" />
           </Button>
@@ -410,7 +325,7 @@ export const ModerationPage = () => {
               variant="outline"
               onClick={() => flag(row.id)}
               title="Tandai"
-              className="px-3 py-1 border-yellow-200 hover:bg-yellow-50 text-yellow-600 hover:text-yellow-700 transition-colors duration-200"
+              className="px-3 py-1 border-yellow-200 hover:bg-yellow-50 text-yellow-600 hover:text-yellow-700"
             >
               <Shield className="w-4 h-4" />
             </Button>
@@ -423,7 +338,7 @@ export const ModerationPage = () => {
             variant="outline"
             onClick={() => accept(row.id)}
             title="Setujui"
-            className="px-3 py-1 border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700 transition-colors duration-200"
+            className="px-3 py-1 border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700"
           >
             <Check className="w-4 h-4" />
           </Button>
@@ -432,7 +347,7 @@ export const ModerationPage = () => {
             variant="outline"
             onClick={() => reject(row.id)}
             title="Tolak"
-            className="px-3 py-1 border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors duration-200"
+            className="px-3 py-1 border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700"
           >
             <X className="w-4 h-4" />
           </Button>
@@ -443,7 +358,7 @@ export const ModerationPage = () => {
           variant="outline"
           onClick={() => updateStatus(row.id, "pending")}
           title="Buka Ulang"
-          className="px-3 py-1 border-blue-200 hover:bg-blue-50 text-blue-600 hover:text-blue-700 transition-colors duration-200"
+          className="px-3 py-1 border-blue-200 hover:bg-blue-50 text-blue-600 hover:text-blue-700"
         >
           <RefreshCw className="w-4 h-4" />
         </Button>
@@ -455,47 +370,47 @@ export const ModerationPage = () => {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-foreground">Moderasi Konten</h1>
-        <p className="text-muted-foreground">Kelola moderasi konten dari semua pondok pesantren</p>
+        <p className="text-muted-foreground">Kelola moderasi konten dari semua pondok pesantren dengan AI Analysis</p>
       </div>
 
       {/* Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="shadow-card hover:shadow-lg transition-all duration-200 hover:scale-[1.02] border border-gray-200">
+        <Card className="shadow-card hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Menunggu Moderasi</p>
                 <p className="text-2xl font-bold text-orange-600">{pendingCount}</p>
               </div>
-              <div className="p-3 bg-orange-100 rounded-full hover:bg-orange-200 transition-colors duration-200">
+              <div className="p-3 bg-orange-100 rounded-full">
                 <Shield className="w-6 h-6 text-orange-600" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-card hover:shadow-lg transition-all duration-200 hover:scale-[1.02] border border-gray-200">
+        <Card className="shadow-card hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Diproses</p>
                 <p className="text-2xl font-bold text-blue-600">{inProgressCount}</p>
               </div>
-              <div className="p-3 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors duration-200">
+              <div className="p-3 bg-blue-100 rounded-full">
                 <Filter className="w-6 h-6 text-blue-600" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-card hover:shadow-lg transition-all duration-200 hover:scale-[1.02] border border-gray-200">
+        <Card className="shadow-card hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Ditandai</p>
                 <p className="text-2xl font-bold text-yellow-600">{flaggedCount}</p>
               </div>
-              <div className="p-3 bg-yellow-100 rounded-full hover:bg-yellow-200 transition-colors duration-200">
+              <div className="p-3 bg-yellow-100 rounded-full">
                 <Shield className="w-6 h-6 text-yellow-600" />
               </div>
             </div>
@@ -514,35 +429,24 @@ export const ModerationPage = () => {
           <div className="flex flex-col space-y-4">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
-                <label className="text-sm font-medium mb-2 block">Pencarian</label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     className="pl-10"
                     placeholder="Cari judul, pondok, alasan..."
                     value={filters.search}
-                    onChange={e => updateFilters({ search: e.target.value })}
+                    onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))}
                   />
                 </div>
-              </div>
-              <div className="flex items-end">
-                <Button
-                  variant="outline"
-                  className="bg-white border-gray-300 hover:bg-gray-50 text-gray-700"
-                >
-                  <Filter className="w-4 h-4 mr-2" />
-                  Filter
-                </Button>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">Jenis Konten</label>
                 <select
                   className="w-full px-3 py-2 border rounded-md bg-background"
                   value={filters.type}
-                  onChange={e => updateFilters({ type: e.target.value })}
+                  onChange={e => setFilters(prev => ({ ...prev, type: e.target.value }))}
                 >
                   <option value="all">Semua Jenis</option>
                   <option value="news">Berita</option>
@@ -554,11 +458,10 @@ export const ModerationPage = () => {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Status</label>
                 <select
                   className="w-full px-3 py-2 border rounded-md bg-background"
                   value={filters.status}
-                  onChange={e => updateFilters({ status: e.target.value })}
+                  onChange={e => setFilters(prev => ({ ...prev, status: e.target.value }))}
                 >
                   <option value="all">Semua Status</option>
                   <option value="pending">Menunggu</option>
@@ -570,11 +473,10 @@ export const ModerationPage = () => {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Prioritas</label>
                 <select
                   className="w-full px-3 py-2 border rounded-md bg-background"
                   value={filters.priority}
-                  onChange={e => updateFilters({ priority: e.target.value })}
+                  onChange={e => setFilters(prev => ({ ...prev, priority: e.target.value }))}
                 >
                   <option value="all">Semua Prioritas</option>
                   <option value="high">Tinggi</option>
@@ -584,14 +486,13 @@ export const ModerationPage = () => {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Nama Pondok</label>
                 <select
                   className="w-full px-3 py-2 border rounded-md bg-background"
                   value={filters.pondok}
-                  onChange={e => updateFilters({ pondok: e.target.value })}
+                  onChange={e => setFilters(prev => ({ ...prev, pondok: e.target.value }))}
                 >
                   <option value="">Semua Pondok</option>
-                  {uniquePondoks.map(pondok => (
+                  {Array.from(new Set(rows.map(r => r.pondok))).map(pondok => (
                     <option key={pondok} value={pondok}>{pondok}</option>
                   ))}
                 </select>
@@ -601,63 +502,11 @@ export const ModerationPage = () => {
         </CardContent>
       </Card>
 
-      {/* Batch Actions Bar */}
-      {showBatchActions && (
-        <Card className="shadow-card mb-4 bg-blue-50 border-blue-200">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <CheckSquare className="w-5 h-5 text-blue-600" />
-                <span className="font-medium text-blue-900">
-                  {selectedItems.length} item dipilih
-                </span>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  onClick={batchApprove}
-                  className="bg-green-600 hover:bg-green-700 text-white"
-                >
-                  <Check className="w-4 h-4 mr-1" />
-                  Setujui Semua
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={batchReject}
-                  className="bg-red-600 hover:bg-red-700 text-white"
-                >
-                  <X className="w-4 h-4 mr-1" />
-                  Tolak Semua
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={batchFlag}
-                  className="bg-yellow-600 hover:bg-yellow-700 text-white"
-                >
-                  <Shield className="w-4 h-4 mr-1" />
-                  Tandai Semua
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setSelectedItems([]);
-                    setShowBatchActions(false);
-                  }}
-                >
-                  Batal Pilih
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Moderation Table */}
       <Card className="shadow-card">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-primary" /> Daftar Moderasi ({filteredAndSortedRows.length})
+            <Shield className="w-5 h-5 text-primary" /> Daftar Moderasi ({filteredRows.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -667,21 +516,19 @@ export const ModerationPage = () => {
             keyField="id"
             actions={renderActions}
             emptyMessage="Tidak ada konten yang sesuai dengan filter yang dipilih"
-            className="border border-gray-200 rounded-lg overflow-hidden"
           />
 
           {totalPages > 1 && (
             <div className="flex items-center justify-between mt-4">
               <div className="text-sm text-gray-600">
-                Menampilkan {indexOfFirstItem + 1} hingga {Math.min(indexOfLastItem, sortedRows.length)} dari {sortedRows.length} data
+                Menampilkan {indexOfFirstItem + 1} hingga {Math.min(indexOfLastItem, filteredRows.length)} dari {filteredRows.length} data
               </div>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handlePageChange(currentPage - 1)}
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
-                  className="border-gray-300"
                 >
                   Previous
                 </Button>
@@ -690,8 +537,7 @@ export const ModerationPage = () => {
                     key={index}
                     variant={currentPage === index + 1 ? "default" : "outline"}
                     size="sm"
-                    onClick={() => handlePageChange(index + 1)}
-                    className={currentPage === index + 1 ? "bg-primary" : "border-gray-300"}
+                    onClick={() => setCurrentPage(index + 1)}
                   >
                     {index + 1}
                   </Button>
@@ -699,9 +545,8 @@ export const ModerationPage = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handlePageChange(currentPage + 1)}
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages}
-                  className="border-gray-300"
                 >
                   Next
                 </Button>
@@ -710,8 +555,20 @@ export const ModerationPage = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Content Preview Modal */}
+      <ContentPreviewModal
+        item={selectedItem}
+        aiAnalysis={selectedItem ? getAIAnalysis(selectedItem.id) : undefined}
+        open={showPreviewModal}
+        onClose={() => {
+          setShowPreviewModal(false);
+          setSelectedItem(null);
+        }}
+        onApprove={accept}
+        onReject={reject}
+        onFlag={flag}
+      />
     </div>
   );
 };
-
-
