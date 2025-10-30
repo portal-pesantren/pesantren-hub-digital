@@ -11,6 +11,7 @@ import { StatCard } from "@/components/StatCard";
 import { SantriForm } from "@/components/forms/SantriForm";
 import { UstadzForm } from "@/components/forms/UstadzForm";
 import { ResponsiveTable } from "@/components/ui/responsive-table";
+import { STANDARD_TABLE_HEADERS } from "@/components/ui/table-header";
 import { type SantriFormData } from "@/lib/validations";
 
 // Types
@@ -434,23 +435,119 @@ export const PeoplePage = () => {
 
             <TabsContent value="santri" className="mt-0">
               <ResponsiveTable
-                data={filteredSantri}
-                columns={santriTableColumns}
-                keyField="id"
-                actions={renderSantriActions}
-                emptyMessage="Tidak ada data santri yang tersedia"
-                className="border rounded-lg"
+                headers={STANDARD_TABLE_HEADERS.PEOPLE}
+                data={filteredSantri.map(santri => ({
+                  name: (
+                    <span className="font-medium text-sm">{santri.name}</span>
+                  ),
+                  class: (
+                    <span className="text-sm">{santri.class}</span>
+                  ),
+                  status: (
+                    <Badge variant={santri.status === "Aktif" ? "default" : "secondary"}>
+                      {santri.status}
+                    </Badge>
+                  ),
+                  contact: santri.parentContact,
+                  address: santri.address,
+                  actions: (
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setEditingSantri(santri);
+                          setIsSantriFormOpen(true);
+                        }}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="sm" className="text-destructive">
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Apakah Anda yakin ingin menghapus data santri <strong>{santri.name}</strong>?
+                              Tindakan ini tidak dapat dibatalkan.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Batal</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteSantri(santri.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Hapus
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  )
+                }))}
               />
             </TabsContent>
 
             <TabsContent value="ustadz" className="mt-0">
               <ResponsiveTable
-                data={filteredUstadz}
-                columns={ustadzTableColumns}
-                keyField="id"
-                actions={renderUstadzActions}
-                emptyMessage="Tidak ada data ustadz yang tersedia"
-                className="border rounded-lg"
+                headers={STANDARD_TABLE_HEADERS.PEOPLE}
+                data={filteredUstadz.map(ustadz => ({
+                  name: (
+                    <span className="font-medium text-sm">{ustadz.name}</span>
+                  ),
+                  class: (
+                    <span className="text-sm">{ustadz.subject}</span>
+                  ),
+                  status: (
+                    <Badge variant="default">{ustadz.status}</Badge>
+                  ),
+                  contact: ustadz.phone,
+                  address: ustadz.email,
+                  actions: (
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setEditingUstadz(ustadz);
+                          setIsUstadzFormOpen(true);
+                        }}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="sm" className="text-destructive">
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Apakah Anda yakin ingin menghapus data ustadz <strong>{ustadz.name}</strong>?
+                              Tindakan ini tidak dapat dibatalkan.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Batal</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteUstadz(ustadz.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Hapus
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  )
+                }))}
               />
             </TabsContent>
           </Tabs>

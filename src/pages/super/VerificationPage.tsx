@@ -7,6 +7,7 @@ import { CheckCircle2, XCircle, FileText, Search, Newspaper } from "lucide-react
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResponsiveTable } from "@/components/ui/responsive-table";
+import { STANDARD_TABLE_HEADERS } from "@/components/ui/table-header";
 
 interface Submission {
   id: number;
@@ -27,93 +28,6 @@ export const VerificationPage = () => {
 
   const filtered = rows.filter(r => [r.pondok, r.city].some(v => v.toLowerCase().includes(search.toLowerCase())));
   const setStatus = (id: number, status: Submission["status"]) => setRows(prev => prev.map(r => r.id === id ? { ...r, status } : r));
-
-  // Responsive table columns configuration
-  const tableColumns = [
-    {
-      key: 'id',
-      label: 'ID',
-      render: (value: number) => (
-        <Badge variant="outline" className="text-xs">
-          #{value}
-        </Badge>
-      ),
-      hideOnMobile: false
-    },
-    {
-      key: 'pondok',
-      label: 'Pondok',
-      render: (value: string) => (
-        <span className="font-medium text-sm">{value}</span>
-      ),
-      hideOnMobile: false
-    },
-    {
-      key: 'city',
-      label: 'Kota',
-      render: (value: string) => (
-        <span className="text-sm">{value}</span>
-      ),
-      hideOnMobile: true
-    },
-    {
-      key: 'documents',
-      label: 'Dokumen',
-      render: (value: number) => (
-        <span className="text-sm">{value} file</span>
-      ),
-      hideOnMobile: false
-    },
-    {
-      key: 'status',
-      label: 'Status',
-      render: (value: string) => (
-        <Badge variant={
-          value === "verified" ? "verified" :
-          value === "in-progress" ? "in-progress" :
-          value === "pending" ? "waiting" :
-          value === "waiting" ? "waiting" :
-          value === "suspended" ? "suspended" :
-          "outline"
-        }>
-          {value === "in-progress" ? "In Progress" : value}
-        </Badge>
-      ),
-      hideOnMobile: false
-    },
-    {
-      key: 'date',
-      label: 'Tanggal',
-      render: (value: string) => (
-        <span className="text-sm">{value}</span>
-      ),
-      hideOnMobile: true
-    }
-  ];
-
-  // Render actions for each row
-  const renderActions = (row: Submission) => (
-    <div className="flex justify-center gap-1">
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => setStatus(row.id, "verified")}
-        title="Verifikasi"
-        className="px-3 py-1 border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700 transition-colors duration-200"
-      >
-        <CheckCircle2 className="w-4 h-4" />
-      </Button>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => setStatus(row.id, "suspended")}
-        title="Tolak"
-        className="px-3 py-1 border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors duration-200"
-      >
-        <XCircle className="w-4 h-4" />
-      </Button>
-    </div>
-  );
 
   return (
     <div className="space-y-6">
@@ -145,12 +59,56 @@ export const VerificationPage = () => {
             </CardHeader>
             <CardContent>
               <ResponsiveTable
-                data={filtered}
-                columns={tableColumns}
-                keyField="id"
-                actions={renderActions}
-                emptyMessage="Tidak ada pengajuan yang tersedia"
-                className="border rounded-lg overflow-hidden"
+                headers={STANDARD_TABLE_HEADERS.VERIFICATION}
+                data={filtered.map(r => ({
+                  id: (
+                    <Badge variant="outline" className="text-xs">
+                      #{r.id}
+                    </Badge>
+                  ),
+                  pondok: (
+                    <span className="font-medium text-sm">{r.pondok}</span>
+                  ),
+                  city: r.city,
+                  documents: (
+                    <span className="text-sm">{r.documents} file</span>
+                  ),
+                  status: (
+                    <Badge variant={
+                      r.status === "verified" ? "verified" :
+                      r.status === "in-progress" ? "in-progress" :
+                      r.status === "pending" ? "waiting" :
+                      r.status === "waiting" ? "waiting" :
+                      r.status === "suspended" ? "suspended" :
+                      "outline"
+                    }>
+                      {r.status === "in-progress" ? "In Progress" : r.status}
+                    </Badge>
+                  ),
+                  date: r.date,
+                  actions: (
+                    <div className="flex justify-center gap-1">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setStatus(r.id, "verified")}
+                        title="Verifikasi"
+                        className="px-3 py-1 border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700 transition-colors duration-200"
+                      >
+                        <CheckCircle2 className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setStatus(r.id, "suspended")}
+                        title="Tolak"
+                        className="px-3 py-1 border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors duration-200"
+                      >
+                        <XCircle className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  )
+                }))}
               />
             </CardContent>
           </Card>
