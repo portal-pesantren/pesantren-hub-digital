@@ -3,8 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Database, Download, Upload, RefreshCw } from "lucide-react";
-import { ResponsiveTable } from "@/components/ui/responsive-table";
-import { STANDARD_TABLE_HEADERS } from "@/components/ui/table-header";
 
 interface BackupItem {
   id: number;
@@ -42,22 +40,32 @@ export const BackupPage = () => {
           <CardTitle className="flex items-center gap-2"><Database className="w-5 h-5 text-primary" /> Riwayat Backup</CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveTable
-            headers={STANDARD_TABLE_HEADERS.BACKUP}
-            data={items.map(i => ({
-              id: `#${i.id}`,
-              created: i.createdAt,
-              size: i.size,
-              type: i.type,
-              actions: (
-                <div className="flex justify-end">
-                  <Button size="sm" variant="outline">
-                    <Download className="w-4 h-4" />
-                  </Button>
-                </div>
-              )
-            }))}
-          />
+          <div className="border rounded-lg overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Dibuat</TableHead>
+                  <TableHead>Ukuran</TableHead>
+                  <TableHead>Jenis</TableHead>
+                  <TableHead className="text-right">Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {items.map(i => (
+                  <TableRow key={i.id}>
+                    <TableCell>#{i.id}</TableCell>
+                    <TableCell>{i.createdAt}</TableCell>
+                    <TableCell>{i.size}</TableCell>
+                    <TableCell>{i.type}</TableCell>
+                    <TableCell className="text-right">
+                      <Button size="sm" variant="outline"><Download className="w-4 h-4" /></Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -3,16 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ResponsiveTable } from "@/components/ui/responsive-table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Search, Building2, CheckCircle2, XCircle, Star, Slash, MapPin, Calendar } from "lucide-react";
+import { Plus, Edit, Trash2, Search, Building2, CheckCircle2, XCircle, Star, Slash } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TableHeader, TableHeaderCell, TableActionsHeader } from "@/components/ui/table-header";
 
 interface Pondok {
   id: number;
@@ -242,75 +241,99 @@ export const ManagePondokPage = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveTable
-            headers={STANDARD_TABLE_HEADERS.PONDOK}
-            data={filtered.map((p, idx) => ({
-              id: p.id,
-              name: p.name,
-              location: `${p.city}, ${p.province}`,
-              students: p.students.toLocaleString(),
-              status: (
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Badge
-                    variant={
-                      p.status === "verified" ? "verified" :
-                      p.status === "in-progress" ? "in-progress" :
-                      p.status === "suspended" ? "suspended" :
-                      p.status === "waiting" || p.status === "pending" ? "waiting" :
-                      "outline"}
+          <div className="border rounded-lg overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>No</TableHead>
+                  <TableHead>Nama Pondok</TableHead>
+                  <TableHead>Lokasi</TableHead>
+                  <TableHead>Berdiri</TableHead>
+                  <TableHead>Santri</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Aktivitas</TableHead>
+                  <TableHead className="text-right">Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filtered.map((p, idx) => (
+                  <TableRow
+                    key={p.id}
+                    className="cursor-pointer hover:bg-muted/50 transition-colors duration-200 hover:shadow-md"
+                    onClick={() => navigate(`/manage-pondok/${p.id}`)}
                   >
-                    {p.status === "in-progress" ? "In Progress" : p.status}
-                  </Badge>
-                  {p.suspended && (<Badge variant="suspended">suspended</Badge>)}
-                  {p.featured && (<Badge variant="secondary">featured</Badge>)}
-                </div>
-              ),
-              established: p.founded,
-              actions: (
-                <div className="flex gap-1 justify-end">
-                  <Button size="sm" variant={p.featured ? "default" : "outline"} onClick={() => toggleFeatured(p.id)} title="Featured">
-                    <Star className="w-4 h-4" />
-                  </Button>
-                  <Button size="sm" variant={p.suspended ? "default" : "outline"} onClick={() => toggleSuspend(p.id)} title="Suspend">
-                    <Slash className="w-4 h-4" />
-                  </Button>
-                  {(p.status !== "verified" && p.status !== "in-progress") && (
-                    <Button size="sm" variant="outline" onClick={() => verify(p.id)} title="Verify">
-                      <CheckCircle2 className="w-4 h-4" />
-                    </Button>
-                  )}
-                  {(p.status !== "suspended" && p.status !== "in-progress") && (
-                    <Button size="sm" variant="outline" onClick={() => reject(p.id)} title="Suspend">
-                      <XCircle className="w-4 h-4" />
-                    </Button>
-                  )}
-                  <Button size="sm" variant="outline" onClick={() => startEdit(p)} title="Edit">
-                    <Edit className="w-4 h-4" />
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button size="sm" variant="outline" className="text-destructive" title="Hapus">
-                        <Trash2 className="w-4 h-4" />
+                    <TableCell>{idx + 1}</TableCell>
+                    <TableCell className="font-medium">{p.name}</TableCell>
+                    <TableCell>{p.city}, {p.province}</TableCell>
+                    <TableCell>{p.founded}</TableCell>
+                    <TableCell>{p.students.toLocaleString()}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Badge
+                          variant={
+                            p.status === "verified" ? "verified" :
+                            p.status === "in-progress" ? "in-progress" :
+                            p.status === "suspended" ? "suspended" :
+                            p.status === "waiting" || p.status === "pending" ? "waiting" :
+                            "outline"}
+                        >
+                          {p.status === "in-progress" ? "In Progress" : p.status}
+                        </Badge>
+                        {p.suspended && (<Badge variant="suspended">suspended</Badge>)}
+                        {p.featured && (<Badge variant="secondary">featured</Badge>)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-xs text-muted-foreground">
+                        <div>Login: {p.lastLogin || "-"}</div>
+                        <div>Update: {p.lastUpdate || "-"}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right space-x-1" onClick={(e) => e.stopPropagation()}>
+                      <Button size="sm" variant={p.featured ? "default" : "outline"} onClick={() => toggleFeatured(p.id)} title="Featured">
+                        <Star className="w-4 h-4" />
                       </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Hapus Pondok?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Tindakan ini akan menghapus {p.name} secara permanen.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Batal</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => remove(p.id)}>Hapus</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-              ),
-              onClick: () => navigate(`/manage-pondok/${p.id}`)
-            }))}
-          />
+                      <Button size="sm" variant={p.suspended ? "default" : "outline"} onClick={() => toggleSuspend(p.id)} title="Suspend">
+                        <Slash className="w-4 h-4" />
+                      </Button>
+                      {(p.status !== "verified" && p.status !== "in-progress") && (
+                        <Button size="sm" variant="outline" onClick={() => verify(p.id)} title="Verify">
+                          <CheckCircle2 className="w-4 h-4" />
+                        </Button>
+                      )}
+                      {(p.status !== "suspended" && p.status !== "in-progress") && (
+                        <Button size="sm" variant="outline" onClick={() => reject(p.id)} title="Suspend">
+                          <XCircle className="w-4 h-4" />
+                        </Button>
+                      )}
+                      <Button size="sm" variant="outline" onClick={() => startEdit(p)} title="Edit">
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button size="sm" variant="outline" className="text-destructive" title="Hapus">
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Hapus Pondok?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Tindakan ini akan menghapus {p.name} secara permanen.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Batal</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => remove(p.id)}>Hapus</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 

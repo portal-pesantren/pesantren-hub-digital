@@ -9,12 +9,7 @@ export default {
       center: true,
       padding: "2rem",
       screens: {
-        "xs": "480px",
-        "sm": "640px",   // Mobile large
-        "md": "768px",   // Tablet
-        "lg": "1024px",  // Desktop
-        "xl": "1280px",  // Desktop large
-        "2xl": "1400px", // Desktop extra large
+        "2xl": "1400px",
       },
     },
     safelist: [

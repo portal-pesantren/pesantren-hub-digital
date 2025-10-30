@@ -4,8 +4,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FileClock } from "lucide-react";
-import { ResponsiveTable } from "@/components/ui/responsive-table";
-import { STANDARD_TABLE_HEADERS } from "@/components/ui/table-header";
 
 interface LogItem {
   id: number;
@@ -66,16 +64,30 @@ export const ActivityLogsPage = () => {
             </Select>
           </div>
 
-          <ResponsiveTable
-            headers={STANDARD_TABLE_HEADERS.ACTIVITY}
-            data={filtered.map(r => ({
-              time: r.timestamp,
-              pondok: r.pondok,
-              admin: r.admin,
-              action: r.action,
-              category: r.category
-            }))}
-          />
+          <div className="border rounded-lg overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Waktu</TableHead>
+                  <TableHead>Pondok</TableHead>
+                  <TableHead>Admin</TableHead>
+                  <TableHead>Aksi</TableHead>
+                  <TableHead>Kategori</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filtered.map(r => (
+                  <TableRow key={r.id}>
+                    <TableCell>{r.timestamp}</TableCell>
+                    <TableCell className="font-medium">{r.pondok}</TableCell>
+                    <TableCell>{r.admin}</TableCell>
+                    <TableCell>{r.action}</TableCell>
+                    <TableCell>{r.category}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

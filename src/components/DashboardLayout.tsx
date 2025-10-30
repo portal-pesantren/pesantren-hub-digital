@@ -3,9 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { DashboardNavbar } from "@/components/DashboardNavbar";
 import { useRole } from "@/contexts/RoleContext";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -16,7 +13,6 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [key, setKey] = useState(0);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Force re-render when role changes to ensure desktop layout updates
   useEffect(() => {
@@ -45,45 +41,16 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     }
   }, [role, location.pathname, navigate]);
 
-  // Close mobile menu when route changes
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [location.pathname]);
-
   return (
     <div key={key} className="min-h-screen bg-background flex w-full">
-      {/* Desktop Sidebar - Hidden on mobile and tablet */}
-      <div className="hidden lg:block">
-        <DashboardSidebar role={role} currentPath={location.pathname} />
-      </div>
-
-      {/* Mobile & Tablet Sidebar - Drawer */}
-      <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-        <SheetContent
-          side="left"
-          className="w-64 sm:w-72 p-0 bg-sidebar max-w-[85vw] sm:max-w-[80vw] border-r border-sidebar-border"
-        >
-          <DashboardSidebar
-            role={role}
-            currentPath={location.pathname}
-            onClose={() => setMobileMenuOpen(false)}
-          />
-        </SheetContent>
-      </Sheet>
-
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <DashboardSidebar role={role} currentPath={location.pathname} />
+      <div className="flex-1 flex flex-col">
         <DashboardNavbar
           role={role}
           onRoleSwitch={switchRole}
-          onMenuToggle={() => setMobileMenuOpen(true)}
-          showMenuButton={true}
         />
-        <main className="flex-1 overflow-y-auto overflow-x-hidden">
-          <div className="p-responsive p-responsive-sm sm:p-4 md:p-6 lg:p-8">
-            <div className="w-full max-w-full mx-auto">
-              {children}
-            </div>
-          </div>
+        <main className="flex-1 p-6 overflow-y-auto">
+          {children}
         </main>
       </div>
     </div>
