@@ -7,7 +7,14 @@ import { Input } from "@/components/ui/input";
 import { STANDARD_TABLE_HEADERS } from "./table-header";
 
 interface ResponsiveTableProps {
-  headers: Array<{ key: string; label: string; sortable?: boolean }>;
+  headers?: Array<{ key: string; label: string; sortable?: boolean }>;
+  columns?: Array<{
+    key: string;
+    label: string;
+    render?: (value: any, row: any) => React.ReactNode;
+    hideOnMobile?: boolean;
+    sortable?: boolean;
+  }>;
   data: Record<string, React.ReactNode>[];
   searchable?: boolean;
   searchPlaceholder?: string;
@@ -17,10 +24,13 @@ interface ResponsiveTableProps {
   onSort?: (key: string) => void;
   emptyMessage?: string;
   className?: string;
+  keyField?: string;
+  actions?: (row: any) => React.ReactNode;
 }
 
 export const ResponsiveTable = ({
   headers,
+  columns,
   data,
   searchable = true,
   searchPlaceholder = "Cari...",
@@ -29,8 +39,14 @@ export const ResponsiveTable = ({
   onSearch,
   onSort,
   emptyMessage = "Tidak ada data yang tersedia",
-  className = ""
+  className = "",
+  keyField = "id",
+  actions
 }: ResponsiveTableProps) => {
+
+  // Use columns if provided, otherwise use headers
+  const tableColumns = columns || headers || [];
+
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
@@ -52,7 +68,7 @@ export const ResponsiveTable = ({
     onSort?.(key);
   };
 
-  // Filter data based on search
+  // Filter data based on search - use original data for filtering
   const filteredData = data.filter(row => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
@@ -83,20 +99,39 @@ export const ResponsiveTable = ({
     ? sortedData.slice(startIndex, startIndex + itemsPerPage)
     : sortedData;
 
+  // Transform paginated data for display
+  const displayData = paginatedData.map(row => {
+    const transformedRow = { ...row };
+
+    // Apply render functions from columns
+    tableColumns.forEach(column => {
+      if (column.render) {
+        transformedRow[column.key] = column.render(row[column.key], row);
+      }
+    });
+
+    // Add actions if provided
+    if (actions) {
+      transformedRow.actions = actions(row);
+    }
+
+    return transformedRow;
+  });
+
   // Mobile view - Card layout
   const MobileView = () => (
     <div className="space-y-3 sm:hidden">
-      {paginatedData.map((row, index) => (
-        <Card key={index} className="p-4">
+      {displayData.map((row, index) => (
+        <Card key={row[keyField] || index} className="p-4">
           <div className="space-y-3">
-            {headers.map((header) => (
-              header.key !== 'actions' && (
-                <div key={header.key} className="flex justify-between items-start">
+            {tableColumns.map((column) => (
+              column.key !== 'actions' && (
+                <div key={column.key} className="flex justify-between items-start">
                   <span className="text-sm font-medium text-muted-foreground min-w-0 flex-shrink-0">
-                    {header.label}:
+                    {column.label}:
                   </span>
                   <span className="text-sm text-right min-w-0 flex-1 ml-2">
-                    {row[header.key]}
+                    {row[column.key]}
                   </span>
                 </div>
               )
@@ -118,20 +153,20 @@ export const ResponsiveTable = ({
       <table className="w-full border-collapse">
         <thead>
           <tr className="border-b">
-            {headers.map((header) => (
+            {tableColumns.map((column) => (
               <th
-                key={header.key}
+                key={column.key}
                 className={`
                   px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider
-                  ${header.sortable ? 'cursor-pointer hover:bg-muted/50' : ''}
+                  ${(column.sortable !== false) ? 'cursor-pointer hover:bg-muted/50' : ''}
                 `}
-                onClick={() => header.sortable && handleSort(header.key)}
+                onClick={() => (column.sortable !== false) && handleSort(column.key)}
               >
                 <div className="flex items-center gap-2">
-                  {header.label}
-                  {header.sortable && (
+                  {column.label}
+                  {(column.sortable !== false) && (
                     <span className="text-xs">
-                      {sortConfig?.key === header.key ? (
+                      {sortConfig?.key === column.key ? (
                         sortConfig.direction === 'asc' ? '↑' : '↓'
                       ) : (
                         <span className="text-muted-foreground">↕</span>
@@ -141,16 +176,26 @@ export const ResponsiveTable = ({
                 </div>
               </th>
             ))}
+            {actions && (
+              <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Aksi
+              </th>
+            )}
           </tr>
         </thead>
         <tbody className="divide-y">
-          {paginatedData.map((row, index) => (
-            <tr key={index} className="hover:bg-muted/25 transition-colors">
-              {headers.map((header) => (
-                <td key={header.key} className="px-4 py-3 text-sm">
-                  {row[header.key]}
+          {displayData.map((row, index) => (
+            <tr key={row[keyField] || index} className="hover:bg-muted/25 transition-colors">
+              {tableColumns.map((column) => (
+                <td key={column.key} className="px-4 py-3 text-sm">
+                  {row[column.key]}
                 </td>
               ))}
+              {actions && (
+                <td className="px-4 py-3 text-sm">
+                  {row.actions}
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
@@ -208,7 +253,7 @@ export const ResponsiveTable = ({
       )}
 
       {/* Table Content */}
-      {paginatedData.length === 0 ? (
+      {displayData.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
           {emptyMessage}
         </div>
