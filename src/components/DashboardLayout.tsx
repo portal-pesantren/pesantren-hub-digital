@@ -44,13 +44,15 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <div key={key} className="min-h-screen bg-background flex w-full">
       <DashboardSidebar role={role} currentPath={location.pathname} />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         <DashboardNavbar
           role={role}
           onRoleSwitch={switchRole}
         />
-        <main className="flex-1 p-6 overflow-y-auto">
-          {children}
+        <main className="flex-1 p-4 md:p-6 overflow-y-auto">
+          <div className="max-w-full">
+            {children}
+          </div>
         </main>
       </div>
     </div>

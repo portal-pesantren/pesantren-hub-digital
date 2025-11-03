@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ResponsiveTable } from "@/components/ui/responsive-table";
 import { ContentPreviewModal } from "@/components/moderation/ContentPreviewModal";
-import { Shield, Check, X, Search, Filter, FileText, Image, Video, MessageCircle, RefreshCw, Eye, Brain, AlertTriangle, Clock, Loader2, Play } from "lucide-react";
-import { ModerationItemEnhanced, AIContentAnalysis } from "@/types/moderation";
+import { Shield, Check, X, Search, Filter, FileText, Image, Video, MessageCircle, RefreshCw, Eye, Brain, Loader2 } from "lucide-react";
+import { ModerationItemEnhanced } from "@/types/moderation";
 import { ModerationService, ModerationResult } from "@/services/moderationService";
 
 // Enhanced sample data dengan format yang diminta (no/id, bentuk media, nama pondok, status)
@@ -192,7 +192,7 @@ export const ModerationPage = () => {
     }
   };
 
-  const updateStatus = (id: number, status: ModerationItemEnhanced["status"], notes?: string) => {
+  const updateStatus = (id: number, status: ModerationItemEnhanced["status"]) => {
     setRows(prev => prev.map(r =>
       r.id === id ? {
         ...r,
@@ -205,9 +205,9 @@ export const ModerationPage = () => {
     ));
   };
 
-  const accept = (id: number, notes?: string) => updateStatus(id, "approved", notes);
-  const reject = (id: number, notes?: string) => updateStatus(id, "rejected", notes);
-  const flag = (id: number, notes?: string) => updateStatus(id, "flagged", notes);
+  const accept = (id: number) => updateStatus(id, "approved");
+  const reject = (id: number) => updateStatus(id, "rejected");
+  const flag = (id: number) => updateStatus(id, "flagged");
 
   const getTypeIcon = (type: ModerationItemEnhanced["type"]) => {
     switch (type) {
@@ -243,7 +243,7 @@ export const ModerationPage = () => {
   };
 
   const getAIBadge = (aiScore?: number, itemId?: number) => {
-    if (analyzingIds.includes(itemId!)) {
+    if (itemId && analyzingIds.includes(itemId)) {
       return (
         <Badge variant="outline" className="gap-1">
           <Loader2 className="w-3 h-3 animate-spin" />
@@ -355,7 +355,7 @@ export const ModerationPage = () => {
     {
       key: 'aiScore',
       label: 'AI Analysis',
-      render: (value?: number, row: ModerationItemEnhanced) => getAIBadge(value, row.id),
+      render: (value: any, row: ModerationItemEnhanced) => getAIBadge(value as number, row.id),
       hideOnMobile: false
     },
     {
@@ -448,15 +448,17 @@ export const ModerationPage = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Sistem Moderasi Konten AI</h1>
-        <p className="text-muted-foreground">Moderasi konten dengan AI untuk platform Pondok Pesantren berdasarkan nilai-nilai Islam dan etika pesantren</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Sistem Moderasi Konten AI</h1>
+          <p className="text-muted-foreground">Moderasi konten dengan AI untuk platform Pondok Pesantren berdasarkan nilai-nilai Islam dan etika pesantren</p>
+        </div>
       </div>
 
       {/* Status Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="shadow-card hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
-          <CardContent className="p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="shadow-card">
+          <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Menunggu Moderasi</p>
@@ -469,8 +471,8 @@ export const ModerationPage = () => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-card hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
-          <CardContent className="p-4">
+        <Card className="shadow-card">
+          <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Diproses</p>
@@ -483,8 +485,8 @@ export const ModerationPage = () => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-card hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
-          <CardContent className="p-4">
+        <Card className="shadow-card">
+          <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Ditandai</p>
@@ -497,8 +499,8 @@ export const ModerationPage = () => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-card hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
-          <CardContent className="p-4">
+        <Card className="shadow-card">
+          <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">AI Analyzed</p>
@@ -548,7 +550,7 @@ export const ModerationPage = () => {
             <Filter className="w-5 h-5 text-primary" /> Filter Konten
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="flex flex-col space-y-4">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
@@ -634,7 +636,7 @@ export const ModerationPage = () => {
         </CardHeader>
         <CardContent>
           <ResponsiveTable
-            data={currentItems}
+            data={currentItems as any}
             columns={tableColumns}
             keyField="id"
             actions={renderActions}
@@ -682,7 +684,7 @@ export const ModerationPage = () => {
       {/* Content Preview Modal */}
       <ContentPreviewModal
         item={selectedItem}
-        aiAnalysis={selectedItem ? getAIAnalysis(selectedItem.id) : undefined}
+        aiAnalysis={selectedItem ? getAIAnalysis(selectedItem.id) as any : undefined}
         open={showPreviewModal}
         onClose={() => {
           setShowPreviewModal(false);
