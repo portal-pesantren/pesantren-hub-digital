@@ -38,7 +38,7 @@ export const DashboardSidebar = ({ role, currentPath = "/", onClose }: Dashboard
   ];
 
   const superMenuItems = [
-    { icon: LayoutDashboard, label: "Dashboard Global", path: "/" },
+    { icon: LayoutDashboard, label: "Dashboard", path: "/super" },
     { icon: School, label: "Kelola Pondok", path: "/manage-pondok" },
     { icon: CheckCircle, label: "Verifikasi", path: "/verification" },
     { icon: Bell, label: "Notifikasi", path: "/notifications" },
@@ -73,10 +73,10 @@ export const DashboardSidebar = ({ role, currentPath = "/", onClose }: Dashboard
                 <School className="w-6 h-6 text-white" />
               </div>
               <div className="min-w-0 flex-1">
-                <h2 className="text-responsive-base font-bold text-sidebar-foreground truncate">
+                <h2 className="text-base sm:text-lg font-bold text-sidebar-foreground truncate">
                   {role === "pondok" ? "Pondok Portal" : "Super Admin"}
                 </h2>
-                <p className="text-responsive-xs text-sidebar-foreground/70 truncate">
+                <p className="text-xs sm:text-sm text-sidebar-foreground/70 truncate">
                   {role === "pondok" ? "Admin Dashboard" : "Global Control"}
                 </p>
               </div>
@@ -113,7 +113,7 @@ export const DashboardSidebar = ({ role, currentPath = "/", onClose }: Dashboard
                 )}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
-                <span className="text-responsive-sm truncate">{item.label}</span>
+                <span className="text-sm truncate">{item.label}</span>
               </button>
             );
           })}

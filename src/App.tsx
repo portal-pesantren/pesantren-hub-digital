@@ -45,6 +45,7 @@ const App = () => (
           <Route path="/stats" element={<DashboardLayout><StatisticsPage /></DashboardLayout>} />
           <Route path="/settings" element={<DashboardLayout><SettingsPage /></DashboardLayout>} />
           {/* Super admin routes */}
+          <Route path="/super" element={<DashboardLayout><GlobalInsightsPage /></DashboardLayout>} />
           <Route path="/manage-pondok" element={<DashboardLayout><ManagePondokPage /></DashboardLayout>} />
           <Route path="/manage-pondok/:id" element={<DashboardLayout><PondokProfilePage /></DashboardLayout>} />
           <Route path="/verification" element={<DashboardLayout><VerificationPage /></DashboardLayout>} />
