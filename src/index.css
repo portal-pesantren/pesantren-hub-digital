@@ -107,8 +107,8 @@ All colors MUST be HSL.
      * ================================== */
 
     /* Table Header */
-    --table-header: 217 45% 98%;
-    --table-header-foreground: 216 91% 18%;
+    --table-header: 212 100% 98%;
+    --table-header-foreground: 210 93% 17%;
 
     /* ==================================
      * VERIFICATION STATUS COLORS
