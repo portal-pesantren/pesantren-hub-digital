@@ -100,19 +100,17 @@ export const VerificationPage = () => {
                     <div className="flex justify-center gap-2 items-center">
                       <Button
                         size="sm"
-                        variant="outline"
+                        variant="verified"
                         onClick={() => setStatus(r.id, "verified")}
                         title="Verifikasi"
-                        className="px-3 py-2 border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700 transition-colors duration-200 flex items-center justify-center"
                       >
                         <CheckCircle2 className="w-4 h-4" />
                       </Button>
                       <Button
                         size="sm"
-                        variant="outline"
+                        variant="suspended"
                         onClick={() => setStatus(r.id, "suspended")}
                         title="Tolak"
-                        className="px-3 py-2 border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors duration-200 flex items-center justify-center"
                       >
                         <XCircle className="w-4 h-4" />
                       </Button>
@@ -139,8 +137,8 @@ export const VerificationPage = () => {
                       <div className="text-sm text-muted-foreground">{a.pondok}</div>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="px-3 py-2 flex items-center justify-center"><CheckCircle2 className="w-4 h-4" /></Button>
-                      <Button size="sm" variant="outline" className="px-3 py-2 flex items-center justify-center"><XCircle className="w-4 h-4" /></Button>
+                      <Button size="sm" variant="verified"><CheckCircle2 className="w-4 h-4" /></Button>
+                      <Button size="sm" variant="suspended"><XCircle className="w-4 h-4" /></Button>
                     </div>
                   </div>
                 ))}

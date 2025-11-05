@@ -314,7 +314,7 @@ export const NotificationsPage = () => {
           <Edit className="w-4 h-4" />
         </Button>
       )}
-      <Button size="sm" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={() => remove(row.id)} title="Hapus">
+      <Button size="sm" variant="danger" onClick={() => remove(row.id)} title="Hapus">
         <Trash2 className="w-4 h-4" />
       </Button>
     </div>
@@ -516,8 +516,8 @@ export const NotificationsPage = () => {
               </div>
 
               <div className="flex justify-end gap-2">
-                <Button variant="outline">Save Draft</Button>
-                <Button onClick={sendNow}>
+                <Button variant="outline" size="default">Save Draft</Button>
+                <Button size="default" onClick={sendNow}>
                   <Send className="w-4 h-4 mr-2" />
                   {isScheduled ? "Jadwalkan" : "Kirim Sekarang"}
                 </Button>

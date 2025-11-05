@@ -386,7 +386,7 @@ export const ModerationPage = () => {
   ];
 
   const renderActions = (row: ModerationItemEnhanced) => (
-    <div className="flex justify-center gap-1">
+    <div className="flex justify-center gap-2">
       <Button
         size="sm"
         variant="outline"
@@ -395,7 +395,6 @@ export const ModerationPage = () => {
           setShowPreviewModal(true);
         }}
         title="Preview"
-        className="px-3 py-1"
       >
         <Eye className="w-4 h-4" />
       </Button>
@@ -404,29 +403,26 @@ export const ModerationPage = () => {
         <>
           <Button
             size="sm"
-            variant="outline"
+            variant="success"
             onClick={() => accept(row.id)}
             title="Setujui"
-            className="px-3 py-1 border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700"
           >
             <Check className="w-4 h-4" />
           </Button>
           <Button
             size="sm"
-            variant="outline"
+            variant="danger"
             onClick={() => reject(row.id)}
             title="Tolak"
-            className="px-3 py-1 border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700"
           >
             <X className="w-4 h-4" />
           </Button>
           {row.status !== "flagged" && (
             <Button
               size="sm"
-              variant="outline"
+              variant="warning"
               onClick={() => flag(row.id)}
               title="Tandai"
-              className="px-3 py-1 border-yellow-200 hover:bg-yellow-50 text-yellow-600 hover:text-yellow-700"
             >
               <Shield className="w-4 h-4" />
             </Button>
@@ -435,10 +431,9 @@ export const ModerationPage = () => {
       ) : (
         <Button
           size="sm"
-          variant="outline"
+          variant="info"
           onClick={() => updateStatus(row.id, "pending")}
           title="Buka Ulang"
-          className="px-3 py-1 border-blue-200 hover:bg-blue-50 text-blue-600 hover:text-blue-700"
         >
           <RefreshCw className="w-4 h-4" />
         </Button>
@@ -523,9 +518,9 @@ export const ModerationPage = () => {
               <p className="text-sm text-muted-foreground">Analisis konten secara otomatis dengan AI untuk mendeteksi risiko dan kategori</p>
             </div>
             <Button
+              size="default"
               onClick={analyzeAllWithAI}
               disabled={isAnalyzing || rows.filter(r => r.aiScore === 0).length === 0}
-              className="bg-gradient-primary text-white shadow-elegant"
             >
               {isAnalyzing ? (
                 <>

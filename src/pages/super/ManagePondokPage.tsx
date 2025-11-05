@@ -188,7 +188,7 @@ export const ManagePondokPage = () => {
           <h1 className="text-3xl font-bold text-foreground">Kelola Pondok</h1>
           <p className="text-muted-foreground">Manajemen daftar pondok di seluruh portal</p>
         </div>
-        <Button className="bg-gradient-primary text-white shadow-elegant" onClick={startCreate}>
+        <Button size="default" onClick={startCreate}>
           <Plus className="w-4 h-4 mr-2" /> Tambah Pondok
         </Button>
       </div>
@@ -470,8 +470,8 @@ export const ManagePondokPage = () => {
               </div>
 
               <div className="flex justify-end gap-2 pt-4 border-t">
-                <Button type="button" variant="outline" onClick={() => setOpenForm(false)}>Batal</Button>
-                <Button type="submit">Simpan</Button>
+                <Button type="button" variant="outline" size="default" onClick={() => setOpenForm(false)}>Batal</Button>
+                <Button type="submit" size="default">Simpan</Button>
               </div>
             </form>
           </Form>
