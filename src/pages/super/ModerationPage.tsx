@@ -569,7 +569,7 @@ export const ModerationPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
                 <select
-                  className="w-full px-3 py-2 border rounded-md bg-background"
+                  className="w-full px-3 py-2 pr-8 border rounded-md bg-background appearance-none"
                   value={filters.type}
                   onChange={e => setFilters(prev => ({ ...prev, type: e.target.value }))}
                 >
@@ -584,7 +584,7 @@ export const ModerationPage = () => {
 
               <div>
                 <select
-                  className="w-full px-3 py-2 border rounded-md bg-background"
+                  className="w-full px-3 py-2 pr-8 border rounded-md bg-background appearance-none"
                   value={filters.status}
                   onChange={e => setFilters(prev => ({ ...prev, status: e.target.value }))}
                 >
@@ -599,7 +599,7 @@ export const ModerationPage = () => {
 
               <div>
                 <select
-                  className="w-full px-3 py-2 border rounded-md bg-background"
+                  className="w-full px-3 py-2 pr-8 border rounded-md bg-background appearance-none"
                   value={filters.priority}
                   onChange={e => setFilters(prev => ({ ...prev, priority: e.target.value }))}
                 >
@@ -612,7 +612,7 @@ export const ModerationPage = () => {
 
               <div>
                 <select
-                  className="w-full px-3 py-2 border rounded-md bg-background"
+                  className="w-full px-3 py-2 pr-8 border rounded-md bg-background appearance-none"
                   value={filters.pondok}
                   onChange={e => setFilters(prev => ({ ...prev, pondok: e.target.value }))}
                 >

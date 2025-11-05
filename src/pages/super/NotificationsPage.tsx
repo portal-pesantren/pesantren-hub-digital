@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Send, Trash2, CheckCircle2, Mail, Smartphone, MessageSquare, Globe, Calendar, BarChart3, Users, Eye, Clock, TrendingUp, AlertCircle } from "lucide-react";
+import { Bell, Send, Trash2, CheckCircle2, Mail, Smartphone, MessageSquare, Globe, Calendar, BarChart3, Users, Eye, Clock, TrendingUp, AlertCircle, Edit } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -220,11 +220,19 @@ export const NotificationsPage = () => {
     {
       key: 'audience',
       label: 'Audiens',
-      render: (value: string) => (
-        <Badge variant="outline">
-          {value === "all" ? "Semua" : value === "pondok" ? "Pondok" : value === "users" ? "Pengguna" : value}
-        </Badge>
-      ),
+      render: (value: string) => {
+        const audienceConfig = {
+          all: { variant: "secondary" as const, label: "Semua", className: "bg-gray-100 text-gray-700" },
+          pondok: { variant: "default" as const, label: "Pondok", className: "bg-blue-100 text-blue-700" },
+          users: { variant: "outline" as const, label: "Pengguna", className: "bg-purple-100 text-purple-700 border-purple-200" }
+        };
+        const config = audienceConfig[value as keyof typeof audienceConfig] || audienceConfig.all;
+        return (
+          <Badge variant={config.variant} className={config.className}>
+            {config.label}
+          </Badge>
+        );
+      },
       hideOnMobile: true
     },
     {
@@ -290,18 +298,23 @@ export const NotificationsPage = () => {
   ];
 
   const renderActions = (row: NotificationEnhanced) => (
-    <div className="flex justify-center gap-1">
-      {row.status === "draft" && (
-        <Button size="sm" variant="outline">
-          <Send className="w-4 h-4" />
+    <div className="flex justify-center gap-2 items-center">
+      {row.status === "scheduled" ? (
+        <Button size="sm" variant="outline" disabled title="Edit tidak tersedia untuk notifikasi terjadwal">
+          <Edit className="w-4 h-4" />
+        </Button>
+      ) : (
+        <Button size="sm" variant="outline" onClick={() => {
+          // Logic untuk edit notifikasi
+          setTitle(row.title);
+          setBody(row.body);
+          setAudience(row.audience);
+          setPriority(row.priority);
+        }} title="Edit">
+          <Edit className="w-4 h-4" />
         </Button>
       )}
-      {row.status === "scheduled" && (
-        <Button size="sm" variant="outline">
-          <Calendar className="w-4 h-4" />
-        </Button>
-      )}
-      <Button size="sm" variant="ghost" className="text-destructive" onClick={() => remove(row.id)}>
+      <Button size="sm" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={() => remove(row.id)} title="Hapus">
         <Trash2 className="w-4 h-4" />
       </Button>
     </div>
@@ -315,9 +328,9 @@ export const NotificationsPage = () => {
       </div>
 
       {/* Analytics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="shadow-card">
-          <CardContent className="p-4">
+          <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Terkirim</p>
@@ -331,7 +344,7 @@ export const NotificationsPage = () => {
         </Card>
 
         <Card className="shadow-card">
-          <CardContent className="p-4">
+          <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Terjadwal</p>
@@ -345,7 +358,7 @@ export const NotificationsPage = () => {
         </Card>
 
         <Card className="shadow-card">
-          <CardContent className="p-4">
+          <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Avg Open Rate</p>
@@ -359,7 +372,7 @@ export const NotificationsPage = () => {
         </Card>
 
         <Card className="shadow-card">
-          <CardContent className="p-4">
+          <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Avg Delivery Rate</p>
@@ -374,10 +387,25 @@ export const NotificationsPage = () => {
       </div>
 
       <Tabs defaultValue="create" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="create">Buat Notifikasi</TabsTrigger>
-          <TabsTrigger value="history">Riwayat</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+        <TabsList className="grid w-full max-w-lg grid-cols-3 bg-gray-100 p-1 rounded-lg">
+          <TabsTrigger
+            value="create"
+            className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary font-medium transition-all duration-200"
+          >
+            Buat Notifikasi
+          </TabsTrigger>
+          <TabsTrigger
+            value="history"
+            className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary font-medium transition-all duration-200"
+          >
+            Riwayat
+          </TabsTrigger>
+          <TabsTrigger
+            value="analytics"
+            className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary font-medium transition-all duration-200"
+          >
+            Analytics
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="create">
@@ -528,27 +556,36 @@ export const NotificationsPage = () => {
               <CardContent>
                 <div className="space-y-4">
                   {[
-                    { name: "Web Notif", sent: 2500, delivered: 2350, rate: 94 },
-                    { name: "Email", sent: 1800, delivered: 1620, rate: 90 },
-                    { name: "Push Notif", sent: 1200, delivered: 1080, rate: 90 },
-                    { name: "SMS", sent: 300, delivered: 285, rate: 95 }
-                  ].map((channel) => (
-                    <div key={channel.name} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
-                          <BarChart3 className="w-4 h-4 text-blue-600" />
+                    { name: "Web Notif", sent: 2500, delivered: 2350, rate: 94, icon: Globe, color: "blue" },
+                    { name: "Email", sent: 1800, delivered: 1620, rate: 90, icon: Mail, color: "green" },
+                    { name: "Push Notif", sent: 1200, delivered: 1080, rate: 90, icon: Smartphone, color: "purple" },
+                    { name: "SMS", sent: 300, delivered: 285, rate: 95, icon: MessageSquare, color: "orange" }
+                  ].map((channel) => {
+                    const Icon = channel.icon;
+                    const colorClasses = {
+                      blue: "bg-blue-100 text-blue-600",
+                      green: "bg-green-100 text-green-600",
+                      purple: "bg-purple-100 text-purple-600",
+                      orange: "bg-orange-100 text-orange-600"
+                    };
+                    return (
+                      <div key={channel.name} className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 ${colorClasses[channel.color as keyof typeof colorClasses]} rounded-lg flex items-center justify-center`}>
+                            <Icon className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <div className="font-medium text-sm">{channel.name}</div>
+                            <div className="text-xs text-gray-500">{channel.delivered}/{channel.sent} terkirim</div>
+                          </div>
                         </div>
-                        <div>
-                          <div className="font-medium text-sm">{channel.name}</div>
-                          <div className="text-xs text-gray-500">{channel.delivered}/{channel.sent} terkirim</div>
+                        <div className="text-right">
+                          <div className="font-medium text-sm">{channel.rate}%</div>
+                          <div className="text-xs text-gray-500">delivery rate</div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="font-medium text-sm">{channel.rate}%</div>
-                        <div className="text-xs text-gray-500">delivery rate</div>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>

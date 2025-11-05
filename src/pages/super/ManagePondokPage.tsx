@@ -269,18 +269,21 @@ export const ManagePondokPage = () => {
                     <TableCell>{p.students.toLocaleString()}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <Badge
-                          variant={
-                            p.status === "verified" ? "verified" :
-                            p.status === "in-progress" ? "in-progress" :
-                            p.status === "suspended" ? "suspended" :
-                            p.status === "waiting" || p.status === "pending" ? "waiting" :
-                            "outline"}
-                        >
-                          {p.status === "in-progress" ? "In Progress" : p.status}
-                        </Badge>
-                        {p.suspended && (<Badge variant="suspended">suspended</Badge>)}
-                        {p.featured && (<Badge variant="secondary">featured</Badge>)}
+                        {p.suspended ? (
+                          <Badge variant="suspended">Suspend</Badge>
+                        ) : (
+                          <Badge
+                            variant={
+                              p.status === "verified" ? "verified" :
+                              p.status === "in-progress" ? "in-progress" :
+                              p.status === "suspended" ? "suspended" :
+                              p.status === "waiting" || p.status === "pending" ? "waiting" :
+                              "outline"}
+                          >
+                            {p.status === "in-progress" ? "In Progress" : p.status}
+                          </Badge>
+                        )}
+                        {p.featured && !p.suspended && (<Badge variant="secondary">featured</Badge>)}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -290,22 +293,6 @@ export const ManagePondokPage = () => {
                       </div>
                     </TableCell>
                     <TableCell className="text-right space-x-1" onClick={(e) => e.stopPropagation()}>
-                      <Button size="sm" variant={p.featured ? "default" : "outline"} onClick={() => toggleFeatured(p.id)} title="Featured">
-                        <Star className="w-4 h-4" />
-                      </Button>
-                      <Button size="sm" variant={p.suspended ? "default" : "outline"} onClick={() => toggleSuspend(p.id)} title="Suspend">
-                        <Slash className="w-4 h-4" />
-                      </Button>
-                      {(p.status !== "verified" && p.status !== "in-progress") && (
-                        <Button size="sm" variant="outline" onClick={() => verify(p.id)} title="Verify">
-                          <CheckCircle2 className="w-4 h-4" />
-                        </Button>
-                      )}
-                      {(p.status !== "suspended" && p.status !== "in-progress") && (
-                        <Button size="sm" variant="outline" onClick={() => reject(p.id)} title="Suspend">
-                          <XCircle className="w-4 h-4" />
-                        </Button>
-                      )}
                       <Button size="sm" variant="outline" onClick={() => startEdit(p)} title="Edit">
                         <Edit className="w-4 h-4" />
                       </Button>

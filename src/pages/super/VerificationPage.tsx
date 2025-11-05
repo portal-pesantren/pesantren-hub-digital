@@ -46,9 +46,19 @@ export const VerificationPage = () => {
       </Card>
 
       <Tabs defaultValue="pondok">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="pondok">Pondok</TabsTrigger>
-          <TabsTrigger value="news">Berita</TabsTrigger>
+        <TabsList className="grid w-full max-w-md grid-cols-2 bg-gray-100 p-1 rounded-lg">
+          <TabsTrigger
+            value="pondok"
+            className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary font-medium transition-all duration-200"
+          >
+            Pondok
+          </TabsTrigger>
+          <TabsTrigger
+            value="news"
+            className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary font-medium transition-all duration-200"
+          >
+            Berita
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="pondok" className="mt-6">
           <Card className="shadow-card">
@@ -87,13 +97,13 @@ export const VerificationPage = () => {
                   ),
                   date: r.date,
                   actions: (
-                    <div className="flex justify-center gap-1">
+                    <div className="flex justify-center gap-2 items-center">
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => setStatus(r.id, "verified")}
                         title="Verifikasi"
-                        className="px-3 py-1 border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700 transition-colors duration-200"
+                        className="px-3 py-2 border-green-200 hover:bg-green-50 text-green-600 hover:text-green-700 transition-colors duration-200 flex items-center justify-center"
                       >
                         <CheckCircle2 className="w-4 h-4" />
                       </Button>
@@ -102,7 +112,7 @@ export const VerificationPage = () => {
                         variant="outline"
                         onClick={() => setStatus(r.id, "suspended")}
                         title="Tolak"
-                        className="px-3 py-1 border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors duration-200"
+                        className="px-3 py-2 border-red-200 hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors duration-200 flex items-center justify-center"
                       >
                         <XCircle className="w-4 h-4" />
                       </Button>
@@ -128,9 +138,9 @@ export const VerificationPage = () => {
                       <div className="font-medium text-foreground">{a.title}</div>
                       <div className="text-sm text-muted-foreground">{a.pondok}</div>
                     </div>
-                    <div className="space-x-2">
-                      <Button size="sm" variant="outline"><CheckCircle2 className="w-4 h-4" /></Button>
-                      <Button size="sm" variant="outline"><XCircle className="w-4 h-4" /></Button>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" className="px-3 py-2 flex items-center justify-center"><CheckCircle2 className="w-4 h-4" /></Button>
+                      <Button size="sm" variant="outline" className="px-3 py-2 flex items-center justify-center"><XCircle className="w-4 h-4" /></Button>
                     </div>
                   </div>
                 ))}
