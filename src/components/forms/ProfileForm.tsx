@@ -38,9 +38,11 @@ export const ProfileForm = () => {
           <h1 className="text-3xl font-bold text-foreground">Profile Pondok</h1>
           <p className="text-muted-foreground">Kelola informasi dan profil pondok pesantren Anda</p>
         </div>
-        <Button 
+        <Button
+          variant="default"
+          size="default"
           onClick={form.handleSubmit(onSubmit)}
-          className="bg-gradient-primary text-white shadow-elegant"
+          className="shadow-sm"
         >
           <Save className="w-4 h-4 mr-2" />
           Simpan Perubahan

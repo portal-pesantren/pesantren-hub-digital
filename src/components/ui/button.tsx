@@ -23,6 +23,9 @@ const buttonVariants = cva(
         waiting: "bg-yellow-100 text-yellow-700 hover:bg-yellow-200/80 hover:shadow-md active:bg-yellow-200 focus:ring-yellow-500/50 border border-yellow-200",
         suspended: "bg-red-100 text-red-700 hover:bg-red-200/80 hover:shadow-md active:bg-red-200 focus:ring-red-500/50 border border-red-200",
         "in-progress": "bg-blue-100 text-blue-700 hover:bg-blue-200/80 hover:shadow-md active:bg-blue-200 focus:ring-blue-500/50 border border-blue-200",
+        link: "text-primary underline-offset-4 hover:underline hover:text-primary/80 focus:text-primary/80 focus:underline px-0 h-auto",
+        subtle: "text-muted-foreground hover:text-foreground hover:bg-muted/50 focus:bg-muted/50 focus:text-foreground",
+        dashed: "border-2 border-dashed border-[#042558] text-[#042558] hover:bg-[#042558] hover:text-white hover:border-solid hover:shadow-md focus:ring-[#042558]/50 bg-white",
       },
       size: {
         xs: "h-8 px-4 py-1.5 text-xs rounded-lg min-h-[32px]",

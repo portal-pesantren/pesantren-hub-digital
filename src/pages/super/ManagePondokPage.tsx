@@ -183,66 +183,78 @@ export const ManagePondokPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Kelola Pondok</h1>
-          <p className="text-muted-foreground">Manajemen daftar pondok di seluruh portal</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Kelola Pondok</h1>
+          <p className="text-muted-foreground text-sm sm:text-base">Manajemen daftar pondok di seluruh portal</p>
         </div>
-        <Button size="default" onClick={startCreate}>
+        <Button size="default" onClick={startCreate} className="w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" /> Tambah Pondok
         </Button>
       </div>
 
       <Card className="shadow-card">
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row gap-3">
-            <div className="relative flex-1">
+        <CardContent className="p-4 sm:p-6">
+          <div className="space-y-3">
+            {/* Search Input - Full width on mobile */}
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input placeholder="Cari pondok / kota / provinsi..." className="pl-10" value={search} onChange={e => setSearch(e.target.value)} />
+              <Input
+                placeholder="Cari pondok / kota / provinsi..."
+                className="pl-10 w-full"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[180px]"><SelectValue placeholder="Status" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Semua Status</SelectItem>
-                <SelectItem value="verified">Verified</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="waiting">Waiting</SelectItem>
-                <SelectItem value="in-progress">In Progress</SelectItem>
-                <SelectItem value="suspended">Suspended</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={provinceFilter} onValueChange={setProvinceFilter}>
-              <SelectTrigger className="w-[180px]"><SelectValue placeholder="Provinsi" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Semua Provinsi</SelectItem>
-                <SelectItem value="Jawa Barat">Jawa Barat</SelectItem>
-                <SelectItem value="Jawa Timur">Jawa Timur</SelectItem>
-                <SelectItem value="DKI Jakarta">DKI Jakarta</SelectItem>
-                <SelectItem value="Banten">Banten</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={suspendFilter} onValueChange={setSuspendFilter}>
-              <SelectTrigger className="w-[180px]"><SelectValue placeholder="Status Akses" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Semua Akses</SelectItem>
-                <SelectItem value="active">Aktif</SelectItem>
-                <SelectItem value="suspended">Suspended</SelectItem>
-              </SelectContent>
-            </Select>
+
+            {/* Filter Row - Responsive */}
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full sm:w-[160px]"><SelectValue placeholder="Status" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua Status</SelectItem>
+                  <SelectItem value="verified">Verified</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="waiting">Waiting</SelectItem>
+                  <SelectItem value="in-progress">In Progress</SelectItem>
+                  <SelectItem value="suspended">Suspended</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={provinceFilter} onValueChange={setProvinceFilter}>
+                <SelectTrigger className="w-full sm:w-[160px]"><SelectValue placeholder="Provinsi" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua Provinsi</SelectItem>
+                  <SelectItem value="Jawa Barat">Jawa Barat</SelectItem>
+                  <SelectItem value="Jawa Timur">Jawa Timur</SelectItem>
+                  <SelectItem value="DKI Jakarta">DKI Jakarta</SelectItem>
+                  <SelectItem value="Banten">Banten</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={suspendFilter} onValueChange={setSuspendFilter}>
+                <SelectTrigger className="w-full sm:w-[160px]"><SelectValue placeholder="Status Akses" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua Akses</SelectItem>
+                  <SelectItem value="active">Aktif</SelectItem>
+                  <SelectItem value="suspended">Suspended</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>
 
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 flex-wrap">
             <Building2 className="w-5 h-5 text-primary" />
             Daftar Pondok ({filtered.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-lg overflow-hidden">
-            <Table>
+          {/* Responsive table container */}
+          <div className="rounded-lg border overflow-x-auto">
+            <div className="min-w-[800px]">
+              <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>No</TableHead>
@@ -320,6 +332,7 @@ export const ManagePondokPage = () => {
                 ))}
               </TableBody>
             </Table>
+            </div>
           </div>
         </CardContent>
       </Card>

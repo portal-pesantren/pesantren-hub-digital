@@ -1,27 +1,31 @@
-import { useLocation } from "react-router-dom";
-import { DashboardSidebar } from "@/components/DashboardSidebar";
-import { DashboardNavbar } from "@/components/DashboardNavbar";
 import { PondokDashboard } from "@/components/PondokDashboard";
 import { SuperAdminDashboard } from "@/components/SuperAdminDashboard";
+import { DashboardLayout } from "@/components/DashboardLayout";
+import { useAuth } from "@/contexts/AuthContext";
 import { useRole } from "@/contexts/RoleContext";
 
 const Index = () => {
-  const { role, switchRole } = useRole();
-  const location = useLocation();
+  const { user } = useAuth();
+  const { role } = useRole();
+
+  // Determine dashboard content based on user role and UI role
+  const getDashboardContent = () => {
+    // Super admin user with UI role 'super' - show Super Admin Dashboard
+    if (user?.role === 'admin' && role === 'super') {
+      return <SuperAdminDashboard />;
+    }
+
+    // All other cases show Pondok Dashboard:
+    // - Super admin user with UI role 'pondok'
+    // - Pondok admin users
+    // - Parent users
+    return <PondokDashboard />;
+  };
 
   return (
-    <div className="min-h-screen bg-background flex w-full">
-      <DashboardSidebar role={role} currentPath={location.pathname} />
-      <div className="flex-1 flex flex-col">
-        <DashboardNavbar
-          role={role}
-          onRoleSwitch={switchRole}
-        />
-        <main className="flex-1 p-6 overflow-y-auto">
-          {role === "pondok" ? <PondokDashboard /> : <SuperAdminDashboard />}
-        </main>
-      </div>
-    </div>
+    <DashboardLayout>
+      {getDashboardContent()}
+    </DashboardLayout>
   );
 };
 
