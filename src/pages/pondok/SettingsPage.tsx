@@ -54,12 +54,37 @@ export const SettingsPage = () => {
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="general">Umum</TabsTrigger>
-          <TabsTrigger value="notifications">Notifikasi</TabsTrigger>
-          <TabsTrigger value="security">Keamanan</TabsTrigger>
-          <TabsTrigger value="website">Website</TabsTrigger>
-          <TabsTrigger value="backup">Backup</TabsTrigger>
+        <TabsList className="h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-5">
+          <TabsTrigger
+            value="general"
+            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5"
+          >
+            Umum
+          </TabsTrigger>
+          <TabsTrigger
+            value="notifications"
+            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5"
+          >
+            Notifikasi
+          </TabsTrigger>
+          <TabsTrigger
+            value="security"
+            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5"
+          >
+            Keamanan
+          </TabsTrigger>
+          <TabsTrigger
+            value="website"
+            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5"
+          >
+            Website
+          </TabsTrigger>
+          <TabsTrigger
+            value="backup"
+            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5"
+          >
+            Backup
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="space-y-6">

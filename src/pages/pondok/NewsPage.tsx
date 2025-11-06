@@ -280,9 +280,8 @@ const getCategoryColor = (category: string) => {
                     touch-target-sm
                     ${selectedCategory === category
                       ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                      : "bg-background text-foreground border-border hover:bg-muted hover:border-muted-foreground/50"
+                      : "bg-background text-foreground border-border hover:bg-muted hover:border-muted-foreground/50 hover:px-4 hover:py-2"
                     }
-                    transition-all duration-200 ease-in-out
                     px-3 py-1.5 h-8
                     text-xs font-medium
                     rounded-md

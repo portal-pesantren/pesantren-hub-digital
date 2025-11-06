@@ -195,12 +195,37 @@ export const StatisticsPage = () => {
 
       {/* Charts Section */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="students">Santri</TabsTrigger>
-          <TabsTrigger value="pertumbuhan">Pertumbuhan</TabsTrigger>
-          <TabsTrigger value="engagement">Engagement</TabsTrigger>
-          <TabsTrigger value="website">Website</TabsTrigger>
+        <TabsList className="h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-5">
+          <TabsTrigger
+            value="overview"
+            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5"
+          >
+            Overview
+          </TabsTrigger>
+          <TabsTrigger
+            value="students"
+            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5"
+          >
+            Santri
+          </TabsTrigger>
+          <TabsTrigger
+            value="pertumbuhan"
+            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5"
+          >
+            Pertumbuhan
+          </TabsTrigger>
+          <TabsTrigger
+            value="engagement"
+            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5"
+          >
+            Engagement
+          </TabsTrigger>
+          <TabsTrigger
+            value="website"
+            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5"
+          >
+            Website
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">

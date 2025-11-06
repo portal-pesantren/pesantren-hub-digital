@@ -291,9 +291,8 @@ export const GalleryPage = () => {
                     touch-target-sm
                     ${selectedCategory === category
                       ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                      : "bg-background text-foreground border-border hover:bg-muted hover:border-muted-foreground/50"
+                      : "bg-background text-foreground border-border hover:bg-muted hover:border-muted-foreground/50 hover:px-4 hover:py-2"
                     }
-                    transition-all duration-200 ease-in-out
                     px-3 py-1.5 h-8
                     text-xs font-medium
                     rounded-md
@@ -311,11 +310,17 @@ export const GalleryPage = () => {
       <Card className="shadow-card">
         <CardContent className="p-4 sm:p-6">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full max-w-md grid-cols-2 h-12">
-              <TabsTrigger value="photos" className="text-responsive-sm touch-target">
+            <TabsList className="items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full max-w-md grid-cols-2 h-12">
+              <TabsTrigger
+                value="photos"
+                className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5 text-responsive-sm"
+              >
                 Foto ({filteredPhotos.length})
               </TabsTrigger>
-              <TabsTrigger value="videos" className="text-responsive-sm touch-target">
+              <TabsTrigger
+                value="videos"
+                className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5 text-responsive-sm"
+              >
                 Video ({filteredVideos.length})
               </TabsTrigger>
             </TabsList>
