@@ -51,15 +51,13 @@ const App = () => (
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
 
-            {/* Protected routes - require authentication */}
+            {/* Main dashboard route - no authentication required */}
             <Route path="/" element={
-              <ProtectedRoute>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><Index /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><Index /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/profile" element={
