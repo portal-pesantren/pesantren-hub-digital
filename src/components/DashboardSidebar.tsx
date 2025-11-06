@@ -84,20 +84,7 @@ export const DashboardSidebar = ({ navigation, currentPath = "/", onClose, role 
           </div>
         </nav>
 
-        {/* Mobile close button - Only shown in mobile drawer mode */}
-        {isMobileDrawer && (
-          <div className="p-4 border-t border-sidebar-border">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onClose}
-              className="w-full"
-            >
-              Tutup Menu
-            </Button>
-          </div>
-        )}
-      </div>
+        </div>
     </aside>
   );
 };

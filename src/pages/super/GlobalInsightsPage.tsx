@@ -30,7 +30,10 @@ export const GlobalInsightsPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-foreground">Insight Global</h1>
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Insight Global</h1>
+          <p className="text-muted-foreground">Analitik lintas pondok di seluruh portal</p>
+        </div>
         <div className="flex items-center gap-3">
           <Select value={segment} onValueChange={setSegment}>
             <SelectTrigger className="w-[160px]"><SelectValue placeholder="Segment" /></SelectTrigger>
@@ -52,7 +55,6 @@ export const GlobalInsightsPage = () => {
           </Select>
         </div>
       </div>
-      <p className="text-muted-foreground">Analitik lintas pondok di seluruh portal</p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard title="Total Pondok" value={531} icon={School} trend={{ value: 8.2, isPositive: true }} />

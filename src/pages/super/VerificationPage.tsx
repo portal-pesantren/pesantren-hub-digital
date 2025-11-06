@@ -46,16 +46,16 @@ export const VerificationPage = () => {
       </Card>
 
       <Tabs defaultValue="pondok">
-        <TabsList className="grid w-full max-w-md grid-cols-2 bg-gray-100 p-1 rounded-lg">
+        <TabsList className="grid w-full max-w-md grid-cols-2 bg-muted p-1 rounded-md mx-auto">
           <TabsTrigger
             value="pondok"
-            className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary font-medium transition-all duration-200"
+            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-4 py-2 h-9 text-sm rounded-md touch-target text-center"
           >
             Pondok
           </TabsTrigger>
           <TabsTrigger
             value="news"
-            className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary font-medium transition-all duration-200"
+            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-4 py-2 h-9 text-sm rounded-md touch-target text-center"
           >
             Berita
           </TabsTrigger>

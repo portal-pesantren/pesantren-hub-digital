@@ -71,7 +71,7 @@ export const DashboardNavbar = ({ user, role, pondokName = "Pondok Pesantren Al-
                 <User className="w-4 h-4 text-white" />
               </div>
               <span className="text-sm font-medium hidden sm:block truncate">
-                {user?.name || getRoleDisplayName(user?.role, role)}
+                {getRoleDisplayName(user?.role, role)}
               </span>
               <ChevronDown className="w-4 h-4 flex-shrink-0" />
             </Button>
@@ -80,7 +80,7 @@ export const DashboardNavbar = ({ user, role, pondokName = "Pondok Pesantren Al-
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">
-                  {user?.name || 'User'}
+                  {getRoleDisplayName(user?.role, role)}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground">
                   {user?.email || 'user@example.com'}

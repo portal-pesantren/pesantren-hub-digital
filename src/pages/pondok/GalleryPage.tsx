@@ -287,7 +287,17 @@ export const GalleryPage = () => {
                   variant={selectedCategory === category ? "default" : "outline"}
                   size="sm"
                   onClick={() => setSelectedCategory(category)}
-                  className="touch-target-sm"
+                  className={`
+                    touch-target-sm
+                    ${selectedCategory === category
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                      : "bg-background text-foreground border-border hover:bg-muted hover:border-muted-foreground/50"
+                    }
+                    transition-all duration-200 ease-in-out
+                    px-3 py-1.5 h-8
+                    text-xs font-medium
+                    rounded-md
+                  `}
                 >
                   {category === "all" ? "Semua" : category}
                 </Button>
