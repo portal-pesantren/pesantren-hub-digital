@@ -9,7 +9,6 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import { DashboardLayout } from "./components/DashboardLayout";
-import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext";
 import { RoleProvider } from "./contexts/RoleContext";
 import AppWithErrorBoundary from "./AppWithErrorBoundary";
@@ -61,180 +60,148 @@ const App = () => (
             } />
 
             <Route path="/profile" element={
-              <ProtectedRoute>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><ProfilePage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><ProfilePage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/people" element={
-              <ProtectedRoute>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><PeoplePage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><PeoplePage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/events" element={
-              <ProtectedRoute>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><EventsPage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><EventsPage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/news" element={
-              <ProtectedRoute>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><NewsPage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><NewsPage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/gallery" element={
-              <ProtectedRoute>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><GalleryPage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><GalleryPage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/stats" element={
-              <ProtectedRoute>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><StatisticsPage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><StatisticsPage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/settings" element={
-              <ProtectedRoute>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><SettingsPage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><SettingsPage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
-            {/* Super admin routes - require super admin role */}
+            {/* Super admin routes - no authentication required */}
             <Route path="/super" element={
-              <ProtectedRoute requireSuperAdmin>
-                <Navigate to="/global-insights" replace />
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <Navigate to="/global-insights" replace />
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/manage-pondok" element={
-              <ProtectedRoute requireSuperAdmin>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><ManagePondokPage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><ManagePondokPage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/manage-pondok/:id" element={
-              <ProtectedRoute requireSuperAdmin>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><PondokProfilePage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><PondokProfilePage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/verification" element={
-              <ProtectedRoute requireAdmin>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><VerificationPage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><VerificationPage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/notifications" element={
-              <ProtectedRoute requireAdmin>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><NotificationsPage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><NotificationsPage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/moderation" element={
-              <ProtectedRoute requireAdmin>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><ModerationPage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><ModerationPage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/backup" element={
-              <ProtectedRoute requireSuperAdmin>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><BackupPage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><BackupPage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/global-insights" element={
-              <ProtectedRoute requireSuperAdmin>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><GlobalInsightsPage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><GlobalInsightsPage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/portal-settings" element={
-              <ProtectedRoute requireSuperAdmin>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><PortalSettingsPage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><PortalSettingsPage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/branding" element={
-              <ProtectedRoute requireSuperAdmin>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><BrandingPage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><BrandingPage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             <Route path="/activity-logs" element={
-              <ProtectedRoute requireSuperAdmin>
-                <AuthProvider>
-                  <RoleProvider>
-                    <DashboardLayout><ActivityLogsPage /></DashboardLayout>
-                  </RoleProvider>
-                </AuthProvider>
-              </ProtectedRoute>
+              <AuthProvider>
+                <RoleProvider>
+                  <DashboardLayout><ActivityLogsPage /></DashboardLayout>
+                </RoleProvider>
+              </AuthProvider>
             } />
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
