@@ -139,8 +139,7 @@ export const getNavigationConfig = (userRole: UserRole, uiRole: 'pondok' | 'supe
       ),
       path: '/manage-pondok',
       requiredRole: ['admin'],
-      category: 'management',
-      badge: { count: 45, color: 'primary' }
+      category: 'management'
     },
     {
       id: 'verification',
@@ -152,8 +151,7 @@ export const getNavigationConfig = (userRole: UserRole, uiRole: 'pondok' | 'supe
       ),
       path: '/verification',
       requiredRole: ['admin', 'pesantren_admin'],
-      category: 'management',
-      badge: { count: 12, color: 'warning' }
+      category: 'management'
     },
     {
       id: 'notifications',
@@ -165,8 +163,7 @@ export const getNavigationConfig = (userRole: UserRole, uiRole: 'pondok' | 'supe
       ),
       path: '/notifications',
       requiredRole: ['admin', 'pesantren_admin'],
-      category: 'communication',
-      badge: { count: 5, color: 'error' }
+      category: 'communication'
     },
     {
       id: 'moderation',

@@ -76,10 +76,10 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         />
       )}
 
-      {/* Sidebar - Desktop: Always visible, Mobile: Slide-in drawer */}
+      {/* Sidebar - Desktop: Fixed width, Mobile: Slide-in drawer */}
       <div className={`
         ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        lg:translate-x-0 fixed lg:relative lg:block
+        lg:translate-x-0 fixed lg:relative lg:block w-64 flex-shrink-0
         z-50 transition-transform duration-200 ease-in-out
       `}>
         <DashboardSidebar
@@ -90,7 +90,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         />
       </div>
 
-      {/* Main Content */}
+      {/* Main Content - Takes remaining space beside sidebar */}
       <div className="flex-1 flex flex-col min-w-0 lg:ml-0">
         <DashboardNavbar
           user={user}
@@ -108,12 +108,14 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             <Breadcrumb showHome={true} maxItems={4} />
           </div>
 
-          {/* Page Content with Transitions and Loading Overlay */}
-          <div className="max-w-full relative">
-            <PageTransition location={location.pathname}>
-              <RouteLoadingOverlay />
-              {children}
-            </PageTransition>
+          {/* Page Content with proper width constraints */}
+          <div className="w-full">
+            <div className="max-w-none lg:max-w-6xl xl:max-w-7xl">
+              <PageTransition location={location.pathname}>
+                <RouteLoadingOverlay />
+                {children}
+              </PageTransition>
+            </div>
           </div>
         </main>
       </div>

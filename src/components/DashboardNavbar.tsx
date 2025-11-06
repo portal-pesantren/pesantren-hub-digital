@@ -41,11 +41,9 @@ export const DashboardNavbar = ({ user, role, pondokName = "Pondok Pesantren Al-
           <h1 className="text-lg sm:text-xl font-bold text-foreground truncate">
             {role === "pondok" ? pondokName : "Portal Pesantren Indonesia"}
           </h1>
-          {role === "pondok" && (
-            <span className="hidden sm:inline-flex px-3 py-1 text-xs font-medium bg-gradient-primary text-white rounded-full whitespace-nowrap">
-              Terverifikasi
-            </span>
-          )}
+          <span className="hidden sm:inline-flex px-3 py-1 text-xs font-medium bg-gradient-primary text-white rounded-full whitespace-nowrap">
+            {role === "pondok" ? "Admin Pondok" : "Super Admin"}
+          </span>
         </div>
       </div>
 

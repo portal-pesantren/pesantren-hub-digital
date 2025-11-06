@@ -1,7 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { NavigationItem } from "@/types/navigation";
 
 interface DashboardSidebarProps {
@@ -15,32 +14,11 @@ export const DashboardSidebar = ({ navigation, currentPath = "/", onClose, role 
   const navigate = useNavigate();
   const isMobileDrawer = !!onClose;
 
-  // Group navigation items by category
-  const groupedNavigation = navigation.reduce((acc, item) => {
-    const category = item.category || 'other';
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(item);
-    return acc;
-  }, {} as Record<string, NavigationItem[]>);
-
   const handleNavigation = (path: string) => {
     navigate(path);
     if (isMobileDrawer) {
       onClose();
     }
-  };
-
-  // Category labels in Indonesian
-  const categoryLabels: Record<string, string> = {
-    main: 'Menu Utama',
-    management: 'Manajemen',
-    content: 'Konten',
-    communication: 'Komunikasi',
-    analytics: 'Analitik',
-    system: 'Sistem',
-    other: 'Lainnya'
   };
 
   const NavigationItemComponent = ({ item }: { item: NavigationItem }) => {
@@ -66,21 +44,7 @@ export const DashboardSidebar = ({ navigation, currentPath = "/", onClose, role 
         )}
       >
         <Icon className="w-5 h-5 flex-shrink-0" />
-        <span className="text-sm truncate">{item.label}</span>
-
-        {item.badge && (
-          <Badge
-            variant={
-              item.badge.color === 'error' ? 'destructive' :
-              item.badge.color === 'warning' ? 'secondary' :
-              item.badge.color === 'success' ? 'default' :
-              'outline'
-            }
-            className="ml-auto text-xs px-2 py-0.5"
-          >
-            {item.badge.count}
-          </Badge>
-        )}
+        <span className="text-sm truncate flex-1">{item.label}</span>
       </button>
     );
   };
@@ -111,50 +75,28 @@ export const DashboardSidebar = ({ navigation, currentPath = "/", onClose, role 
           </div>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-6 overflow-y-auto">
-          {Object.entries(groupedNavigation).map(([category, items]) => {
-            if (items.length === 0) return null;
-
-            return (
-              <div key={category} className="space-y-1">
-                <h3 className="text-xs font-medium text-sidebar-foreground/50 uppercase tracking-wide px-3">
-                  {categoryLabels[category] || category}
-                </h3>
-                <div className="space-y-1">
-                  {items.map((item) => (
-                    <NavigationItemComponent key={item.id} item={item} />
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+        {/* Navigation - Unified without category separators */}
+        <nav className="flex-1 p-4 overflow-y-auto">
+          <div className="space-y-1">
+            {navigation.map((item) => (
+              <NavigationItemComponent key={item.id} item={item} />
+            ))}
+          </div>
         </nav>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-sidebar-border">
-          <div className="space-y-2">
-            <div className="text-xs text-sidebar-foreground/50 text-center">
-              © 2025 Portal Pondok Pesantren
-            </div>
-            <div className="flex items-center justify-center gap-1 text-xs text-sidebar-foreground/40">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span>System Online</span>
-            </div>
-          </div>
-
-          {/* Mobile close button */}
-          {isMobileDrawer && (
+        {/* Mobile close button - Only shown in mobile drawer mode */}
+        {isMobileDrawer && (
+          <div className="p-4 border-t border-sidebar-border">
             <Button
               variant="outline"
               size="sm"
               onClick={onClose}
-              className="w-full mt-2"
+              className="w-full"
             >
               Tutup Menu
             </Button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </aside>
   );
