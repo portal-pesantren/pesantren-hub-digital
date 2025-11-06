@@ -166,7 +166,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Initialize auth state on mount
+  // Initialize auth state on mount with auto-login
   useEffect(() => {
     const initializeAuth = async () => {
       try {
@@ -185,6 +185,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           } catch (parseError) {
             console.warn('Failed to parse stored user data:', parseError);
             localStorage.removeItem(USER_KEY);
+          }
+        } else {
+          // Auto-login with default user for development
+          console.log('Auto-logging in with default user...');
+          try {
+            const response = await authAPI.login({
+              email: 'admin@pesantren.id',
+              password: 'admin123'
+            });
+            if (response.success) {
+              const { user } = response.data;
+              setUser(user);
+              localStorage.setItem(USER_KEY, JSON.stringify(user));
+              console.log(`Auto-login successful: ${user.name}`);
+            }
+          } catch (loginError) {
+            console.error('Auto-login failed:', loginError);
           }
         }
       } catch (error) {

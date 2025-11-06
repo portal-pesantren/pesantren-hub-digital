@@ -1,6 +1,5 @@
 import { PondokDashboard } from "@/components/PondokDashboard";
 import { SuperAdminDashboard } from "@/components/SuperAdminDashboard";
-import { DashboardLayout } from "@/components/DashboardLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRole } from "@/contexts/RoleContext";
 
@@ -23,9 +22,9 @@ const Index = () => {
   };
 
   return (
-    <DashboardLayout>
+    <div>
       {getDashboardContent()}
-    </DashboardLayout>
+    </div>
   );
 };
 

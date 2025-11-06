@@ -56,7 +56,7 @@ const App = () => (
               <ProtectedRoute>
                 <AuthProvider>
                   <RoleProvider>
-                    <Index />
+                    <DashboardLayout><Index /></DashboardLayout>
                   </RoleProvider>
                 </AuthProvider>
               </ProtectedRoute>
