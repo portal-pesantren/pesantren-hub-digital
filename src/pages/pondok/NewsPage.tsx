@@ -157,8 +157,16 @@ export const NewsPage = () => {
   };
 
   const handleDraftArticle = (id: number) => {
-    setNewsArticles(newsArticles.map(article => 
-      article.id === id 
+    setNewsArticles(newsArticles.map(article =>
+      article.id === id
+        ? { ...article, status: "draft" as const }
+        : article
+    ));
+  };
+
+  const handleUnpublishArticle = (id: number) => {
+    setNewsArticles(newsArticles.map(article =>
+      article.id === id
         ? { ...article, status: "draft" as const }
         : article
     ));
@@ -343,27 +351,9 @@ const getCategoryColor = (category: string) => {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => {
-                        setNewsArticles(newsArticles.map(a => 
-                          a.id === article.id ? { ...a, views: a.views + 1 } : a
-                        ));
-                      }}
-                    >
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => openEditForm(article)}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
                     {article.status === "draft" ? (
-                      <Button 
-                        size="sm" 
+                      <Button
+                        size="sm"
                         variant="outline"
                         className="text-green-600"
                         onClick={() => handlePublishArticle(article.id)}
@@ -371,40 +361,15 @@ const getCategoryColor = (category: string) => {
                         Publish
                       </Button>
                     ) : (
-                      <Button 
-                        size="sm" 
+                      <Button
+                        size="sm"
                         variant="outline"
-                        className="text-yellow-600"
-                        onClick={() => handleDraftArticle(article.id)}
+                        className="text-destructive"
+                        onClick={() => handleUnpublishArticle(article.id)}
                       >
-                        Draft
+                        Unpublish
                       </Button>
                     )}
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                    <Button size="sm" variant="outline" className="text-destructive">
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Apakah Anda yakin ingin menghapus artikel <strong>{article.title}</strong>? 
-                            Tindakan ini tidak dapat dibatalkan.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Batal</AlertDialogCancel>
-                          <AlertDialogAction 
-                            onClick={() => handleDeleteArticle(article.id)}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          >
-                            Hapus
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
                   </div>
                 </div>
               </div>

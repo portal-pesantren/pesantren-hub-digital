@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Calendar, Plus, Clock, MapPin, Users as UsersIcon, Edit, Trash2 } from "lucide-react";
+import { Calendar, Plus, Clock, MapPin, Users as UsersIcon, Edit, Trash2, Bookmark, Check, FileText } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
 import { EventForm } from "@/components/forms/EventForm";
 import { type EventFormData } from "@/lib/validations";
@@ -18,13 +18,14 @@ interface Event {
   location: string;
   participants: number;
   category: string;
-  status: "upcoming" | "completed" | "cancelled";
+  status: "upcoming" | "completed" | "cancelled" | "draft";
   maxParticipants?: number;
 }
 
 export const EventsPage = () => {
   const [isEventFormOpen, setIsEventFormOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [isDraftFormOpen, setIsDraftFormOpen] = useState(false);
 
   // State management untuk data events
   const [events, setEvents] = useState<Event[]>([
@@ -108,6 +109,23 @@ export const EventsPage = () => {
     setIsEventFormOpen(false);
   };
 
+  const handleAddDraftEvent = (data: EventFormData) => {
+    const newEvent: Event = {
+      id: Math.max(...events.map(e => e.id)) + 1,
+      title: data.title,
+      description: data.description,
+      date: data.date,
+      time: data.time,
+      location: data.location,
+      participants: 0,
+      category: data.category,
+      status: "draft",
+      maxParticipants: data.maxParticipants,
+    };
+    setEvents([...events, newEvent]);
+    setIsDraftFormOpen(false);
+  };
+
   const handleEditEvent = (data: EventFormData) => {
     if (editingEvent) {
       setEvents(events.map(event => 
@@ -125,9 +143,17 @@ export const EventsPage = () => {
   };
 
   const handleCancelEvent = (id: number) => {
-    setEvents(events.map(event => 
-      event.id === id 
+    setEvents(events.map(event =>
+      event.id === id
         ? { ...event, status: "cancelled" as const }
+        : event
+    ));
+  };
+
+  const handleUnpublishEvent = (id: number) => {
+    setEvents(events.map(event =>
+      event.id === id
+        ? { ...event, status: "draft" as const }
         : event
     ));
   };
@@ -135,12 +161,12 @@ export const EventsPage = () => {
   // Filter events
   const upcomingEvents = events.filter(event => event.status === "upcoming");
   const recentEvents = events.filter(event => event.status === "completed");
+  const draftEvents = events.filter(event => event.status === "draft");
 
   // Statistik dinamis
   const totalEvents = events.length;
   const upcomingCount = upcomingEvents.length;
   const completedCount = recentEvents.length;
-  const totalParticipants = events.reduce((sum, event) => sum + event.participants, 0);
 
   const getStatusColor = (status: Event["status"]) => {
     switch (status) {
@@ -150,6 +176,8 @@ export const EventsPage = () => {
         return "bg-green-500/10 text-green-600";
       case "cancelled":
         return "bg-red-500/10 text-red-600";
+      case "draft":
+        return "bg-gray-500/10 text-gray-600";
       default:
         return "bg-secondary";
     }
@@ -163,8 +191,29 @@ export const EventsPage = () => {
         return "Selesai";
       case "cancelled":
         return "Dibatalkan";
+      case "draft":
+        return "Draft";
       default:
         return status;
+    }
+  };
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case "Event Besar":
+        return "bg-blue-500/10 text-blue-600";
+      case "Kegiatan Rutin":
+        return "bg-green-500/10 text-green-600";
+      case "Pendaftaran":
+        return "bg-orange-500/10 text-orange-600";
+      case "Seasonal":
+        return "bg-purple-500/10 text-purple-600";
+      case "Annual":
+        return "bg-indigo-500/10 text-indigo-600";
+      case "Monthly":
+        return "bg-yellow-500/10 text-yellow-600";
+      default:
+        return "bg-secondary";
     }
   };
 
@@ -175,23 +224,35 @@ export const EventsPage = () => {
           <h1 className="text-3xl font-bold text-foreground">Kegiatan & Event</h1>
           <p className="text-muted-foreground">Kelola jadwal kegiatan dan event pondok pesantren</p>
         </div>
-        <Button 
-          className="bg-gradient-primary text-white shadow-elegant"
-          onClick={() => {
-            setEditingEvent(null);
-            setIsEventFormOpen(true);
-          }}
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Tambah Event
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              setEditingEvent(null);
+              setIsDraftFormOpen(true);
+            }}
+          >
+            <FileText className="w-4 h-4 mr-2" />
+            Draft
+          </Button>
+          <Button
+            className="bg-gradient-primary text-white shadow-elegant"
+            onClick={() => {
+              setEditingEvent(null);
+              setIsEventFormOpen(true);
+            }}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Tambah Event
+          </Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <StatCard
           title="Total Event"
           value={totalEvents}
-          icon={Calendar}
+          icon={Bookmark}
           trend={{ value: 8.3, isPositive: true }}
         />
         <StatCard
@@ -202,12 +263,7 @@ export const EventsPage = () => {
         <StatCard
           title="Event Selesai"
           value={completedCount}
-          icon={Calendar}
-        />
-        <StatCard
-          title="Total Peserta"
-          value={totalParticipants.toLocaleString()}
-          icon={UsersIcon}
+          icon={Check}
         />
       </div>
 
@@ -253,7 +309,7 @@ export const EventsPage = () => {
                     </div>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <Badge className={getStatusColor(event.status)}>
+                    <Badge className={getCategoryColor(event.category)}>
                       {event.category}
                     </Badge>
                     <Badge variant="outline">
@@ -262,65 +318,28 @@ export const EventsPage = () => {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => {
-                      setEditingEvent(event);
-                      setIsEventFormOpen(true);
-                    }}
-                  >
-                    <Edit className="w-4 h-4 mr-1" />
-                    Edit
-                  </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button size="sm" variant="outline" className="text-destructive">
                         <Trash2 className="w-4 h-4 mr-1" />
-                        Batalkan
+                        Unpublish
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Konfirmasi Pembatalan</AlertDialogTitle>
+                        <AlertDialogTitle>Konfirmasi Unpublish</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Apakah Anda yakin ingin membatalkan event <strong>{event.title}</strong>? 
-                          Tindakan ini akan mengubah status event menjadi dibatalkan.
+                          Apakah Anda yakin ingin unpublish event <strong>{event.title}</strong>?
+                          Tindakan ini akan mengubah status event menjadi draft.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Batal</AlertDialogCancel>
-                        <AlertDialogAction 
-                          onClick={() => handleCancelEvent(event.id)}
+                        <AlertDialogAction
+                          onClick={() => handleUnpublishEvent(event.id)}
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         >
-                          Batalkan Event
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button size="sm" variant="outline" className="text-destructive">
-                        <Trash2 className="w-4 h-4 mr-1" />
-                        Hapus
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Apakah Anda yakin ingin menghapus event <strong>{event.title}</strong>? 
-                          Tindakan ini tidak dapat dibatalkan.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Batal</AlertDialogCancel>
-                        <AlertDialogAction 
-                          onClick={() => handleDeleteEvent(event.id)}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                          Hapus Event
+                          Unpublish Event
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -355,45 +374,12 @@ export const EventsPage = () => {
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Badge variant="secondary">{event.category}</Badge>
+                  <Badge className={getCategoryColor(event.category)}>
+                    {event.category}
+                  </Badge>
                   <Badge className={getStatusColor(event.status)}>
                     {getStatusText(event.status)}
                   </Badge>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => {
-                      setEditingEvent(event);
-                      setIsEventFormOpen(true);
-                    }}
-                  >
-                    <Edit className="w-4 h-4" />
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="ghost" size="sm" className="text-destructive">
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Apakah Anda yakin ingin menghapus event <strong>{event.title}</strong>? 
-                          Tindakan ini tidak dapat dibatalkan.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Batal</AlertDialogCancel>
-                        <AlertDialogAction 
-                          onClick={() => handleDeleteEvent(event.id)}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                          Hapus Event
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
                 </div>
               </div>
             ))}
@@ -411,6 +397,18 @@ export const EventsPage = () => {
         eventData={editingEvent}
         mode={editingEvent ? "edit" : "create"}
         onSubmit={editingEvent ? handleEditEvent : handleAddEvent}
+      />
+
+      {/* Draft Event Form */}
+      <EventForm
+        isOpen={isDraftFormOpen}
+        onClose={() => {
+          setIsDraftFormOpen(false);
+          setEditingEvent(null);
+        }}
+        eventData={editingEvent}
+        mode="create"
+        onSubmit={handleAddDraftEvent}
       />
     </div>
   );
