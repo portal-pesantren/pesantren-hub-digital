@@ -191,30 +191,29 @@ export const SuperAdminDashboard = () => {
 
           {/* Tablet & Desktop View - Table Layout */}
           <div className="hidden sm:block p-4 sm:p-6">
-            <div className="overflow-x-auto -mx-4 sm:mx-0">
-              <div className="inline-block min-w-full align-middle">
-                <div className="overflow-hidden rounded-lg border">
-                  <table className="min-w-full divide-y divide-border">
-                    <thead className="bg-muted/50">
+            <div className="rounded-lg border overflow-x-auto">
+              <div className="min-w-[800px]">
+                <table className="w-full border-collapse">
+                    <thead>
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        <th className="h-12 px-4 text-left align-middle font-semibold bg-table-header text-table-header-foreground text-sm title-case">
                           Nama Pondok
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">
+                        <th className="h-12 px-4 text-left align-middle font-semibold bg-table-header text-table-header-foreground text-sm title-case hidden lg:table-cell">
                           Lokasi
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">
+                        <th className="h-12 px-4 text-left align-middle font-semibold bg-table-header text-table-header-foreground text-sm title-case hidden md:table-cell">
                           Tanggal
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        <th className="h-12 px-4 text-left align-middle font-semibold bg-table-header text-table-header-foreground text-sm title-case">
                           Status
                         </th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        <th className="h-12 px-4 text-right align-middle font-semibold bg-table-header text-table-header-foreground text-sm title-case">
                           Aksi
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-card divide-y divide-border">
+                    <tbody className="divide-y border-t">
                       {pendingPondok.map((pondok, index) => (
                         <tr key={index} className="hover:bg-muted/25 transition-colors">
                           <td className="px-4 py-3">
@@ -255,9 +254,8 @@ export const SuperAdminDashboard = () => {
                       ))}
                     </tbody>
                   </table>
+                  </div>
                 </div>
-              </div>
-            </div>
           </div>
         </CardContent>
       </Card>

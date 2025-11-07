@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Search, Filter } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { STANDARD_TABLE_HEADERS } from "./table-header";
 
 interface ResponsiveTableProps {
   headers?: Array<{ key: string; label: string; sortable?: boolean }>;
@@ -103,9 +101,9 @@ export const ResponsiveTable = ({
   const displayData = paginatedData.map(row => {
     const transformedRow = { ...row };
 
-    // Apply render functions from columns
-    tableColumns.forEach(column => {
-      if (column.render) {
+    // Apply render functions from columns if available
+    columns?.forEach(column => {
+      if (column.render && column.key in transformedRow) {
         transformedRow[column.key] = column.render(row[column.key], row);
       }
     });
@@ -122,7 +120,7 @@ export const ResponsiveTable = ({
   const MobileView = () => (
     <div className="space-y-3 sm:hidden">
       {displayData.map((row, index) => (
-        <Card key={row[keyField] || index} className="p-4">
+        <Card key={String(row[keyField] || index)} className="p-4">
           <div className="space-y-3">
             {tableColumns.map((column) => (
               column.key !== 'actions' && (
@@ -149,15 +147,16 @@ export const ResponsiveTable = ({
 
   // Desktop view - Table layout
   const DesktopView = () => (
-    <div className="hidden sm:block overflow-x-auto">
-      <table className="w-full border-collapse">
+    <div className="hidden sm:block rounded-lg border overflow-x-auto">
+      <div className="min-w-[800px]">
+        <table className="w-full border-collapse">
         <thead>
-          <tr className="border-b">
+          <tr>
             {tableColumns.map((column) => (
               <th
                 key={column.key}
                 className={`
-                  px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider bg-[hsl(var(--table-header))] text-[hsl(var(--table-header-foreground))]
+                  h-12 px-4 text-left align-middle font-semibold bg-table-header text-table-header-foreground [&:has([role=checkbox])]:pr-0 text-sm title-case
                   ${(column.sortable !== false) ? 'cursor-pointer hover:bg-muted/50' : ''}
                 `}
                 onClick={() => (column.sortable !== false) && handleSort(column.key)}
@@ -177,15 +176,15 @@ export const ResponsiveTable = ({
               </th>
             ))}
             {actions && (
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider bg-[hsl(var(--table-header))] text-[hsl(var(--table-header-foreground))]">
+              <th className="h-12 px-4 text-left align-middle font-semibold bg-table-header text-table-header-foreground [&:has([role=checkbox])]:pr-0 text-sm title-case text-right">
                 Aksi
               </th>
             )}
           </tr>
         </thead>
-        <tbody className="divide-y">
+        <tbody className="divide-y border-t">
           {displayData.map((row, index) => (
-            <tr key={row[keyField] || index} className="hover:bg-muted/25 transition-colors">
+            <tr key={String(row[keyField] || index)} className="hover:bg-muted/25 transition-colors">
               {tableColumns.map((column) => (
                 <td key={column.key} className="px-4 py-3 text-sm">
                   {row[column.key]}
@@ -200,6 +199,7 @@ export const ResponsiveTable = ({
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 

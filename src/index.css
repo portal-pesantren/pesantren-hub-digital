@@ -299,4 +299,9 @@ All colors MUST be HSL.
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
   }
+
+  /* Title case utility for table headers */
+  .title-case {
+    text-transform: capitalize;
+  }
 }
