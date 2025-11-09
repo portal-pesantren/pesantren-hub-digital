@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { FileText, Plus, Eye, Edit, Trash2, Clock, Search, Filter, Save, X } from "lucide-react";
+import { FileText, Plus, Eye, Edit, Trash2, Clock, Search, Filter, Save, X, Send } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -303,6 +303,110 @@ const getCategoryColor = (category: string) => {
         </CardContent>
       </Card>
 
+      {/* Card Box untuk Draft Berita */}
+      <Card className="shadow-card">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="w-5 h-5 text-gray-500" />
+            Draft Berita ({draftArticles})
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {newsArticles.filter(article => article.status === "draft").map((article) => (
+              <div
+                key={article.id}
+                className="p-6 rounded-lg border bg-card hover:shadow-card transition-shadow"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-lg font-semibold text-foreground">{article.title}</h3>
+                      <Badge className={getCategoryColor(article.category)}>
+                        {article.category}
+                      </Badge>
+                      <Badge variant="outline">Draft</Badge>
+                      {article.featured && (
+                        <Badge variant="secondary">Featured</Badge>
+                      )}
+                    </div>
+                    <p className="text-muted-foreground mb-3 line-clamp-2">{article.excerpt}</p>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        {new Date(article.date).toLocaleDateString('id-ID', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
+                        })}
+                      </span>
+                      <span>•</span>
+                      <span>{article.author}</span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1">
+                        <Eye className="w-4 h-4" />
+                        {article.views.toLocaleString()} views
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => openEditForm(article)}
+                    >
+                      <Edit className="w-4 h-4 mr-1" />
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="text-green-600"
+                      onClick={() => handlePublishArticle(article.id)}
+                    >
+                      <FileText className="w-4 h-4 mr-1" />
+                      Publish
+                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button size="sm" variant="outline" className="text-destructive">
+                          <Trash2 className="w-4 h-4 mr-1" />
+                          Hapus
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Apakah Anda yakin ingin menghapus draft artikel <strong>{article.title}</strong>?
+                            Tindakan ini tidak dapat dibatalkan.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Batal</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDeleteArticle(article.id)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Hapus
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {newsArticles.filter(article => article.status === "draft").length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>Belum ada draft berita</p>
+                <p className="text-sm">Draft berita akan muncul di sini setelah Anda menyimpan artikel sebagai draft</p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
       <Card className="shadow-card">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -313,7 +417,7 @@ const getCategoryColor = (category: string) => {
         <CardContent>
           <div className="space-y-4">
             {filteredArticles.map((article) => (
-              <div 
+              <div
                 key={article.id}
                 className="p-6 rounded-lg border bg-card hover:shadow-card transition-shadow"
               >
@@ -335,10 +439,10 @@ const getCategoryColor = (category: string) => {
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="w-4 h-4" />
-                        {new Date(article.date).toLocaleDateString('id-ID', { 
-                          day: 'numeric', 
-                          month: 'long', 
-                          year: 'numeric' 
+                        {new Date(article.date).toLocaleDateString('id-ID', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
                         })}
                       </span>
                       <span>•</span>
@@ -485,8 +589,28 @@ const getCategoryColor = (category: string) => {
                 </Button>
                 <Button type="submit" className="bg-gradient-primary">
                   <Save className="w-4 h-4 mr-2" />
-                  {editingArticle ? "Simpan Perubahan" : "Simpan Artikel"}
+                  {editingArticle ? "Simpan Perubahan" : "Simpan ke Draft"}
                 </Button>
+                {!editingArticle && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="text-green-600"
+                    onClick={() => {
+                      form.handleSubmit((data) => {
+                        handleAddArticle(data);
+                        // Auto-publish the newly created article
+                        setTimeout(() => {
+                          const newId = Math.max(...newsArticles.map(a => a.id)) + 1;
+                          handlePublishArticle(newId);
+                        }, 100);
+                      })();
+                    }}
+                  >
+                    <Send className="w-4 h-4 mr-2" />
+                    Publish
+                  </Button>
+                )}
               </div>
             </form>
           </Form>

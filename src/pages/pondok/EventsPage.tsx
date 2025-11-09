@@ -128,8 +128,8 @@ export const EventsPage = () => {
 
   const handleEditEvent = (data: EventFormData) => {
     if (editingEvent) {
-      setEvents(events.map(event => 
-        event.id === editingEvent.id 
+      setEvents(events.map(event =>
+        event.id === editingEvent.id
           ? { ...event, ...data }
           : event
       ));
@@ -142,14 +142,7 @@ export const EventsPage = () => {
     setEvents(events.filter(event => event.id !== id));
   };
 
-  const handleCancelEvent = (id: number) => {
-    setEvents(events.map(event =>
-      event.id === id
-        ? { ...event, status: "cancelled" as const }
-        : event
-    ));
-  };
-
+  
   const handleUnpublishEvent = (id: number) => {
     setEvents(events.map(event =>
       event.id === id
@@ -267,17 +260,18 @@ export const EventsPage = () => {
         />
       </div>
 
+      {/* Card Box untuk Draft Agenda */}
       <Card className="shadow-card">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-primary" />
-            Event Mendatang ({upcomingCount})
+            <FileText className="w-5 h-5 text-gray-500" />
+            Draft Agenda ({draftEvents.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {upcomingEvents.map((event) => (
-              <div 
+            {draftEvents.map((event) => (
+              <div
                 key={event.id}
                 className="p-6 rounded-lg border bg-card hover:shadow-card transition-shadow"
               >
@@ -288,10 +282,125 @@ export const EventsPage = () => {
                     <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
-                        {new Date(event.date).toLocaleDateString('id-ID', { 
-                          day: 'numeric', 
-                          month: 'long', 
-                          year: 'numeric' 
+                        {new Date(event.date).toLocaleDateString('id-ID', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
+                        })}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        {event.time}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-4 h-4" />
+                        {event.location}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <UsersIcon className="w-4 h-4" />
+                        {event.participants}/{event.maxParticipants} peserta
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Badge className={getCategoryColor(event.category)}>
+                      {event.category}
+                    </Badge>
+                    <Badge variant="outline">Draft</Badge>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setEditingEvent(event);
+                      setIsEventFormOpen(true);
+                    }}
+                  >
+                    <Edit className="w-4 h-4 mr-1" />
+                    Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="text-green-600"
+                    onClick={() => {
+                      // Change status from draft to upcoming
+                      setEvents(events.map(e =>
+                        e.id === event.id
+                          ? { ...e, status: "upcoming" as const }
+                          : e
+                      ));
+                    }}
+                  >
+                    <Calendar className="w-4 h-4 mr-1" />
+                    Publish
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button size="sm" variant="outline" className="text-destructive">
+                        <Trash2 className="w-4 h-4 mr-1" />
+                        Hapus
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Apakah Anda yakin ingin menghapus draft agenda <strong>{event.title}</strong>?
+                          Tindakan ini tidak dapat dibatalkan.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDeleteEvent(event.id)}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          Hapus
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </div>
+            ))}
+            {draftEvents.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>Belum ada draft agenda</p>
+                <p className="text-sm">Draft agenda akan muncul di sini setelah Anda menyimpan event sebagai draft</p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-card">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-primary" />
+            Event Mendatang ({upcomingCount})
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {upcomingEvents.map((event) => (
+              <div
+                key={event.id}
+                className="p-6 rounded-lg border bg-card hover:shadow-card transition-shadow"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-foreground mb-2">{event.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-3">{event.description}</p>
+                    <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        {new Date(event.date).toLocaleDateString('id-ID', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
                         })}
                       </span>
                       <span className="flex items-center gap-1">
