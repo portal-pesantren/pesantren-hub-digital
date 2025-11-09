@@ -54,34 +54,34 @@ export const SettingsPage = () => {
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-5">
+        <TabsList className="items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full max-w-4xl grid-cols-5 h-12 mx-auto">
           <TabsTrigger
             value="general"
-            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5"
+            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-3 py-2 h-9 text-sm rounded-md touch-target text-center"
           >
             Umum
           </TabsTrigger>
           <TabsTrigger
             value="notifications"
-            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5"
+            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-3 py-2 h-9 text-sm rounded-md touch-target text-center"
           >
             Notifikasi
           </TabsTrigger>
           <TabsTrigger
             value="security"
-            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5"
+            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-3 py-2 h-9 text-sm rounded-md touch-target text-center"
           >
             Keamanan
           </TabsTrigger>
           <TabsTrigger
             value="website"
-            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5"
+            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-3 py-2 h-9 text-sm rounded-md touch-target text-center"
           >
             Website
           </TabsTrigger>
           <TabsTrigger
             value="backup"
-            className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5"
+            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-3 py-2 h-9 text-sm rounded-md touch-target text-center"
           >
             Backup
           </TabsTrigger>

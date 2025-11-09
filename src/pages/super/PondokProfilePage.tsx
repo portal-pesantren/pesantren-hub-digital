@@ -264,13 +264,43 @@ export const PondokProfilePage = () => {
 
       {/* Tabs untuk konten detail */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="overview">Profil</TabsTrigger>
-          <TabsTrigger value="programs">Program</TabsTrigger>
-          <TabsTrigger value="facilities">Fasilitas</TabsTrigger>
-          <TabsTrigger value="gallery">Galeri</TabsTrigger>
-          <TabsTrigger value="achievements">Prestasi</TabsTrigger>
-          <TabsTrigger value="contact">Kontak</TabsTrigger>
+        <TabsList className="items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full max-w-4xl grid-cols-6 h-12 mx-auto">
+          <TabsTrigger
+            value="overview"
+            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-2 py-2 h-9 text-sm rounded-md touch-target text-center"
+          >
+            Profil
+          </TabsTrigger>
+          <TabsTrigger
+            value="programs"
+            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-2 py-2 h-9 text-sm rounded-md touch-target text-center"
+          >
+            Program
+          </TabsTrigger>
+          <TabsTrigger
+            value="facilities"
+            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-2 py-2 h-9 text-sm rounded-md touch-target text-center"
+          >
+            Fasilitas
+          </TabsTrigger>
+          <TabsTrigger
+            value="gallery"
+            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-2 py-2 h-9 text-sm rounded-md touch-target text-center"
+          >
+            Galeri
+          </TabsTrigger>
+          <TabsTrigger
+            value="achievements"
+            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-2 py-2 h-9 text-sm rounded-md touch-target text-center"
+          >
+            Prestasi
+          </TabsTrigger>
+          <TabsTrigger
+            value="contact"
+            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-2 py-2 h-9 text-sm rounded-md touch-target text-center"
+          >
+            Kontak
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">

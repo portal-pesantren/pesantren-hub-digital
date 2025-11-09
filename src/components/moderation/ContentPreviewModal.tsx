@@ -26,14 +26,12 @@ import {
   User,
   Calendar,
   HardDrive,
-  Shield,
-  Brain
+  Shield
 } from "lucide-react";
-import { ModerationItemEnhanced, AIContentAnalysis } from "@/types/moderation";
+import { ModerationItemEnhanced } from "@/types/moderation";
 
 interface ContentPreviewModalProps {
   item: ModerationItemEnhanced | null;
-  aiAnalysis?: AIContentAnalysis;
   open: boolean;
   onClose: () => void;
   onApprove?: (id: number, notes?: string) => void;
@@ -43,7 +41,6 @@ interface ContentPreviewModalProps {
 
 export const ContentPreviewModal = ({
   item,
-  aiAnalysis,
   open,
   onClose,
   onApprove,
@@ -112,13 +109,7 @@ export const ContentPreviewModal = ({
     );
   };
 
-  const getAiScoreColor = (score: number) => {
-    if (score >= 90) return "text-green-600";
-    if (score >= 70) return "text-yellow-600";
-    if (score >= 50) return "text-orange-600";
-    return "text-red-600";
-  };
-
+  
   const handleAction = (action: "approve" | "reject" | "flag") => {
     switch (action) {
       case "approve":
@@ -153,14 +144,6 @@ export const ContentPreviewModal = ({
                   </Badge>
                   {getStatusBadge(item.status)}
                   {getPriorityBadge(item.priority)}
-                  {item.aiScore && (
-                    <Badge variant="outline" className="gap-1">
-                      <Brain className="w-3 h-3" />
-                      <span className={getAiScoreColor(item.aiScore)}>
-                        AI: {item.aiScore}/100
-                      </span>
-                    </Badge>
-                  )}
                 </div>
               </div>
             </div>
@@ -178,11 +161,25 @@ export const ContentPreviewModal = ({
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="content">Konten</TabsTrigger>
-            <TabsTrigger value="metadata">Metadata</TabsTrigger>
-            <TabsTrigger value="ai-analysis">AI Analysis</TabsTrigger>
-            <TabsTrigger value="review">Review</TabsTrigger>
+          <TabsList className="items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full max-w-md grid-cols-3 h-12 mx-auto">
+            <TabsTrigger
+              value="content"
+              className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-2 py-2 h-9 text-sm rounded-md touch-target text-center"
+            >
+              Konten
+            </TabsTrigger>
+            <TabsTrigger
+              value="metadata"
+              className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-2 py-2 h-9 text-sm rounded-md touch-target text-center"
+            >
+              Metadata
+            </TabsTrigger>
+            <TabsTrigger
+              value="review"
+              className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-2 py-2 h-9 text-sm rounded-md touch-target text-center"
+            >
+              Review
+            </TabsTrigger>
           </TabsList>
 
           <div className="flex-1 overflow-hidden">
@@ -333,116 +330,7 @@ export const ContentPreviewModal = ({
               </Card>
             </TabsContent>
 
-            <TabsContent value="ai-analysis" className="mt-4">
-              <div className="space-y-6">
-                {aiAnalysis && (
-                  <>
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <Brain className="w-5 h-5" />
-                          AI Safety Score
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-center">
-                          <div className={`text-6xl font-bold ${getAiScoreColor(aiAnalysis.safetyScore)}`}>
-                            {aiAnalysis.safetyScore}
-                          </div>
-                          <p className="text-sm text-muted-foreground mt-2">
-                            dari 100 (Semakin tinggi semakin aman)
-                          </p>
-                          <div className="mt-4">
-                            <div className="w-full bg-gray-200 rounded-full h-2">
-                              <div
-                                className={`h-2 rounded-full ${
-                                  aiAnalysis.safetyScore >= 90 ? 'bg-green-500' :
-                                  aiAnalysis.safetyScore >= 70 ? 'bg-yellow-500' :
-                                  aiAnalysis.safetyScore >= 50 ? 'bg-orange-500' : 'bg-red-500'
-                                }`}
-                                style={{ width: `${aiAnalysis.safetyScore}%` }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Kategori Risiko</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-3">
-                          {Object.entries(aiAnalysis.categories).map(([category, score]) => (
-                            <div key={category} className="flex items-center justify-between">
-                              <span className="text-sm capitalize">{category}</span>
-                              <div className="flex items-center gap-2">
-                                <div className="w-24 bg-gray-200 rounded-full h-2">
-                                  <div
-                                    className={`h-2 rounded-full ${
-                                      score >= 70 ? 'bg-red-500' :
-                                      score >= 40 ? 'bg-yellow-500' : 'bg-green-500'
-                                    }`}
-                                    style={{ width: `${score}%` }}
-                                  />
-                                </div>
-                                <span className="text-sm font-medium w-8">{score}%</span>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    {aiAnalysis.flaggedPhrases.length > 0 && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-red-600">Frasa yang Ditandai</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="flex flex-wrap gap-2">
-                            {aiAnalysis.flaggedPhrases.map((phrase, index) => (
-                              <Badge key={index} variant="destructive" className="text-xs">
-                                {phrase}
-                              </Badge>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-
-                    {aiAnalysis.suggestions.length > 0 && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle>Saran AI</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <ul className="space-y-2">
-                            {aiAnalysis.suggestions.map((suggestion, index) => (
-                              <li key={index} className="text-sm flex items-start gap-2">
-                                <span className="text-blue-500 mt-1">•</span>
-                                {suggestion}
-                              </li>
-                            ))}
-                          </ul>
-                        </CardContent>
-                      </Card>
-                    )}
-                  </>
-                )}
-
-                {!aiAnalysis && (
-                  <Card>
-                    <CardContent className="text-center py-8">
-                      <Brain className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                      <p className="text-muted-foreground">Analisis AI tidak tersedia untuk konten ini</p>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            </TabsContent>
-
+  
             <TabsContent value="review" className="mt-4">
               <Card>
                 <CardHeader>

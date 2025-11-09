@@ -177,19 +177,7 @@ export const getNavigationConfig = (userRole: UserRole, uiRole: 'pondok' | 'supe
       requiredRole: ['admin', 'pesantren_admin'],
       category: 'management'
     },
-    {
-      id: 'backup',
-      label: 'Backup & Restore',
-      icon: ({ className }: { className?: string }) => (
-        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
-        </svg>
-      ),
-      path: '/backup',
-      requiredRole: ['admin'],
-      category: 'system'
-    },
-    {
+        {
       id: 'analytics',
       label: 'Analytics',
       icon: ({ className }: { className?: string }) => (
@@ -226,19 +214,7 @@ export const getNavigationConfig = (userRole: UserRole, uiRole: 'pondok' | 'supe
       requiredRole: ['admin'],
       category: 'system'
     },
-    {
-      id: 'activity-logs',
-      label: 'Log Aktivitas',
-      icon: ({ className }: { className?: string }) => (
-        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-        </svg>
-      ),
-      path: '/activity-logs',
-      requiredRole: ['admin'],
-      category: 'system'
-    }
-  ];
+      ];
 
   // Filter navigation based on user role and UI role
   let navigation: NavigationItem[] = [];

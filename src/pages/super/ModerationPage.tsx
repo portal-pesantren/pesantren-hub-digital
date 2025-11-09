@@ -5,11 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ResponsiveTable } from "@/components/ui/responsive-table";
 import { ContentPreviewModal } from "@/components/moderation/ContentPreviewModal";
-import { Shield, Check, X, Search, Filter, FileText, Image, Video, MessageCircle, RefreshCw, Eye, Brain, Loader2 } from "lucide-react";
+import { Shield, Check, X, Search, Filter, FileText, Image, Video, MessageCircle, RefreshCw, Eye } from "lucide-react";
 import { ModerationItemEnhanced } from "@/types/moderation";
-import { ModerationService, ModerationResult } from "@/services/moderationService";
 
-// Enhanced sample data dengan format yang diminta (no/id, bentuk media, nama pondok, status)
+// Sample data dengan format yang diminta (no/id, bentuk media, nama pondok, status)
 const sampleModerationItems: ModerationItemEnhanced[] = [
   {
     id: 101,
@@ -23,7 +22,6 @@ const sampleModerationItems: ModerationItemEnhanced[] = [
     priority: "medium",
     contentExcerpt: "Panduan lengkap shalat dari takbir hingga salam, dilengkapi dengan bacaan Arab, Latin, dan terjemahannya. Sangat cocok untuk santri pemula yang ingin memperbaiki shalatnya.",
     fullContent: "Panduan lengkap shalat dari takbir hingga salam, dilengkapi dengan bacaan Arab, Latin, dan terjemahannya. Sangat cocok untuk santri pemula yang ingin memperbaiki shalatnya. Artikel ini mencakup: 1. Persyaratan wajib shalat, 2. Rukun shalat, 3. Sunnah shalat, 4. Hal yang membatalkan shalat, 5. Waktu shalat, 6. Doa setelah shalat.",
-    aiScore: 0,
     flaggedKeywords: [],
     escalationLevel: 0,
     autoApproved: false,
@@ -31,7 +29,7 @@ const sampleModerationItems: ModerationItemEnhanced[] = [
     createdBy: "Ustadz Ahmad",
     category: "Keagamaan",
     tags: ["shalat", "ibadah", "panduan", "santri"],
-    metadata: { aiAnalysis: null }
+    metadata: {}
   },
   {
     id: 102,
@@ -45,7 +43,6 @@ const sampleModerationItems: ModerationItemEnhanced[] = [
     priority: "low",
     contentExcerpt: "Dokumentasi video perayaan Maulid Nabi Muhammad SAW dengan pembacaan shalawat dan maulid, diikuti oleh seluruh santri dan ustadz.",
     fullContent: "Video berdurasi 15 menit menampilkan dokumentasi lengkap perayaan Maulid Nabi Muhammad SAW di Pondok Pesantren Darul Falah. Acara dihadiri oleh 500+ santri, 30 ustadz, dan tamu undangan. Termasuk pembacaan maulid, shalawat, tausiyah, dan doa bersama.",
-    aiScore: 0,
     flaggedKeywords: [],
     escalationLevel: 0,
     autoApproved: false,
@@ -55,7 +52,7 @@ const sampleModerationItems: ModerationItemEnhanced[] = [
     tags: ["maulid", "nabi", "peringatan", "dokumentasi"],
     fileSize: 52428800,
     mimeType: "video/mp4",
-    metadata: { aiAnalysis: null }
+    metadata: {}
   },
   {
     id: 103,
@@ -69,7 +66,6 @@ const sampleModerationItems: ModerationItemEnhanced[] = [
     priority: "low",
     contentExcerpt: "Foto dokumentasi kegiatan belajar kelompok santri dalam mata pelajaran Bahasa Arab dengan metode aktif.",
     fullContent: "Kumpulan foto (5 foto) menampilkan kegiatan belajar kelompok santri kelas 3 Tsanawiyah dalam mata pelajaran Bahasa Arab. Santri belajar dalam kelompok kecil 4-5 orang dengan bimbingan ustadz pengampu.",
-    aiScore: 0,
     flaggedKeywords: [],
     escalationLevel: 0,
     autoApproved: false,
@@ -79,7 +75,7 @@ const sampleModerationItems: ModerationItemEnhanced[] = [
     tags: ["belajar", "kelompok", "bahasa arab", "santri"],
     fileSize: 3145728,
     mimeType: "image/jpeg",
-    metadata: { aiAnalysis: null }
+    metadata: {}
   },
   {
     id: 104,
@@ -93,7 +89,6 @@ const sampleModerationItems: ModerationItemEnhanced[] = [
     priority: "high",
     contentExcerpt: "Anisa Putri, sanwati kelas 2 SMA, berhasil meraih juara 1 dalam Olimpiade Sains tingkat provinsi dalam bidang Matematika.",
     fullContent: "Anisa Putri, sanwati kelas 2 SMA Pondok Pesantren Modern Al-Ikhlas, berhasil meraih juara 1 dalam Olimpiade Sains tingkat provinsi dalam bidang Matematika. Prestasi ini diraih setelah melalui seleksi bertahap dan mengungguli 200+ peserta dari seluruh provinsi.",
-    aiScore: 0,
     flaggedKeywords: [],
     escalationLevel: 0,
     autoApproved: false,
@@ -101,7 +96,7 @@ const sampleModerationItems: ModerationItemEnhanced[] = [
     createdBy: "Admin Pondok",
     category: "Pendidikan",
     tags: ["prestasi", "sanwati", "olimpiade", "sains", "juara"],
-    metadata: { aiAnalysis: null }
+    metadata: {}
   },
   {
     id: 105,
@@ -115,7 +110,6 @@ const sampleModerationItems: ModerationItemEnhanced[] = [
     priority: "medium",
     contentExcerpt: "Masya Allah, anak-anak hebat! Terus berkarya untuk membanggakan pondok dan orang tua!",
     fullContent: "Masya Allah, anak-anak hebat! Terus berkarya untuk membanggakan pondok dan orang tua! Semoga menjadi inspirasi untuk santri lainnya.",
-    aiScore: 0,
     flaggedKeywords: [],
     escalationLevel: 0,
     autoApproved: false,
@@ -123,15 +117,12 @@ const sampleModerationItems: ModerationItemEnhanced[] = [
     createdBy: "User",
     category: "Sosial",
     tags: ["komentar", "support", "motivasi"],
-    metadata: { aiAnalysis: null }
+    metadata: {}
   }
 ];
 
 export const ModerationPage = () => {
-  const moderationService = ModerationService.getInstance();
   const [rows, setRows] = useState<ModerationItemEnhanced[]>(sampleModerationItems);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analyzingIds, setAnalyzingIds] = useState<number[]>([]);
   const [selectedItem, setSelectedItem] = useState<ModerationItemEnhanced | null>(null);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -144,53 +135,6 @@ export const ModerationPage = () => {
     priority: "all",
     pondok: ""
   });
-
-  // AI Analysis function
-  const analyzeItemWithAI = async (itemId: number) => {
-    const item = rows.find(r => r.id === itemId);
-    if (!item) return;
-
-    setAnalyzingIds(prev => [...prev, itemId]);
-
-    try {
-      const aiResult = await moderationService.analisisKontenAI(item.fullContent || item.contentExcerpt || "", item.type);
-      const updatedItem = moderationService.updateItemWithAIAnalysis(item, aiResult);
-
-      setRows(prev => prev.map(r => r.id === itemId ? updatedItem : r));
-    } catch (error) {
-      console.error("AI Analysis failed:", error);
-    } finally {
-      setAnalyzingIds(prev => prev.filter(id => id !== itemId));
-    }
-  };
-
-  // Batch AI Analysis
-  const analyzeAllWithAI = async () => {
-    setIsAnalyzing(true);
-    const pendingItems = rows.filter(item => item.aiScore === 0 && item.status === "pending");
-
-    try {
-      const contents = pendingItems.map(item => ({
-        id: item.id,
-        content: item.fullContent || item.contentExcerpt || "",
-        type: item.type
-      }));
-
-      const results = await moderationService.analisisBatch(contents);
-
-      setRows(prev => prev.map(item => {
-        const result = results.get(item.id);
-        if (result) {
-          return moderationService.updateItemWithAIAnalysis(item, result);
-        }
-        return item;
-      }));
-    } catch (error) {
-      console.error("Batch AI Analysis failed:", error);
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
 
   const updateStatus = (id: number, status: ModerationItemEnhanced["status"]) => {
     setRows(prev => prev.map(r =>
@@ -242,44 +186,6 @@ export const ModerationPage = () => {
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
-  const getAIBadge = (aiScore?: number, itemId?: number) => {
-    if (itemId && analyzingIds.includes(itemId)) {
-      return (
-        <Badge variant="outline" className="gap-1">
-          <Loader2 className="w-3 h-3 animate-spin" />
-          Analyzing...
-        </Badge>
-      );
-    }
-
-    if (!aiScore) {
-      return (
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => itemId && analyzeItemWithAI(itemId)}
-          className="gap-1 text-xs"
-        >
-          <Brain className="w-3 h-3" />
-          Analyze
-        </Button>
-      );
-    }
-
-    const color = aiScore >= 90 ? "text-green-600" : aiScore >= 70 ? "text-yellow-600" : aiScore >= 50 ? "text-orange-600" : "text-red-600";
-    const status = aiScore >= 90 ? "Layak" : aiScore >= 70 ? "Perlu Review" : aiScore >= 50 ? "Risiko" : "Tolak";
-
-    return (
-      <Badge
-        variant={aiScore >= 90 ? "verified" : aiScore >= 70 ? "info" : aiScore >= 50 ? "warning" : "destructive"}
-        className="gap-1"
-      >
-        <Brain className="w-3 h-3" />
-        <span className={color}>AI: {aiScore}% ({status})</span>
-      </Badge>
-    );
-  };
-
   const filteredRows = rows.filter(row => {
     if (filters.search && !row.title.toLowerCase().includes(filters.search.toLowerCase()) &&
         !row.pondok.toLowerCase().includes(filters.search.toLowerCase()) &&
@@ -301,11 +207,6 @@ export const ModerationPage = () => {
   const pendingCount = rows.filter(r => r.status === "pending").length;
   const flaggedCount = rows.filter(r => r.status === "flagged").length;
   const inProgressCount = rows.filter(r => r.status === "in-progress").length;
-
-  const getAIAnalysis = (itemId: number) => {
-    const item = rows.find(r => r.id === itemId);
-    return item?.metadata?.aiAnalysis as ModerationResult | undefined;
-  };
 
   // Table columns sesuai format yang diminta
   const tableColumns = [
@@ -351,12 +252,6 @@ export const ModerationPage = () => {
         </div>
       ),
       hideOnMobile: true
-    },
-    {
-      key: 'aiScore',
-      label: 'AI Analysis',
-      render: (value: any, row: ModerationItemEnhanced) => getAIBadge(value as number, row.id),
-      hideOnMobile: false
     },
     {
       key: 'status',
@@ -445,13 +340,13 @@ export const ModerationPage = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Sistem Moderasi Konten AI</h1>
-          <p className="text-muted-foreground">Moderasi konten dengan AI untuk platform Pondok Pesantren berdasarkan nilai-nilai Islam dan etika pesantren</p>
+          <h1 className="text-3xl font-bold text-foreground">Sistem Moderasi Konten</h1>
+          <p className="text-muted-foreground">Moderasi konten manual untuk platform Pondok Pesantren berdasarkan nilai-nilai Islam dan etika pesantren</p>
         </div>
       </div>
 
       {/* Status Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="shadow-card">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -494,49 +389,7 @@ export const ModerationPage = () => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-card">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">AI Analyzed</p>
-                <p className="text-2xl font-bold text-green-600">{rows.filter(r => r.aiScore > 0).length}</p>
-              </div>
-              <div className="p-3 bg-green-100 rounded-full">
-                <Brain className="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
-
-      {/* AI Analysis Controls */}
-      <Card className="shadow-card">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold">AI Content Analysis</h3>
-              <p className="text-sm text-muted-foreground">Analisis konten secara otomatis dengan AI untuk mendeteksi risiko dan kategori</p>
-            </div>
-            <Button
-              size="default"
-              onClick={analyzeAllWithAI}
-              disabled={isAnalyzing || rows.filter(r => r.aiScore === 0).length === 0}
-            >
-              {isAnalyzing ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Analyzing All...
-                </>
-              ) : (
-                <>
-                  <Brain className="w-4 h-4 mr-2" />
-                  Analyze All Pending
-                </>
-              )}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Filters */}
       <Card className="shadow-card">
@@ -679,7 +532,6 @@ export const ModerationPage = () => {
       {/* Content Preview Modal */}
       <ContentPreviewModal
         item={selectedItem}
-        aiAnalysis={selectedItem ? getAIAnalysis(selectedItem.id) as any : undefined}
         open={showPreviewModal}
         onClose={() => {
           setShowPreviewModal(false);

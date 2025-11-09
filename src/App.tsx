@@ -24,11 +24,9 @@ import { PondokProfilePage } from "./pages/super/PondokProfilePage";
 import { VerificationPage } from "./pages/super/VerificationPage";
 import { NotificationsPage } from "./pages/super/NotificationsPage";
 import { ModerationPage } from "./pages/super/ModerationPage";
-import { BackupPage } from "./pages/super/BackupPage";
 import { GlobalInsightsPage } from "./pages/super/GlobalInsightsPage";
 import { PortalSettingsPage } from "./pages/super/PortalSettingsPage";
 import { BrandingPage } from "./pages/super/BrandingPage";
-import { ActivityLogsPage } from "./pages/super/ActivityLogsPage";
 import { SettingsPage } from "./pages/pondok/SettingsPage";
 import TermsPage from "./pages/TermsPage";
 import PrivacyPage from "./pages/PrivacyPage";
@@ -164,14 +162,7 @@ const App = () => (
               </AuthProvider>
             } />
 
-            <Route path="/backup" element={
-              <AuthProvider>
-                <RoleProvider>
-                  <DashboardLayout><BackupPage /></DashboardLayout>
-                </RoleProvider>
-              </AuthProvider>
-            } />
-
+            
             <Route path="/global-insights" element={
               <AuthProvider>
                 <RoleProvider>
@@ -196,14 +187,7 @@ const App = () => (
               </AuthProvider>
             } />
 
-            <Route path="/activity-logs" element={
-              <AuthProvider>
-                <RoleProvider>
-                  <DashboardLayout><ActivityLogsPage /></DashboardLayout>
-                </RoleProvider>
-              </AuthProvider>
-            } />
-
+            
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

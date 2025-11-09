@@ -387,22 +387,22 @@ export const NotificationsPage = () => {
       </div>
 
       <Tabs defaultValue="create" className="space-y-6">
-        <TabsList className="grid w-full max-w-lg grid-cols-3 bg-muted p-1 rounded-md mx-auto">
+        <TabsList className="items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full max-w-lg grid-cols-3 h-12 mx-auto">
           <TabsTrigger
             value="create"
-            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-4 py-2 h-9 text-sm rounded-md touch-target text-center"
+            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-3 py-2 h-9 text-sm rounded-md touch-target text-center"
           >
             Buat Notifikasi
           </TabsTrigger>
           <TabsTrigger
             value="history"
-            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-4 py-2 h-9 text-sm rounded-md touch-target text-center"
+            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-3 py-2 h-9 text-sm rounded-md touch-target text-center"
           >
             Riwayat
           </TabsTrigger>
           <TabsTrigger
             value="analytics"
-            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-4 py-2 h-9 text-sm rounded-md touch-target text-center"
+            className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-3 py-2 h-9 text-sm rounded-md touch-target text-center"
           >
             Analytics
           </TabsTrigger>
