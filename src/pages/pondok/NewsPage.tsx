@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { FileText, Plus, Eye, Edit, Trash2, Clock, Search, Filter, Save, X, Send } from "lucide-react";
+import { FileText, Plus, Eye, Edit, Trash2, Clock, Search, Save, X, Send } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,6 +32,7 @@ interface NewsArticle {
 
 export const NewsPage = () => {
   const [isNewsFormOpen, setIsNewsFormOpen] = useState(false);
+  const [isDraftFormOpen, setIsDraftFormOpen] = useState(false);
   const [editingArticle, setEditingArticle] = useState<NewsArticle | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -114,12 +115,31 @@ export const NewsPage = () => {
       author: "Admin Pondok",
       date: new Date().toISOString().split('T')[0],
       views: 0,
-      status: "draft",
+      status: "published",
       tags: data.tags,
       featured: data.featured,
     };
     setNewsArticles([...newsArticles, newArticle]);
     setIsNewsFormOpen(false);
+    form.reset();
+  };
+
+  const handleAddDraftArticle = (data: NewsFormData) => {
+    const newArticle: NewsArticle = {
+      id: Math.max(...newsArticles.map(a => a.id)) + 1,
+      title: data.title,
+      content: data.content,
+      excerpt: data.content.substring(0, 100) + "...",
+      category: data.category,
+      author: "Admin Pondok",
+      date: new Date().toISOString().split('T')[0],
+      views: 0,
+      status: "draft",
+      tags: data.tags,
+      featured: data.featured,
+    };
+    setNewsArticles([...newsArticles, newArticle]);
+    setIsDraftFormOpen(false);
     form.reset();
   };
 
@@ -156,14 +176,6 @@ export const NewsPage = () => {
     ));
   };
 
-  const handleDraftArticle = (id: number) => {
-    setNewsArticles(newsArticles.map(article =>
-      article.id === id
-        ? { ...article, status: "draft" as const }
-        : article
-    ));
-  };
-
   const handleUnpublishArticle = (id: number) => {
     setNewsArticles(newsArticles.map(article =>
       article.id === id
@@ -181,10 +193,14 @@ export const NewsPage = () => {
     return matchesSearch && matchesCategory;
   });
 
+  // Separate filtered articles for each section
+  const filteredPublishedArticles = filteredArticles.filter(article => article.status === "published");
+  const filteredDraftArticles = filteredArticles.filter(article => article.status === "draft");
+
   // Statistik dinamis
   const totalArticles = newsArticles.length;
-  const publishedArticles = newsArticles.filter(a => a.status === "published").length;
-  const draftArticles = newsArticles.filter(a => a.status === "draft").length;
+  const publishedArticlesCount = newsArticles.filter(a => a.status === "published").length;
+  const draftArticlesCount = newsArticles.filter(a => a.status === "draft").length;
   const totalViews = newsArticles.reduce((sum, article) => sum + article.views, 0);
 
   const categories = ["all", "Prestasi", "Pengumuman", "Berita", "Kegiatan"];
@@ -226,17 +242,30 @@ const getCategoryColor = (category: string) => {
           <h1 className="text-3xl font-bold text-foreground">Berita & Artikel</h1>
           <p className="text-muted-foreground">Kelola berita dan artikel pondok pesantren</p>
         </div>
-        <Button 
-          className="bg-gradient-primary text-white shadow-elegant"
-          onClick={() => {
-            setEditingArticle(null);
-            form.reset();
-            setIsNewsFormOpen(true);
-          }}
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Tulis Artikel
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              setEditingArticle(null);
+              form.reset();
+              setIsDraftFormOpen(true);
+            }}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Buat Draft
+          </Button>
+          <Button
+            className="bg-gradient-primary text-white shadow-elegant"
+            onClick={() => {
+              setEditingArticle(null);
+              form.reset();
+              setIsNewsFormOpen(true);
+            }}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Tulis Artikel
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -248,12 +277,12 @@ const getCategoryColor = (category: string) => {
         />
         <StatCard
           title="Dipublikasikan"
-          value={publishedArticles}
+          value={publishedArticlesCount}
           icon={FileText}
         />
         <StatCard
           title="Draft"
-          value={draftArticles}
+          value={draftArticlesCount}
           icon={FileText}
         />
         <StatCard
@@ -308,12 +337,12 @@ const getCategoryColor = (category: string) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="w-5 h-5 text-gray-500" />
-            Draft Berita ({draftArticles})
+            Draft Berita ({draftArticlesCount})
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {newsArticles.filter(article => article.status === "draft").map((article) => (
+            {filteredDraftArticles.map((article) => (
               <div
                 key={article.id}
                 className="p-6 rounded-lg border bg-card hover:shadow-card transition-shadow"
@@ -396,7 +425,7 @@ const getCategoryColor = (category: string) => {
                 </div>
               </div>
             ))}
-            {newsArticles.filter(article => article.status === "draft").length === 0 && (
+            {filteredDraftArticles.length === 0 && (
               <div className="text-center py-8 text-muted-foreground">
                 <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
                 <p>Belum ada draft berita</p>
@@ -411,12 +440,12 @@ const getCategoryColor = (category: string) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="w-5 h-5 text-primary" />
-            Semua Artikel ({filteredArticles.length})
+            Artikel Dipublikasikan ({filteredPublishedArticles.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {filteredArticles.map((article) => (
+            {filteredPublishedArticles.map((article) => (
               <div
                 key={article.id}
                 className="p-6 rounded-lg border bg-card hover:shadow-card transition-shadow"
@@ -428,9 +457,9 @@ const getCategoryColor = (category: string) => {
                       <Badge className={getCategoryColor(article.category)}>
                         {article.category}
                       </Badge>
-                      {article.status === "draft" && (
-                        <Badge variant="outline">Draft</Badge>
-                      )}
+                      <Badge variant="default" className="bg-green-100 text-green-800">
+                        Dipublikasikan
+                      </Badge>
                       {article.featured && (
                         <Badge variant="secondary">Featured</Badge>
                       )}
@@ -455,29 +484,47 @@ const getCategoryColor = (category: string) => {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    {article.status === "draft" ? (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-green-600"
-                        onClick={() => handlePublishArticle(article.id)}
-                      >
-                        Publish
-                      </Button>
-                    ) : (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-destructive"
-                        onClick={() => handleUnpublishArticle(article.id)}
-                      >
-                        Unpublish
-                      </Button>
-                    )}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-destructive"
+                        >
+                          <FileText className="w-4 h-4 mr-1" />
+                          Unpublish
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Konfirmasi Unpublish</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Apakah Anda yakin ingin unpublish artikel <strong>{article.title}</strong>?
+                            Tindakan ini akan mengubah status artikel menjadi draft dan memindahkannya ke section draft.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Batal</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleUnpublishArticle(article.id)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Unpublish Artikel
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               </div>
             ))}
+            {filteredPublishedArticles.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>Belum ada artikel yang dipublikasikan</p>
+                <p className="text-sm">Artikel yang dipublikasikan akan muncul di sini</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -611,6 +658,130 @@ const getCategoryColor = (category: string) => {
                     Publish
                   </Button>
                 )}
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Draft Form Dialog */}
+      <Dialog open={isDraftFormOpen} onOpenChange={setIsDraftFormOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="w-5 h-5 text-gray-500" />
+              {editingArticle ? "Edit Draft Artikel" : "Buat Draft Artikel Baru"}
+            </DialogTitle>
+          </DialogHeader>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleAddDraftArticle)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Judul Artikel</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Masukkan judul artikel" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Kategori</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Pilih kategori" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Prestasi">Prestasi</SelectItem>
+                          <SelectItem value="Pengumuman">Pengumuman</SelectItem>
+                          <SelectItem value="Berita">Berita</SelectItem>
+                          <SelectItem value="Kegiatan">Kegiatan</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Isi Artikel</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Tulis isi artikel di sini..."
+                        className="min-h-[200px]"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="tags"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tags</FormLabel>
+                      <FormControl>
+                        <Input placeholder="pisahkan dengan koma" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="featured"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                      <div className="space-y-0.5">
+                        <FormLabel>Featured</FormLabel>
+                        <p className="text-sm text-muted-foreground">Tampilkan di halaman utama</p>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setIsDraftFormOpen(false);
+                    form.reset();
+                  }}
+                >
+                  Batal
+                </Button>
+                <Button type="submit">
+                  <Save className="w-4 h-4 mr-2" />
+                  Simpan ke Draft
+                </Button>
               </div>
             </form>
           </Form>

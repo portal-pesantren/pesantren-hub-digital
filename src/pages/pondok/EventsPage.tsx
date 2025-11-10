@@ -160,6 +160,7 @@ export const EventsPage = () => {
   const totalEvents = events.length;
   const upcomingCount = upcomingEvents.length;
   const completedCount = recentEvents.length;
+  const draftCount = draftEvents.length;
 
   const getStatusColor = (status: Event["status"]) => {
     switch (status) {
@@ -226,7 +227,7 @@ export const EventsPage = () => {
             }}
           >
             <FileText className="w-4 h-4 mr-2" />
-            Draft
+            Buat Draft
           </Button>
           <Button
             className="bg-gradient-primary text-white shadow-elegant"
@@ -241,7 +242,7 @@ export const EventsPage = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Total Event"
           value={totalEvents}
@@ -257,6 +258,11 @@ export const EventsPage = () => {
           title="Event Selesai"
           value={completedCount}
           icon={Check}
+        />
+        <StatCard
+          title="Draft"
+          value={draftCount}
+          icon={FileText}
         />
       </div>
 
@@ -275,11 +281,17 @@ export const EventsPage = () => {
                 key={event.id}
                 className="p-6 rounded-lg border bg-card hover:shadow-card transition-shadow"
               >
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex items-start gap-4">
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-foreground mb-2">{event.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-3">{event.description}</p>
-                    <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-lg font-semibold text-foreground">{event.title}</h3>
+                      <Badge className={getCategoryColor(event.category)}>
+                        {event.category}
+                      </Badge>
+                      <Badge variant="outline">Draft</Badge>
+                    </div>
+                    <p className="text-muted-foreground mb-3 line-clamp-2">{event.description}</p>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
                         {new Date(event.date).toLocaleDateString('id-ID', {
@@ -288,80 +300,77 @@ export const EventsPage = () => {
                           year: 'numeric'
                         })}
                       </span>
+                      <span>•</span>
                       <span className="flex items-center gap-1">
                         <Clock className="w-4 h-4" />
                         {event.time}
                       </span>
+                      <span>•</span>
                       <span className="flex items-center gap-1">
                         <MapPin className="w-4 h-4" />
                         {event.location}
                       </span>
+                      <span>•</span>
                       <span className="flex items-center gap-1">
                         <UsersIcon className="w-4 h-4" />
                         {event.participants}/{event.maxParticipants} peserta
                       </span>
                     </div>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <Badge className={getCategoryColor(event.category)}>
-                      {event.category}
-                    </Badge>
-                    <Badge variant="outline">Draft</Badge>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      setEditingEvent(event);
-                      setIsEventFormOpen(true);
-                    }}
-                  >
-                    <Edit className="w-4 h-4 mr-1" />
-                    Edit
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="text-green-600"
-                    onClick={() => {
-                      // Change status from draft to upcoming
-                      setEvents(events.map(e =>
-                        e.id === event.id
-                          ? { ...e, status: "upcoming" as const }
-                          : e
-                      ));
-                    }}
-                  >
-                    <Calendar className="w-4 h-4 mr-1" />
-                    Publish
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button size="sm" variant="outline" className="text-destructive">
-                        <Trash2 className="w-4 h-4 mr-1" />
-                        Hapus
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Apakah Anda yakin ingin menghapus draft agenda <strong>{event.title}</strong>?
-                          Tindakan ini tidak dapat dibatalkan.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Batal</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => handleDeleteEvent(event.id)}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setEditingEvent(event);
+                        setIsEventFormOpen(true);
+                      }}
+                    >
+                      <Edit className="w-4 h-4 mr-1" />
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="text-green-600"
+                      onClick={() => {
+                        // Change status from draft to upcoming
+                        setEvents(events.map(e =>
+                          e.id === event.id
+                            ? { ...e, status: "upcoming" as const }
+                            : e
+                        ));
+                      }}
+                    >
+                      <Calendar className="w-4 h-4 mr-1" />
+                      Publish
+                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button size="sm" variant="outline" className="text-destructive">
+                          <Trash2 className="w-4 h-4 mr-1" />
                           Hapus
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Apakah Anda yakin ingin menghapus draft agenda <strong>{event.title}</strong>?
+                            Tindakan ini tidak dapat dibatalkan.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Batal</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDeleteEvent(event.id)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Hapus
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
                 </div>
               </div>
             ))}
@@ -390,11 +399,19 @@ export const EventsPage = () => {
                 key={event.id}
                 className="p-6 rounded-lg border bg-card hover:shadow-card transition-shadow"
               >
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex items-start gap-4">
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-foreground mb-2">{event.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-3">{event.description}</p>
-                    <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-lg font-semibold text-foreground">{event.title}</h3>
+                      <Badge className={getCategoryColor(event.category)}>
+                        {event.category}
+                      </Badge>
+                      <Badge variant="outline">
+                        {getStatusText(event.status)}
+                      </Badge>
+                    </div>
+                    <p className="text-muted-foreground mb-3 line-clamp-2">{event.description}</p>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
                         {new Date(event.date).toLocaleDateString('id-ID', {
@@ -403,59 +420,61 @@ export const EventsPage = () => {
                           year: 'numeric'
                         })}
                       </span>
+                      <span>•</span>
                       <span className="flex items-center gap-1">
                         <Clock className="w-4 h-4" />
                         {event.time}
                       </span>
+                      <span>•</span>
                       <span className="flex items-center gap-1">
                         <MapPin className="w-4 h-4" />
                         {event.location}
                       </span>
+                      <span>•</span>
                       <span className="flex items-center gap-1">
                         <UsersIcon className="w-4 h-4" />
                         {event.participants}/{event.maxParticipants} peserta
                       </span>
                     </div>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <Badge className={getCategoryColor(event.category)}>
-                      {event.category}
-                    </Badge>
-                    <Badge variant="outline">
-                      {getStatusText(event.status)}
-                    </Badge>
+                  <div className="flex gap-2">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button size="sm" variant="outline" className="text-destructive">
+                          <FileText className="w-4 h-4 mr-1" />
+                          Unpublish
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Konfirmasi Unpublish</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Apakah Anda yakin ingin mengunpublish event <strong>{event.title}</strong>?
+                            Event akan dipindahkan ke section draft dan dapat diedit kembali.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Batal</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleUnpublishEvent(event.id)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Unpublish
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
-                </div>
-                <div className="flex gap-2">
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button size="sm" variant="outline" className="text-destructive">
-                        <Trash2 className="w-4 h-4 mr-1" />
-                        Unpublish
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Konfirmasi Unpublish</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Apakah Anda yakin ingin unpublish event <strong>{event.title}</strong>?
-                          Tindakan ini akan mengubah status event menjadi draft.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Batal</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => handleUnpublishEvent(event.id)}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                          Unpublish Event
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
                 </div>
               </div>
             ))}
+            {upcomingEvents.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>Belum ada event mendatang</p>
+                <p className="text-sm">Event mendatang akan muncul di sini setelah Anda membuat atau mempublish draft event</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -466,32 +485,50 @@ export const EventsPage = () => {
           <Button variant="outline" size="sm">Lihat Semua</Button>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {recentEvents.map((event) => (
-              <div 
+              <div
                 key={event.id}
-                className="flex items-center justify-between p-4 rounded-lg border hover:bg-secondary/50 transition-colors"
+                className="p-6 rounded-lg border bg-card hover:shadow-card transition-shadow"
               >
-                <div className="flex-1">
-                  <h4 className="font-medium text-foreground">{event.title}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(event.date).toLocaleDateString('id-ID', { 
-                      day: 'numeric', 
-                      month: 'long', 
-                      year: 'numeric' 
-                    })} • {event.participants} peserta
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Badge className={getCategoryColor(event.category)}>
-                    {event.category}
-                  </Badge>
-                  <Badge className={getStatusColor(event.status)}>
-                    {getStatusText(event.status)}
-                  </Badge>
+                <div className="flex items-start gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-lg font-semibold text-foreground">{event.title}</h3>
+                      <Badge className={getCategoryColor(event.category)}>
+                        {event.category}
+                      </Badge>
+                      <Badge variant="outline">
+                        {getStatusText(event.status)}
+                      </Badge>
+                    </div>
+                    <p className="text-muted-foreground mb-3 line-clamp-2">{event.description}</p>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        {new Date(event.date).toLocaleDateString('id-ID', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
+                        })}
+                      </span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1">
+                        <UsersIcon className="w-4 h-4" />
+                        {event.participants} peserta
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
+            {recentEvents.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                <Check className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>Belum ada event yang selesai</p>
+                <p className="text-sm">Event yang telah selesai akan muncul di sini</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -505,7 +542,18 @@ export const EventsPage = () => {
         }}
         eventData={editingEvent}
         mode={editingEvent ? "edit" : "create"}
-        onSubmit={editingEvent ? handleEditEvent : handleAddEvent}
+        onSubmit={(data) => {
+          if (editingEvent) {
+            // Validasi: completed events tidak boleh diedit
+            if (editingEvent.status === "completed") {
+              alert("Event yang sudah selesai tidak dapat diedit.");
+              return;
+            }
+            handleEditEvent(data);
+          } else {
+            handleAddEvent(data);
+          }
+        }}
       />
 
       {/* Draft Event Form */}
