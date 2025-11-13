@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Search, Building2, CheckCircle2, XCircle, Star, Slash } from "lucide-react";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Plus, Search, Building2, CheckCircle2, Slash } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,8 +38,6 @@ interface PondokFormData {
   phone?: string;
   email?: string;
   website?: string;
-  students?: number;
-  teachers?: number;
   vision?: string;
   mission?: string;
   facilities?: string;
@@ -78,8 +75,6 @@ export const ManagePondokPage = () => {
       phone: "",
       email: "",
       website: "",
-      students: 0,
-      teachers: 0,
       vision: "",
       mission: "",
       facilities: "",
@@ -108,8 +103,6 @@ export const ManagePondokPage = () => {
       phone: "",
       email: "",
       website: "",
-      students: 0,
-      teachers: 0,
       vision: "",
       mission: "",
       facilities: "",
@@ -126,9 +119,7 @@ export const ManagePondokPage = () => {
       city: row.city,
       province: row.province,
       founded: row.founded,
-      description: row.description,
-      students: row.students || 0,
-      teachers: row.teachers || 0
+      description: row.description
     });
     setOpenForm(true);
   };
@@ -151,9 +142,7 @@ export const ManagePondokPage = () => {
     if (editing) {
       setItems(prev => prev.map(p => p.id === editing.id ? {
         ...p,
-        ...processedData,
-        students: data.students || p.students,
-        teachers: data.teachers || p.teachers
+        ...processedData
       } as Pondok : p));
     } else {
       const newItem: Pondok = {
@@ -162,8 +151,8 @@ export const ManagePondokPage = () => {
         city: data.city,
         province: data.province,
         founded: data.founded,
-        students: data.students || 0,
-        teachers: data.teachers || 0,
+        students: 0,
+        teachers: 0,
         status: "pending",
         description: data.description,
         featured: false,
@@ -175,11 +164,7 @@ export const ManagePondokPage = () => {
     setOpenForm(false);
   };
 
-  const remove = (id: number) => setItems(prev => prev.filter(p => p.id !== id));
-  const verify = (id: number) => setItems(prev => prev.map(p => p.id === id ? { ...p, status: "verified" } : p));
-  const reject = (id: number) => setItems(prev => prev.map(p => p.id === id ? { ...p, status: "suspended" } : p));
-  const toggleFeatured = (id: number) => setItems(prev => prev.map(p => p.id === id ? { ...p, featured: !p.featured } : p));
-  const toggleSuspend = (id: number) => setItems(prev => prev.map(p => p.id === id ? { ...p, suspended: !p.suspended } : p));
+    const toggleSuspend = (id: number) => setItems(prev => prev.map(p => p.id === id ? { ...p, suspended: !p.suspended } : p));
 
   return (
     <div className="space-y-6">
@@ -260,10 +245,7 @@ export const ManagePondokPage = () => {
                   <TableHead>No</TableHead>
                   <TableHead>Nama Pondok</TableHead>
                   <TableHead>Lokasi</TableHead>
-                  <TableHead>Berdiri</TableHead>
-                  <TableHead>Santri</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Aktivitas</TableHead>
                   <TableHead className="text-right">Aksi</TableHead>
                 </TableRow>
               </TableHeader>
@@ -277,8 +259,6 @@ export const ManagePondokPage = () => {
                     <TableCell>{idx + 1}</TableCell>
                     <TableCell className="font-medium">{p.name}</TableCell>
                     <TableCell>{p.city}, {p.province}</TableCell>
-                    <TableCell>{p.founded}</TableCell>
-                    <TableCell>{p.students.toLocaleString()}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2 flex-wrap">
                         {p.suspended ? (
@@ -298,35 +278,19 @@ export const ManagePondokPage = () => {
                         {p.featured && !p.suspended && (<Badge variant="secondary">featured</Badge>)}
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <div className="text-xs text-muted-foreground">
-                        <div>Login: {p.lastLogin || "-"}</div>
-                        <div>Update: {p.lastUpdate || "-"}</div>
-                      </div>
-                    </TableCell>
                     <TableCell className="text-right space-x-1" onClick={(e) => e.stopPropagation()}>
-                      <Button size="sm" variant="outline" onClick={() => startEdit(p)} title="Edit">
-                        <Edit className="w-4 h-4" />
+                      <Button
+                        size="sm"
+                        variant={p.suspended ? "default" : "outline"}
+                        onClick={() => toggleSuspend(p.id)}
+                        title={p.suspended ? "Aktifkan Akun" : "Nonaktifkan Akun"}
+                      >
+                        {p.suspended ? (
+                          <CheckCircle2 className="w-4 h-4" />
+                        ) : (
+                          <Slash className="w-4 h-4" />
+                        )}
                       </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button size="sm" variant="outline" className="text-destructive" title="Hapus">
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Hapus Pondok?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Tindakan ini akan menghapus {p.name} secara permanen.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Batal</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => remove(p.id)}>Hapus</AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -421,27 +385,7 @@ export const ManagePondokPage = () => {
                 )} />
               </div>
 
-              {/* Data Kuantitatif */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Data Kuantitatif</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField name="students" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Jumlah Santri</FormLabel>
-                      <FormControl><Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value) || 0)} /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField name="teachers" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Jumlah Guru/Ustadz</FormLabel>
-                      <FormControl><Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value) || 0)} /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                </div>
-              </div>
-
+  
               {/* Informasi Tambahan */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Informasi Tambahan</h3>
