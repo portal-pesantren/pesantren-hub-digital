@@ -52,14 +52,13 @@ export const ManagePondokPage = () => {
     { id: 1, name: "Pondok Pesantren Darul Falah", city: "Bogor", province: "Jawa Barat", status: "verified", founded: 1998, students: 520, teachers: 35, description: "Pesantren dengan fokus tahfidz dan kitab kuning.", featured: true, suspended: false, lastLogin: "2025-10-03 08:02", lastUpdate: "2025-10-02" },
     { id: 2, name: "Pesantren Modern Al-Ikhlas", city: "Surabaya", province: "Jawa Timur", status: "pending", founded: 2005, students: 340, teachers: 28, description: "Pendidikan modern berpadu nilai Islam.", featured: false, suspended: false, lastLogin: "2025-10-02 20:10", lastUpdate: "2025-09-30" },
     { id: 3, name: "Pondok Tahfidz Al-Qur'an", city: "Bandung", province: "Jawa Barat", status: "verified", founded: 2010, students: 280, teachers: 22, description: "Fokus pada tahfidz dan tahsin.", featured: true, suspended: false, lastLogin: "2025-10-01 10:22", lastUpdate: "2025-10-01" },
-    { id: 4, name: "Pondok Modern Al-Hikmah", city: "Jakarta", province: "DKI Jakarta", status: "suspended", founded: 2015, students: 150, teachers: 18, description: "Pesantren dengan kurikulum modern.", featured: false, suspended: true, lastLogin: "2025-09-28 14:30", lastUpdate: "2025-09-28" },
+    { id: 4, name: "Pondok Modern Al-Hikmah", city: "Jakarta", province: "DKI Jakarta", status: "verified", founded: 2015, students: 150, teachers: 18, description: "Pesantren dengan kurikulum modern.", featured: false, suspended: true, lastLogin: "2025-09-28 14:30", lastUpdate: "2025-09-28" },
     { id: 5, name: "Pondok Pesantren Nurul Iman", city: "Malang", province: "Jawa Timur", status: "verified", founded: 1992, students: 450, teachers: 30, description: "Pesantren salaf dengan pendidikan formal.", featured: false, suspended: true, lastLogin: "2025-09-15 09:15", lastUpdate: "2025-09-20" },
     { id: 6, name: "Pondok IT Al-Azhar", city: "Tangerang", province: "Banten", status: "waiting", founded: 2018, students: 120, teachers: 15, description: "Pesantren dengan fokus teknologi dan coding.", featured: false, suspended: false, lastLogin: "2025-10-01 15:45", lastUpdate: "2025-10-01" },
     { id: 7, name: "Pondok Entrepreneur Muslim", city: "Depok", province: "Jawa Barat", status: "waiting", founded: 2020, students: 85, teachers: 12, description: "Pesantren kewirausahaan dan bisnis Islam.", featured: false, suspended: false, lastLogin: "2025-09-30 11:20", lastUpdate: "2025-09-30" },
     { id: 8, name: "Pondok Al-Fatih", city: "Semarang", province: "Jawa Tengah", status: "in-progress", founded: 2016, students: 200, teachers: 16, description: "Sedang dalam proses verifikasi dokumen.", featured: false, suspended: false, lastLogin: "2025-10-05 09:30", lastUpdate: "2025-10-05" },
   ]);
   const [openForm, setOpenForm] = useState(false);
-  const [editing, setEditing] = useState<Pondok | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [provinceFilter, setProvinceFilter] = useState<string>("all");
   const [suspendFilter, setSuspendFilter] = useState<string>("all");
@@ -92,7 +91,6 @@ export const ManagePondokPage = () => {
   });
 
   const startCreate = () => {
-    setEditing(null);
     form.reset({
       name: "",
       city: "",
@@ -112,59 +110,31 @@ export const ManagePondokPage = () => {
     setOpenForm(true);
   };
 
-  const startEdit = (row: Pondok) => {
-    setEditing(row);
-    form.reset({
-      name: row.name,
-      city: row.city,
-      province: row.province,
-      founded: row.founded,
-      description: row.description
-    });
-    setOpenForm(true);
-  };
-
   const onSubmit = (data: PondokFormData) => {
-    // Process array fields from comma-separated strings
-    const processArrayField = (field?: string): string[] => {
-      if (!field || !field.trim()) return [];
-      return field.split(',').map(item => item.trim()).filter(item => item.length > 0);
+    const newItem: Pondok = {
+      id: Math.max(0, ...items.map(i => i.id)) + 1,
+      name: data.name,
+      city: data.city,
+      province: data.province,
+      founded: data.founded,
+      students: 0,
+      teachers: 0,
+      status: "pending",
+      description: data.description,
+      featured: false,
+      suspended: false,
+      lastUpdate: new Date().toISOString().split('T')[0],
+      address: data.address,
+      phone: data.phone,
+      email: data.email,
+      website: data.website,
+      vision: data.vision
     };
-
-    const processedData = {
-      ...data,
-      mission: processArrayField(data.mission),
-      programs: processArrayField(data.programs),
-      facilities: processArrayField(data.facilities),
-      achievements: processArrayField(data.achievements)
-    };
-
-    if (editing) {
-      setItems(prev => prev.map(p => p.id === editing.id ? {
-        ...p,
-        ...processedData
-      } as Pondok : p));
-    } else {
-      const newItem: Pondok = {
-        id: Math.max(0, ...items.map(i => i.id)) + 1,
-        name: data.name,
-        city: data.city,
-        province: data.province,
-        founded: data.founded,
-        students: 0,
-        teachers: 0,
-        status: "pending",
-        description: data.description,
-        featured: false,
-        suspended: false,
-        lastUpdate: new Date().toISOString().split('T')[0]
-      };
-      setItems(prev => [...prev, newItem]);
-    }
+    setItems(prev => [...prev, newItem]);
     setOpenForm(false);
   };
 
-    const toggleSuspend = (id: number) => setItems(prev => prev.map(p => p.id === id ? { ...p, suspended: !p.suspended } : p));
+  const toggleSuspend = (id: number) => setItems(prev => prev.map(p => p.id === id ? { ...p, suspended: !p.suspended } : p));
 
   return (
     <div className="space-y-6">
@@ -181,7 +151,6 @@ export const ManagePondokPage = () => {
       <Card className="shadow-card">
         <CardContent className="p-4 sm:p-6">
           <div className="space-y-3">
-            {/* Search Input - Full width on mobile */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
@@ -192,7 +161,6 @@ export const ManagePondokPage = () => {
               />
             </div>
 
-            {/* Filter Row - Responsive */}
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-full sm:w-[160px]"><SelectValue placeholder="Status" /></SelectTrigger>
@@ -236,7 +204,6 @@ export const ManagePondokPage = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {/* Responsive table container */}
           <div className="rounded-lg border overflow-x-auto">
             <div className="min-w-[800px]">
               <Table>
@@ -253,7 +220,9 @@ export const ManagePondokPage = () => {
                 {filtered.map((p, idx) => (
                   <TableRow
                     key={p.id}
-                    className="cursor-pointer hover:bg-muted/50 transition-colors duration-200 hover:shadow-md"
+                    className={`cursor-pointer transition-colors duration-200 hover:shadow-md ${
+                      p.suspended ? 'bg-red-50 hover:bg-red-100' : 'hover:bg-muted/50'
+                    }`}
                     onClick={() => navigate(`/manage-pondok/${p.id}`)}
                   >
                     <TableCell>{idx + 1}</TableCell>
@@ -261,36 +230,43 @@ export const ManagePondokPage = () => {
                     <TableCell>{p.city}, {p.province}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2 flex-wrap">
-                        {p.suspended ? (
-                          <Badge variant="suspended">Suspend</Badge>
-                        ) : (
-                          <Badge
-                            variant={
-                              p.status === "verified" ? "verified" :
-                              p.status === "in-progress" ? "in-progress" :
-                              p.status === "suspended" ? "suspended" :
-                              p.status === "waiting" || p.status === "pending" ? "waiting" :
-                              "outline"}
-                          >
-                            {p.status === "in-progress" ? "In Progress" : p.status}
-                          </Badge>
-                        )}
-                        {p.featured && !p.suspended && (<Badge variant="secondary">featured</Badge>)}
+                        <Badge
+                          variant={
+                            p.status === "verified" ? "verified" :
+                            p.status === "in-progress" ? "in-progress" :
+                            p.status === "suspended" ? "suspended" :
+                            p.status === "waiting" || p.status === "pending" ? "waiting" :
+                            "outline"}
+                        >
+                          {p.status === "in-progress" ? "In Progress" :
+                           p.status === "waiting" ? "Waiting" :
+                           p.status.charAt(0).toUpperCase() + p.status.slice(1)}
+                        </Badge>
+                        {p.featured && (<Badge variant="secondary">featured</Badge>)}
+                        {p.suspended && (<Badge variant="destructive">diblokir</Badge>)}
                       </div>
                     </TableCell>
                     <TableCell className="text-right space-x-1" onClick={(e) => e.stopPropagation()}>
-                      <Button
-                        size="sm"
-                        variant={p.suspended ? "default" : "outline"}
-                        onClick={() => toggleSuspend(p.id)}
-                        title={p.suspended ? "Aktifkan Akun" : "Nonaktifkan Akun"}
-                      >
-                        {p.suspended ? (
-                          <CheckCircle2 className="w-4 h-4" />
-                        ) : (
-                          <Slash className="w-4 h-4" />
-                        )}
-                      </Button>
+                      {p.suspended ? (
+                        <Button
+                          size="sm"
+                          variant="default"
+                          onClick={() => toggleSuspend(p.id)}
+                          title="Aktifkan Akun"
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          Aktifkan
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => toggleSuspend(p.id)}
+                          title="Nonaktifkan Akun"
+                        >
+                          Nonaktifkan
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -304,11 +280,10 @@ export const ManagePondokPage = () => {
       <Dialog open={openForm} onOpenChange={setOpenForm}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editing ? "Edit Pondok" : "Tambah Pondok"}</DialogTitle>
+            <DialogTitle>Tambah Pondok</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              {/* Informasi Dasar */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Informasi Dasar</h3>
                 <FormField name="name" control={form.control} render={({ field }) => (
@@ -357,7 +332,6 @@ export const ManagePondokPage = () => {
                 )} />
               </div>
 
-              {/* Kontak */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Informasi Kontak</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -386,46 +360,6 @@ export const ManagePondokPage = () => {
               </div>
 
   
-              {/* Informasi Tambahan */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Informasi Tambahan</h3>
-                <FormField name="vision" control={form.control} render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Visi</FormLabel>
-                    <FormControl><Textarea rows={2} {...field} placeholder="Visi pondok" /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField name="mission" control={form.control} render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Misi</FormLabel>
-                    <FormControl><Textarea rows={3} {...field} placeholder="Misi pondok (pisahkan dengan koma)" /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField name="programs" control={form.control} render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Program Unggulan</FormLabel>
-                    <FormControl><Textarea rows={2} {...field} placeholder="Program unggulan (pisahkan dengan koma)" /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField name="facilities" control={form.control} render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Fasilitas</FormLabel>
-                    <FormControl><Textarea rows={3} {...field} placeholder="Fasilitas pondok (pisahkan dengan koma)" /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField name="achievements" control={form.control} render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Prestasi</FormLabel>
-                    <FormControl><Textarea rows={2} {...field} placeholder="Prestasi (pisahkan dengan koma)" /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-              </div>
-
               <div className="flex justify-end gap-2 pt-4 border-t">
                 <Button type="button" variant="outline" size="default" onClick={() => setOpenForm(false)}>Batal</Button>
                 <Button type="submit" size="default">Simpan</Button>
@@ -437,5 +371,3 @@ export const ManagePondokPage = () => {
     </div>
   );
 };
-
-
