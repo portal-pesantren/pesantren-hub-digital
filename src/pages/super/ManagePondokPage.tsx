@@ -250,19 +250,18 @@ export const ManagePondokPage = () => {
                       {p.suspended ? (
                         <Button
                           size="sm"
-                          variant="default"
                           onClick={() => toggleSuspend(p.id)}
                           title="Aktifkan Akun"
-                          className="bg-green-600 hover:bg-green-700 text-white"
+                          className="bg-[#CFF6C7] hover:bg-[#CFF6C7]/80 text-[#02AD02] focus:outline-none focus:ring-0 active:bg-[#CFF6C7]"
                         >
                           Aktifkan
                         </Button>
                       ) : (
                         <Button
                           size="sm"
-                          variant="destructive"
                           onClick={() => toggleSuspend(p.id)}
                           title="Nonaktifkan Akun"
+                          className="bg-[#F6C7C7] hover:bg-[#F6C7C7]/80 text-[#D80808] focus:outline-none focus:ring-0 active:bg-[#F6C7C7]"
                         >
                           Nonaktifkan
                         </Button>
