@@ -128,7 +128,7 @@ export const ContentPreviewModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
+      <DialogContent className="max-w-6xl max-h-[95vh] px-6 pb-8 md:px-8 md:pb-10 overflow-y-auto">
         <DialogHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -147,7 +147,7 @@ export const ContentPreviewModal = ({
                 </div>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 pr-4">
               <Button variant="outline" size="sm">
                 <ExternalLink className="w-4 h-4 mr-2" />
                 Buka di Tab Baru
@@ -164,37 +164,37 @@ export const ContentPreviewModal = ({
           <TabsList className="items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid grid-cols-3 h-12 w-full">
             <TabsTrigger
               value="content"
-              className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-2 py-2 h-9 text-sm rounded-md touch-target text-center"
+              className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-2 py-2 h-9 text-sm rounded-md touch-target text-center min-w-[120px]"
             >
               Konten
             </TabsTrigger>
             <TabsTrigger
               value="metadata"
-              className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-2 py-2 h-9 text-sm rounded-md touch-target text-center"
+              className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-2 py-2 h-9 text-sm rounded-md touch-target text-center min-w-[120px]"
             >
               Metadata
             </TabsTrigger>
             <TabsTrigger
               value="review"
-              className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-2 py-2 h-9 text-sm rounded-md touch-target text-center"
+              className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-2 py-2 h-9 text-sm rounded-md touch-target text-center min-w-[120px]"
             >
               Review
             </TabsTrigger>
           </TabsList>
 
-          <div className="flex-1 overflow-hidden">
-            <TabsContent value="content" className="h-full mt-4">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+          <div className="flex-1 min-h-0">
+            <TabsContent value="content" className="mt-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-4 md:pb-6">
                 {/* Content Preview */}
-                <Card className="h-full">
+                <Card className="min-h-0 overflow-hidden flex flex-col">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Eye className="w-5 h-5" />
                       Preview Konten
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="h-full">
-                    <ScrollArea className="h-[400px]">
+                  <CardContent className="flex-1 pb-4">
+                    <ScrollArea className="min-h-0">
                       {item.type === "photo" && (
                         <div className="space-y-4">
                           <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
@@ -227,15 +227,15 @@ export const ContentPreviewModal = ({
                 </Card>
 
                 {/* Content Information */}
-                <Card className="h-full">
-                  <CardHeader>
+                <Card className="min-h-0 overflow-hidden flex flex-col">
+                  <CardHeader className="pb-2">
                     <CardTitle className="flex items-center gap-2">
                       <FileText className="w-5 h-5" />
                       Informasi Konten
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <ScrollArea className="h-[400px]">
+                  <CardContent className="flex-1 pb-4">
+                    <ScrollArea className="min-h-0">
                       <div className="space-y-4">
                         <div>
                           <h4 className="font-medium text-sm mb-1">Alasan Moderasi</h4>
@@ -316,15 +316,17 @@ export const ContentPreviewModal = ({
             </TabsContent>
 
             <TabsContent value="metadata" className="mt-4">
-              <Card>
-                <CardHeader>
+              <Card className="overflow-hidden flex flex-col min-h-0">
+                <CardHeader className="pb-2">
                   <CardTitle>Metadata Lengkap</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <ScrollArea className="h-[500px]">
-                    <pre className="text-xs bg-muted p-4 rounded-lg overflow-x-auto">
-                      {JSON.stringify(item, null, 2)}
-                    </pre>
+                <CardContent className="flex-1 pb-4">
+                  <ScrollArea className="min-h-0">
+                    <div className="max-w-full overflow-auto p-4">
+                      <pre className="text-xs bg-muted p-4 rounded-lg font-mono whitespace-pre-wrap break-all">
+                        {JSON.stringify(item, null, 2)}
+                      </pre>
+                    </div>
                   </ScrollArea>
                 </CardContent>
               </Card>
@@ -332,11 +334,11 @@ export const ContentPreviewModal = ({
 
   
             <TabsContent value="review" className="mt-4">
-              <Card>
-                <CardHeader>
+              <Card className="overflow-hidden flex flex-col min-h-0">
+                <CardHeader className="pb-2">
                   <CardTitle>Review & Keputusan</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 pb-4 flex-1 overflow-auto">
                   <div>
                     <label className="text-sm font-medium mb-2 block">
                       Catatan Review
