@@ -161,7 +161,7 @@ export const ContentPreviewModal = ({
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1">
-          <TabsList className="items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full max-w-md grid-cols-3 h-12 mx-auto">
+          <TabsList className="items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid grid-cols-3 h-12 w-full">
             <TabsTrigger
               value="content"
               className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-2 py-2 h-9 text-sm rounded-md touch-target text-center"

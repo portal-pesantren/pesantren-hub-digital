@@ -310,7 +310,7 @@ export const GalleryPage = () => {
       <Card className="shadow-card">
         <CardContent className="p-4 sm:p-6">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full max-w-md grid-cols-2 h-12">
+            <TabsList className="items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid grid-cols-2 h-12 w-full">
               <TabsTrigger
                 value="photos"
                 className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium px-4 py-2 h-9 text-sm rounded-md touch-target text-center hover:px-5 hover:py-2.5 text-responsive-sm"

@@ -406,7 +406,7 @@ export const PeoplePage = () => {
       <Card className="shadow-card">
         <CardContent className="p-6">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full max-w-md grid-cols-2 h-12">
+            <TabsList className="items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid grid-cols-2 h-12 w-full">
               <TabsTrigger
                 value="santri"
                 className="data-[state=active]:bg-background data-[state=active]:border-border data-[state=active]:text-foreground data-[state=active]:shadow-sm font-medium transition-all duration-200 ease-in-out px-3 py-2 h-9 text-sm rounded-md touch-target text-center"
