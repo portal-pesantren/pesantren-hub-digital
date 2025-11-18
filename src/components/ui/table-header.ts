@@ -11,6 +11,14 @@ export const STANDARD_TABLE_HEADERS = {
     { key: 'actions', label: 'Aksi', sortable: false }
   ],
 
+  PONDOK: [
+    { key: 'id', label: 'ID', sortable: false },
+    { key: 'name', label: 'Nama Pondok', sortable: true },
+    { key: 'location', label: 'Lokasi', sortable: true },
+    { key: 'students', label: 'Jumlah Santri', sortable: true },
+    { key: 'status', label: 'Status', sortable: true }
+  ],
+
   MANAGE_PONDOK: [
     { key: 'no', label: 'No', sortable: false },
     { key: 'name', label: 'Nama Pondok', sortable: true },

@@ -23,7 +23,7 @@ import { ManagePondokPage } from "./pages/super/ManagePondokPage";
 import { PondokProfilePage } from "./pages/super/PondokProfilePage";
 import { VerificationPage } from "./pages/super/VerificationPage";
 import { NotificationsPage } from "./pages/super/NotificationsPage";
-import { ModerationPage } from "./pages/super/ModerationPage";
+import { ActivityPage } from "./pages/super/ActivityPage";
 import { GlobalInsightsPage } from "./pages/super/GlobalInsightsPage";
 import { PortalSettingsPage } from "./pages/super/PortalSettingsPage";
 import { BrandingPage } from "./pages/super/BrandingPage";
@@ -157,7 +157,7 @@ const App = () => (
             <Route path="/moderation" element={
               <AuthProvider>
                 <RoleProvider>
-                  <DashboardLayout><ModerationPage /></DashboardLayout>
+                  <DashboardLayout><ActivityPage /></DashboardLayout>
                 </RoleProvider>
               </AuthProvider>
             } />
